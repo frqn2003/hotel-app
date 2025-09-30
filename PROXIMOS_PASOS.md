@@ -1,4 +1,4 @@
-# 🚀 PRÓXIMOS PASOS INMEDIATOS
+# 🚀 PRÓXIMOS PASOS INMEDIATOS (TypeScript)
 
 ## 📅 ESTA SEMANA (30 SEP - 4 OCT)
 
@@ -28,19 +28,27 @@
 
 **Integrante 1: Crear el proyecto**
 ```bash
-# 1. Crear proyecto Next.js
+# 1. Crear proyecto Next.js con TypeScript
 npx create-next-app@latest hotel-app
-# Responder: NO a TypeScript, YES a Tailwind, YES a App Router
+# Responder: 
+# YES a TypeScript 
+# YES a ESLint
+# YES a Tailwind
+# YES a src/ directory
+# YES a App Router
 
 # 2. Entrar al proyecto
 cd hotel-app
 
 # 3. Instalar dependencias
-npm install mongoose next-auth react-bootstrap bootstrap
-npm install react-icons nodemailer stripe react-leaflet leaflet
+npm install mongoose next-auth react-icons
+npm install nodemailer stripe react-leaflet leaflet
 npm install date-fns react-hot-toast
 
-# 4. Probar que funcione
+# 4. Instalar types de TypeScript
+npm install @types/leaflet @types/nodemailer --save-dev
+
+# 5. Probar que funcione
 npm run dev
 # Abrir http://localhost:3000
 ```
@@ -60,15 +68,15 @@ npm run dev
 ### 💾 DÍA 3 (2 OCT)
 
 **Integrante 1: Estructura básica**
-- Crear `src/components/Navbar.js`
-- Modificar `src/app/layout.js`
-- Crear `src/app/habitaciones/page.js`
+- Crear `src/components/Navbar.tsx` 
+- Modificar `src/app/layout.tsx`
+- Crear `src/app/habitaciones/page.tsx`
 - Test: navegar entre páginas
 
 **Integrante 2: MongoDB Connection**
 - Crear `.env.local` con variables
-- Crear `src/lib/mongodb.js`
-- Crear `src/models/Room.js`
+- Crear `src/lib/mongodb.ts` 
+- Crear `src/models/Room.ts` con interface IRoom
 - Test: endpoint `/api/habitaciones`
 
 ---
@@ -76,8 +84,8 @@ npm run dev
 ### 🧪 DÍA 4 (3 OCT)
 
 **AMBOS: Primera integración**
-- Crear endpoint `GET /api/habitaciones`
-- Conectar frontend con backend
+- Crear endpoint `GET /api/habitaciones/route.ts`
+- Conectar frontend con backend (con tipos)
 - Agregar datos de prueba (seed)
 - Verificar que se muestren habitaciones
 
@@ -86,6 +94,10 @@ npm run dev
 # Debe funcionar:
 http://localhost:3000/habitaciones
 # Debe mostrar tarjetas de habitaciones
+
+# Verificar tipos:
+npx tsc --noEmit
+# No debe mostrar errores
 ```
 
 ---
@@ -97,7 +109,7 @@ http://localhost:3000/habitaciones
 # Inicializar Git
 git init
 git add .
-git commit -m "feat: configuración inicial del proyecto"
+git commit -m "feat: configuración inicial del proyecto con TypeScript"
 
 # Crear repo en GitHub
 # Conectar y subir
@@ -115,14 +127,15 @@ git push -u origin main
 ## 🎯 CHECKLIST SEMANA 1
 
 Al final de la semana debes tener:
-- [x] Proyecto Next.js creado
-- [x] Dependencias instaladas
+- [x] Proyecto Next.js con TypeScript creado
+- [x] Dependencias instaladas (incluidas @types)
 - [x] MongoDB Atlas configurado
-- [x] Navbar funcionando
-- [x] Página de habitaciones básica
+- [x] Navbar funcionando (.tsx)
+- [x] Página de habitaciones básica con tipos
 - [x] Conexión a MongoDB funcionando
 - [x] Datos de prueba en la DB
 - [x] Código en GitHub
+- [x] Sin errores de TypeScript (`npx tsc --noEmit`)
 
 ---
 
@@ -150,7 +163,7 @@ EMAIL_USER=pendiente
 EMAIL_PASSWORD=pendiente
 ```
 
-**⚠️ IMPORTANTE:** Agregar `.env.local` al `.gitignore`
+**⚠️ IMPORTANTE:** Agregar `.env.local` al `.gitignore` (ya viene por defecto)
 
 ---
 
@@ -175,6 +188,20 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
+### Errores de TypeScript
+```bash
+# Verificar errores sin ejecutar
+npx tsc --noEmit
+
+# Si marca errores pero funciona:
+npm run dev  # TypeScript no impide ejecución en desarrollo
+```
+
+### Error: Type 'X' is not assignable to type 'Y'
+- Lee el error completo - TypeScript te dice exactamente qué espera
+- Pregúntale a la IA: "¿Cómo soluciono este error de TypeScript?"
+- Agrega tipos explícitos: `const data: TipoEsperado = ...`
+
 ### Puerto 3000 en uso
 ```bash
 # Usar otro puerto
@@ -186,15 +213,18 @@ npm run dev -- -p 3001
 ## 📚 RECURSOS PARA ESTA SEMANA
 
 ### Videos (ver ANTES de codear)
-1. Next.js en 30 minutos: https://www.youtube.com/watch?v=h2BcitZPMn4
+1. Next.js 14 + TypeScript: https://www.youtube.com/watch?v=h2BcitZPMn4
 2. MongoDB Atlas setup: https://www.youtube.com/watch?v=rPqRyYJmx2g
+3. TypeScript en 5 minutos: https://www.youtube.com/watch?v=ahCwqrYpIuM
 
 ### Documentación
 - Next.js Docs: https://nextjs.org/docs
-- Tailwind CSS: https://tailwindcss.com/docs
+- TypeScript Handbook: https://www.typescriptlang.org/docs/
+- TypeScript + React: https://react-typescript-cheatsheet.netlify.app/
 
 ### Cheat Sheet
 - Git básico: https://training.github.com/downloads/github-git-cheat-sheet/
+- TypeScript Cheat Sheet: https://www.typescriptlang.org/cheatsheets
 
 ---
 
@@ -212,9 +242,10 @@ Cada día, compartir por WhatsApp/Discord:
 git commit -m "tipo: descripción corta"
 
 # Ejemplos:
-git commit -m "feat: agregar navbar"
-git commit -m "fix: corregir conexión mongodb"
+git commit -m "feat: agregar navbar con TypeScript"
+git commit -m "fix: corregir tipos en Room interface"
 git commit -m "docs: actualizar README"
+git commit -m "types: agregar interfaces para API responses"
 ```
 
 ### Sincronización
@@ -230,43 +261,70 @@ git push origin main
 
 ---
 
-## 🎓 TIPS DE APRENDIZAJE
+## 🎓 TIPS DE APRENDIZAJE TYPESCRIPT
 
-### Para los que NO saben React:
-1. **No entres en pánico** - Next.js hace todo más fácil
-2. **Copia los ejemplos** de la guía primero
-3. **Luego modifica** poco a poco para entender
-4. **Console.log() es tu amigo** - úsalo para debug
-5. **Lee los errores** - casi siempre dicen qué está mal
+### Para los que saben JavaScript:
+1. **TypeScript = JavaScript + tipos** - Si funciona en JS, funciona en TS
+2. **Deja que el IDE te ayude** - VS Code sugiere tipos automáticamente
+3. **Usa `interface` para objetos** - Es la forma más común
+4. **No tipar TODO** - TypeScript infiere muchos tipos solo
+5. **Los errores son tus amigos** - Te previenen bugs
 
-### Para aprender mientras haces:
-```jsx
-// 1. Empieza con componente simple
-function MiComponente() {
-  return <h1>Hola</h1>;
+### Tipos básicos que usarás constantemente:
+```typescript
+// Primitivos
+const nombre: string = "Hotel";
+const precio: number = 150;
+const disponible: boolean = true;
+
+// Arrays
+const numeros: number[] = [1, 2, 3];
+const nombres: Array<string> = ["Juan", "María"];
+
+// Objetos (interfaces)
+interface Habitacion {
+  numero: number;
+  precio: number;
+  tipo: string;
 }
 
-// 2. Agregar datos dinámicos
-function MiComponente() {
-  const nombre = "Juan";
-  return <h1>Hola {nombre}</h1>;
+// Funciones
+function calcular(a: number, b: number): number {
+  return a + b;
 }
 
-// 3. Agregar props
-function MiComponente({ nombre }) {
-  return <h1>Hola {nombre}</h1>;
+// Props de componentes
+interface Props {
+  titulo: string;
+  precio: number;
 }
 
-// 4. Agregar estado (si necesitas)
-function MiComponente() {
-  const [contador, setContador] = useState(0);
-  return (
-    <div>
-      <p>Contador: {contador}</p>
-      <button onClick={() => setContador(contador + 1)}>+</button>
-    </div>
-  );
+function Card({ titulo, precio }: Props) {
+  return <div>{titulo}: ${precio}</div>;
 }
+
+// Estados
+const [count, setCount] = useState<number>(0);
+const [data, setData] = useState<Habitacion[]>([]);
+
+// Opcional con ?
+interface User {
+  nombre: string;
+  email: string;
+  telefono?: string;  
+}
+```
+
+### Comandos TypeScript útiles:
+```bash
+# Ver errores de tipos
+npx tsc --noEmit
+
+# Ejecutar (TypeScript no impide ejecución en dev)
+npm run dev
+
+# Generar tipos automáticamente (VS Code)
+# Ctrl + . (punto) sobre un error
 ```
 
 ---
@@ -276,40 +334,44 @@ function MiComponente() {
 ### Semana 1
 ```
 Progreso esperado: 20%
-- [ ] Configuración completa
-- [ ] Primera página funcionando
-- [ ] DB conectada
+- [ ] Configuración completa con TypeScript
+- [ ] Primera página funcionando (.tsx)
+- [ ] DB conectada con tipos (.ts)
 - [ ] Código en GitHub
+- [ ] Sin errores de tipos
 ```
 
 ### Indicadores de éxito:
 ✅ `npm run dev` funciona sin errores
+✅ `npx tsc --noEmit` no muestra errores
 ✅ Puedes ver habitaciones en el navegador
 ✅ MongoDB Atlas tiene datos de prueba
 ✅ GitHub tiene tu código
+✅ VS Code te sugiere propiedades de objetos (autocomplete)
 
 ---
 
 ## 🎯 META DE LA SEMANA 1
 
-**"Tener un proyecto Next.js funcional que muestre habitaciones desde MongoDB"**
+**"Tener un proyecto Next.js + TypeScript funcional que muestre habitaciones desde MongoDB con tipos definidos"**
 
-Si logras esto, estás en el camino correcto para completar el proyecto a tiempo. 🎉
+Si logras esto, estás en el camino correcto para completar el proyecto a tiempo. 
 
 ---
 
 ## 📞 CANALES DE AYUDA
 
 ### Cuando estés trabado:
-1. **Primero:** Lee el error completo en la consola
-2. **Segundo:** Busca en Google: "nextjs [tu error]"
+1. **Primero:** Lee el error completo de TypeScript
+2. **Segundo:** Busca en Google: "nextjs typescript [tu error]"
 3. **Tercero:** Revisa `GUIA_PARA_PRINCIPIANTES.md`
-4. **Cuarto:** Pregunta en Stack Overflow (español)
-5. **Último recurso:** Discord de Midudev o r/nextjs
+4. **Cuarto:** Pregunta a IA: "¿Cómo soluciono este error de tipos?"
+5. **Quinto:** Stack Overflow (español)
+6. **Último recurso:** Discord de Midudev o r/typescript
 
 ### Preguntas inteligentes:
-❌ "No funciona, ayuda"
-✅ "Obtengo error 'Cannot find module mongoose' al correr npm run dev. Ya intenté npm install pero sigue fallando. Mi package.json es..."
+❌ "TypeScript no funciona, ayuda"
+✅ "Obtengo error 'Type string is not assignable to type number' en línea 42 de Room.tsx. Mi código es... ¿Qué tipo debería usar?"
 
 ---
 
@@ -321,9 +383,33 @@ Si logras esto, estás en el camino correcto para completar el proyecto a tiempo
 3. Crear cuenta en GitHub
 4. Crear cuenta en MongoDB Atlas
 5. Leer `GUIA_PARA_PRINCIPIANTES.md` secciones 1-3
+6. **Ver video de TypeScript en 5 minutos** (link arriba)
 
-**Tiempo estimado:** 1-2 horas
+**Tiempo estimado:** 1.5-2 horas
 
 ---
 
-¡Éxito! Recuerda que es NORMAL sentirse abrumado al principio. Toma un paso a la vez. 🚀
+## 🚀 VENTAJAS DE TYPESCRIPT PARA TU PROYECTO
+
+### Lo que ganarás:
+1. **Autocompletado increíble** - VS Code te sugiere todo
+2. **Menos bugs tontos** - TypeScript detecta errores antes de ejecutar
+3. **Mejor documentación** - Los tipos son documentación viva
+4. **Facilita el trabajo en equipo** - Tu compañero sabe qué espera cada función
+5. **Habilidad valiosa** - TypeScript está en todas las ofertas de trabajo
+
+### Ejemplo real:
+```typescript
+// Sin TypeScript - fácil equivocarse
+const room = await Room.findById(id);
+console.log(room.precios);  
+
+// Con TypeScript - error inmediato
+const room = await Room.findById(id);
+console.log(room.precios);  
+console.log(room.precio);   
+```
+
+---
+
+¡Éxito! TypeScript puede parecer complicado al principio, pero en 2-3 días te acostumbrarás. Recuerda: es JavaScript + ayuda extra. 
