@@ -1,0 +1,139 @@
+# PLAN DE PROYECTO HOTEL (30 SEP - 30 OCT) - VERSION COMPLETA
+
+## DIVISION DETALLADA POR SEMANA (2 INTEGRANTES)
+
+### SEMANA 1 (30 SEP - 4 OCT): BASE DEL PROYECTO
+**Integrante 1:**
+- Crear proyecto Next.js (npx create-next-app)
+- Configurar estructura de carpetas
+- diseñar schema de Habitaciones
+
+**Integrante 2:**
+- Configurar MongoDB Atlas
+- Crear schema de Usuarios
+- Instalar NextAuth (Google Auth)
+
+### SEMANA 2 (7-11 OCT): INTERFAZ USUARIO
+**Integrante 1:**
+- Página listado habitaciones
+- Componente Card por habitación
+- Filtros básicos
+
+**Integrante 2:**
+- Formulario login/registro
+- Página perfil usuario
+- Formulario reserva básico
+
+### SEMANA 3 (14-18 OCT): PANEL OPERADOR
+**Integrante 1:**
+- Mapa con Leaflet
+- Marcadores de habitaciones
+- Filtros para operador
+
+**Integrante 2:**
+- Tabla CRUD reservas
+- Cambiar estados habitación
+- Protección de rutas
+
+### SEMANA 4 (21-25 OCT): INTEGRACIONES
+**Integrante 1:**
+- Configurar Nodemailer
+- Formulario contacto
+- Notificaciones básicas
+
+**Integrante 2:**
+- Stripe Checkout
+- Modo prueba con tarjetas
+- Registrar pagos en DB
+
+### SEMANA 5 (28-30 OCT): FINALIZACION
+**Tareas Conjuntas:**
+- Testing manual
+- Ajustes responsive
+- Deploy en Vercel
+
+## TECNOLOGIAS COMPLETAS
+
+**Frontend:**
+- Next.js 14 (React)
+- Tailwind CSS (estilos)
+- React-Bootstrap (componentes UI)
+- Leaflet.js (mapas)
+- Stripe.js (pagos)
+
+**Backend:**
+- Node.js
+- Next.js API Routes
+- NextAuth.js (autenticación)
+- Mongoose (ODM para MongoDB)
+
+**Base de Datos:**
+- MongoDB Atlas (cloud)
+- Schemas para:
+  * Usuarios
+  * Habitaciones
+  * Reservas
+  * Pagos
+
+**Herramientas:**
+- Vercel (deploy)
+- GitHub (control versión)
+- Postman (test APIs)
+- Nodemailer (emails)
+
+**Dependencias clave:**
+- react-icons
+- date-fns (manejo fechas)
+- react-hot-toast (notificaciones)
+- react-leaflet (mapas)
+
+## CONSEJOS PARA PRINCIPIANTES
+1. Usar react-bootstrap para UI
+2. Priorizar funcionalidad sobre diseño
+3. Commits diarios a Git
+4. Usar VSCode Live Share
+
+## GUIA DE INSTALACION RAPIDA
+1. Node.js v18+ (instalar desde nodejs.org)
+2. MongoDB Atlas (crear cuenta gratis)
+3. VS Code con extensiones:
+   - ESLint
+   - Prettier
+   - MongoDB
+
+## SOLUCION DE PROBLEMAS COMUNES
+- **Error de conexión DB**: Verificar string de conexión en .env.local
+- **Autenticación falla**: Revisar credenciales Google OAuth
+- **Mapa no carga**: Añadir CSS de Leaflet en _app.js
+
+## RECURSOS DE APRENDIZAJE
+1. [Next.js Docs](https://nextjs.org/docs)
+2. [MongoDB University](https://university.mongodb.com/)
+3. [Tailwind cheat Sheet](https://tailwindcomponents.com/cheatsheet/)
+4. [Stripe Test Cards](https://stripe.com/docs/testing)
+
+## CHECKLIST DE VERIFICACION SEMANAL
+- [ ] Commits subidos a GitHub
+- [ ] Variables de entorno en .env.local
+- [ ] Backup de base de datos
+
+## RECOMENDACIONES ADICIONALES
+
+### Para evitar bloqueos:
+1. **Semana 1**: Configurar MongoDB Atlas ANTES de codear
+2. **Semana 2**: Usar componentes pre-hechos de react-bootstrap (evitar CSS custom)
+3. **Semana 3**: Empezar con datos mock (sin conexión a DB)
+
+### Prioridades por sprint:
+- **Must Have**: Login, CRUD reservas, mapa básico
+- **Nice to Have**: Filtros avanzados, notificaciones
+
+### Checklist Diario (2 personas):
+1. Revisar merge de cambios en GitHub
+2. Probar funcionalidades cruzadas (ej: reservas + mapa)
+3. Documentar errores en README.md
+
+### Tips para principiantes:
+- Usar `npm run dev` en modo desarrollo
+- Revisar la consola del navegador (F12) para depurar
+- Dividir tareas en subtareas de 2-4 horas max
