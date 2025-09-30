@@ -37,12 +37,25 @@ Cumple con casi todos los requisitos del proyecto y está muy bien organizado. S
 
 **Agregar en Semana 2:**
 
-```javascript
-// src/lib/validations.js
+```typescript
+// src/lib/validations.ts
+
+export interface ReservaData {
+  fechaEntrada: string;
+  fechaSalida: string;
+  huespedes: number;
+  email: string;
+  telefono?: string;
+}
+
+export interface ValidationResult {
+  valido: boolean;
+  errores: string[];
+}
 
 // Validación de formulario de reserva
-export function validarReserva(datos) {
-  const errores = [];
+export function validarReserva(datos: ReservaData): ValidationResult {
+  const errores: string[] = [];
   
   // Validar fechas
   const hoy = new Date();
@@ -57,7 +70,7 @@ export function validarReserva(datos) {
     errores.push('La fecha de salida debe ser posterior a la entrada');
   }
   
-  const diasReserva = (salida - entrada) / (1000 * 60 * 60 * 24);
+  const diasReserva = (salida.getTime() - entrada.getTime()) / (1000 * 60 * 60 * 24);
   if (diasReserva > 30) {
     errores.push('No se pueden hacer reservas mayores a 30 días');
   }
@@ -89,9 +102,15 @@ export function validarReserva(datos) {
   };
 }
 
+export interface ContactoData {
+  nombre: string;
+  email: string;
+  mensaje: string;
+}
+
 // Validación de formulario de contacto
-export function validarContacto(datos) {
-  const errores = [];
+export function validarContacto(datos: ContactoData): ValidationResult {
+  const errores: string[] = [];
   
   if (!datos.nombre || datos.nombre.trim().length < 3) {
     errores.push('El nombre debe tener al menos 3 caracteres');
@@ -112,8 +131,8 @@ export function validarContacto(datos) {
 }
 
 // Validación de imágenes (si permiten subir fotos)
-export function validarImagen(archivo) {
-  const errores = [];
+export function validarImagen(archivo: File): ValidationResult {
+  const errores: string[] = [];
   const tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp'];
   const tamañoMax = 5 * 1024 * 1024; // 5MB
   
@@ -133,9 +152,11 @@ export function validarImagen(archivo) {
 ```
 
 **Uso en el formulario:**
-```jsx
+```tsx
 // Ejemplo de uso en formulario de reserva
-const handleSubmit = (e) => {
+import { validarReserva, ReservaData } from '@/lib/validations';
+
+const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
   
   const validacion = validarReserva(formData);
@@ -328,38 +349,38 @@ Proyecto académico - Universidad XYZ
 ## Esquemas de Base de Datos
 
 ### User
-```javascript
-{
-  nombre: String,
-  email: String (unique),
-  rol: 'usuario' | 'operador',
-  telefono: String,
-  createdAt: Date
+```typescript
+interface User {
+  nombre: string;
+  email: string;
+  rol: 'usuario' | 'operador';
+  telefono: string;
+  createdAt: Date;
 }
 ```
 
 ### Room
-```javascript
-{
-  numero: Number (unique),
-  tipo: 'Simple' | 'Doble' | 'Suite',
-  precio: Number,
-  estado: 'disponible' | 'ocupada' | 'mantenimiento',
-  capacidad: Number,
-  coordenadas: { lat: Number, lng: Number }
+```typescript
+interface Room {
+  numero: number;
+  tipo: 'Simple' | 'Doble' | 'Suite';
+  precio: number;
+  estado: 'disponible' | 'ocupada' | 'mantenimiento';
+  capacidad: number;
+  coordenadas: { lat: number; lng: number };
 }
 ```
 
 ### Reservation
-```javascript
-{
-  usuario: ObjectId (ref: User),
-  habitacion: ObjectId (ref: Room),
-  fechaEntrada: Date,
-  fechaSalida: Date,
-  precioTotal: Number,
-  estado: 'pendiente' | 'confirmada' | 'cancelada',
-  pagado: Boolean
+```typescript
+interface Reservation {
+  usuario: ObjectId;
+  habitacion: ObjectId;
+  fechaEntrada: Date;
+  fechaSalida: Date;
+  precioTotal: number;
+  estado: 'pendiente' | 'confirmada' | 'cancelada';
+  pagado: boolean;
 }
 ```
 
@@ -408,16 +429,16 @@ Si planean permitir subir fotos de habitaciones:
 
 **Agregar en Semana 4:**
 
-```javascript
-// src/app/api/upload/route.js
+```typescript
+// src/app/api/upload/route.ts
 import { writeFile } from 'fs/promises';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get('image');
+    const file = formData.get('image') as File | null;
     
     // Validaciones
     if (!file) {
@@ -450,7 +471,7 @@ export async function POST(request) {
     });
     
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }
 ```
@@ -465,7 +486,7 @@ export async function POST(request) {
 - Página listado habitaciones
 - Componente Card por habitación
 - Filtros básicos
-- **✨ Crear lib/validations.js (nuevo)**
+- **✨ Crear lib/validations.ts (nuevo)**
 
 **Integrante 2:**
 - Formulario login/registro
@@ -563,7 +584,7 @@ export async function POST(request) {
 ```
 
 ### 2. Debugging Tips
-```javascript
+```typescript
 // Agregar logs para debug
 console.log('📧 Enviando email a:', email);
 console.log('💳 Monto del pago:', monto);
