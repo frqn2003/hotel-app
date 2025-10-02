@@ -24,3 +24,65 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@media (max-width: 1200px) {
+  .contenedor {
+    margin-inline: 50px;
+  }
+}
+
+.contenedor {
+  margin-inline: 20px;
+}
+
+/* ===== ANIMACIÓN DEL MENÚ NAVBAR ===== */
+#navbar-menu {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+#navbar-menu.menu-open {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Efecto hover mejorado para los enlaces del menú */
+#navbar-menu a {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+#navbar-menu a:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.02);
+}
+
+/* Animación del botón hamburguesa */
+#menu-button {
+  transition: transform 0.2s ease;
+}
+
+#menu-button:active {
+  transform: scale(0.95);
+}
+
+/* Keyframes para animación suave */
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
