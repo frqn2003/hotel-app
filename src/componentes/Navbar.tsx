@@ -1,8 +1,9 @@
 'use client'
 import Link from 'next/link'
-import Boton from './Boton'
+import Boton from './ui/Boton'
+import Icono from './ui/Icono'
 import { Menu, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export default function Navbar() {
     const [menuAbierto, setMenuAbierto] = useState(false)
@@ -30,10 +31,7 @@ export default function Navbar() {
     return (
         <nav className="top-0 sticky bg-white/90 w-full z-50 backdrop-blur-lg flex border-b-2 border-gray-200 gap-2 md:gap-4 py-4 font-sans">
             <div className='flex items-center gap-2 md:gap-4 w-full contenedor'>
-                <a href="#" className="flex items-center gap-2 justify-start">
-                    <span className='h-10 w-10 md:h-12 md:w-12 rounded-xl bg-black text-white flex items-center justify-center text-sm md:text-md font-bold font-sans'>H</span>
-                    <div className='text-lg md:text-xl font-bold font-sans'>Hotel</div>
-                </a>
+                <Icono />
                 <div className='hidden md:flex md:justify-start md:items-center w-full' id='desktop-navbar'>
                     <div className='gap-2 md:gap-4 flex justify-start items-start text-[15px] font-sans'>
                         <Link href="#habitaciones" className='text-gray-800 hover:text-black transition-all'>Habitaciones</Link>

@@ -1,10 +1,10 @@
-import Boton from './Boton'
+import Boton from './ui/Boton'
 
 export default function Hero() {
     return (
-        <section className="relative w-full h-screen overflow-hidden snap-y snap-mandatory">
+        <section className="relative w-full h-[750px] overflow-hidden snap-y snap-mandatory bg-white">
             <div className="bg-[url('/luxury-hotel-lobby-modern.png')] bg-cover bg-center absolute inset-0 z-10"></div>
-            <div className="bg-white/50 w-full h-full absolute z-20"></div>
+            <div className="bg-gradient-to-r from-background/80 to-background/50 w-full h-full absolute z-20"></div>
             <div className="contenedor relative z-30 flex h-full">
                 <div className="flex items-center justify-start w-full">
                     <div className="flex flex-col items-start space-y-3 md:space-y-4 w-full">
