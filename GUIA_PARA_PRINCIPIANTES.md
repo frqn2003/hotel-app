@@ -22,8 +22,7 @@
 ### Cuentas Gratuitas
 
 - GitHub (código)
-- MongoDB Atlas (base datos)
-- Vercel (deploy)
+- Vercel (deploy + PostgreSQL)
 - Google Cloud Console (login)
 - Stripe (pagos)
 
@@ -49,20 +48,26 @@ npx create-next-app@latest hotel-app
 
 ```bash
 cd hotel-app
-npm install mongoose next-auth react-icons
+npm install @prisma/client next-auth react-icons
 npm install nodemailer stripe react-leaflet leaflet
 npm install date-fns react-hot-toast
-npm install @types/leaflet @types/nodemailer --save-dev
+npm install prisma @types/leaflet @types/nodemailer --save-dev
 ```
 
 ### Variables de Entorno (.env.local)
 
 ```env
-MONGODB_URI=tu_mongodb_uri
+# Vercel Postgres (obtenidas automáticamente en Vercel)
+POSTGRES_PRISMA_URL="postgresql://..."
+POSTGRES_URL_NON_POOLING="postgresql://..."
+
+# Autenticación
 NEXTAUTH_SECRET=clave_secreta_random
 NEXTAUTH_URL=http://localhost:3000
 GOOGLE_CLIENT_ID=tu_google_id
 GOOGLE_CLIENT_SECRET=tu_google_secret
+
+# Servicios externos
 STRIPE_SECRET_KEY=tu_stripe_key
 EMAIL_USER=tu_email
 EMAIL_PASSWORD=tu_password_app
@@ -208,132 +213,108 @@ export default function RootLayout({
 
 ---
 
-### DÍA 2: MongoDB
+### DÍA 2: PostgreSQL con Prisma
 
-**1. Configurar MongoDB Atlas**
+**1. Configurar Vercel Postgres**
 
-- Crear cuenta en https://www.mongodb.com/cloud/atlas
-- Crear cluster gratis
-- Database Access → crear usuario
-- Network Access → 0.0.0.0/0
-- Copiar string de conexión
+- Crear proyecto en https://vercel.com
+- En tu proyecto → Storage → Create Database
+- Seleccionar "Postgres"
+- Las variables de entorno se generan automáticamente
+- Copiar las variables a tu .env.local para desarrollo local
 
-**2. Conexión:**
+**2. Inicializar Prisma:**
 
-```typescript
-// src/lib/mongodb.ts
-import mongoose from "mongoose";
-
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error("Por favor define MONGODB_URI en .env.local");
-}
-
-interface MongooseCache {
-  conn: typeof mongoose | null;
-  promise: Promise<typeof mongoose> | null;
-}
-
-declare global {
-  var mongoose: MongooseCache | undefined;
-}
-
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
-
-if (!global.mongoose) {
-  global.mongoose = cached;
-}
-
-async function dbConnect(): Promise<typeof mongoose> {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      return mongoose;
-    });
-  }
-
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
-
-  return cached.conn;
-}
-
-export default dbConnect;
+```bash
+npx prisma init
 ```
 
-**3. Schema de Habitación:**
+**3. Conexión (ya creado en src/lib/prisma.ts):**
 
 ```typescript
-// src/models/Room.ts
-import mongoose, { Schema, Model } from "mongoose";
+// src/lib/prisma.ts
+import { PrismaClient } from '@prisma/client'
 
-export interface IRoom {
-  numero: number;
-  tipo: "Simple" | "Doble" | "Suite";
-  precio: number;
-  estado: "disponible" | "ocupada" | "mantenimiento";
-  capacidad: number;
-  descripcion?: string;
-  imagen?: string;
-  coordenadas?: {
-    lat: number;
-    lng: number;
-  };
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
 }
 
-const RoomSchema = new Schema<IRoom>(
-  {
-    numero: { type: Number, required: true, unique: true },
-    tipo: { type: String, required: true },
-    precio: { type: Number, required: true },
-    estado: {
-      type: String,
-      enum: ["disponible", "ocupada", "mantenimiento"],
-      default: "disponible",
-    },
-    capacidad: { type: Number, required: true },
-    descripcion: String,
-    imagen: String,
-    coordenadas: {
-      lat: Number,
-      lng: Number,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: ['query', 'error', 'warn'],
+  })
 
-const Room: Model<IRoom> =
-  mongoose.models.Room || mongoose.model<IRoom>("Room", RoomSchema);
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
-export default Room;
+export default prisma
 ```
 
-**4. API:**
+**4. Schema de Prisma (prisma/schema.prisma):**
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Room {
+  id            String        @id @default(cuid())
+  numero        Int           @unique
+  tipo          RoomType
+  precio        Float
+  estado        RoomStatus    @default(DISPONIBLE)
+  capacidad     Int
+  descripcion   String?
+  imagen        String?
+  lat           Float?
+  lng           Float?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  reservations  Reservation[]
+  
+  @@map("rooms")
+}
+
+enum RoomType {
+  SIMPLE
+  DOBLE
+  SUITE
+}
+
+enum RoomStatus {
+  DISPONIBLE
+  OCUPADA
+  MANTENIMIENTO
+}
+```
+
+**5. Generar cliente de Prisma:**
+
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+**6. API con Prisma:**
 
 ```typescript
 // src/app/api/habitaciones/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Room from "@/models/Room";
+import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    await dbConnect();
-    const habitaciones = await Room.find({});
+    const habitaciones = await prisma.room.findMany({
+      orderBy: { numero: 'asc' }
+    });
     return NextResponse.json({ success: true, data: habitaciones });
   } catch (error) {
     return NextResponse.json(
@@ -345,9 +326,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
     const body = await request.json();
-    const habitacion = await Room.create(body);
+    const habitacion = await prisma.room.create({
+      data: body
+    });
     return NextResponse.json(
       { success: true, data: habitacion },
       { status: 201 }
@@ -372,15 +354,15 @@ export async function POST(request: NextRequest) {
 "use client";
 
 import { useState, useEffect } from "react";
-import { IRoom } from "@/models/Room";
+import { Room } from "@prisma/client";
 
 interface ApiResponse {
   success: boolean;
-  data: IRoom[];
+  data: Room[];
 }
 
 export default function HabitacionesPage() {
-  const [habitaciones, setHabitaciones] = useState<IRoom[]>([]);
+  const [habitaciones, setHabitaciones] = useState<Room[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -403,13 +385,13 @@ export default function HabitacionesPage() {
       <h1 className="text-3xl font-bold mb-6">Habitaciones</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {habitaciones.map((hab) => (
-          <div key={hab.numero} className="border rounded-lg p-4 shadow">
+          <div key={hab.id} className="border rounded-lg p-4 shadow">
             <h3 className="text-xl font-bold">Habitación {hab.numero}</h3>
             <p className="text-gray-600">{hab.tipo}</p>
             <p className="text-2xl font-bold mt-2">${hab.precio}/noche</p>
             <span
               className={`inline-block mt-2 px-3 py-1 rounded ${
-                hab.estado === "disponible" ? "bg-green-200" : "bg-red-200"
+                hab.estado === "DISPONIBLE" ? "bg-green-200" : "bg-red-200"
               }`}
             >
               {hab.estado}
@@ -422,48 +404,53 @@ export default function HabitacionesPage() {
 }
 ```
 
-**Agregar datos de prueba (una sola vez):**
+**Agregar datos de prueba con Prisma:**
 
 ```typescript
 // src/app/api/seed/route.ts
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Room from "@/models/Room";
+import prisma from "@/lib/prisma";
 
 export async function GET() {
   try {
-    await dbConnect();
-    await Room.deleteMany({});
+    // Limpiar datos existentes
+    await prisma.room.deleteMany({});
 
-    await Room.insertMany([
-      {
-        numero: 101,
-        tipo: "Simple",
-        precio: 50,
-        capacidad: 1,
-        estado: "disponible",
-        descripcion: "Habitación simple con cama individual",
-        coordenadas: { lat: -34.6037, lng: -58.3816 },
-      },
-      {
-        numero: 102,
-        tipo: "Doble",
-        precio: 80,
-        capacidad: 2,
-        estado: "disponible",
-        descripcion: "Habitación doble con cama matrimonial",
-        coordenadas: { lat: -34.604, lng: -58.382 },
-      },
-      {
-        numero: 201,
-        tipo: "Suite",
-        precio: 150,
-        capacidad: 4,
-        estado: "disponible",
-        descripcion: "Suite de lujo con vista panorámica",
-        coordenadas: { lat: -34.605, lng: -58.383 },
-      },
-    ]);
+    // Crear habitaciones de prueba
+    await prisma.room.createMany({
+      data: [
+        {
+          numero: 101,
+          tipo: "SIMPLE",
+          precio: 50,
+          capacidad: 1,
+          estado: "DISPONIBLE",
+          descripcion: "Habitación simple con cama individual",
+          lat: -34.6037,
+          lng: -58.3816,
+        },
+        {
+          numero: 102,
+          tipo: "DOBLE",
+          precio: 80,
+          capacidad: 2,
+          estado: "DISPONIBLE",
+          descripcion: "Habitación doble con cama matrimonial",
+          lat: -34.604,
+          lng: -58.382,
+        },
+        {
+          numero: 201,
+          tipo: "SUITE",
+          precio: 150,
+          capacidad: 4,
+          estado: "DISPONIBLE",
+          descripcion: "Suite de lujo con vista panorámica",
+          lat: -34.605,
+          lng: -58.383,
+        },
+      ],
+    });
 
     return NextResponse.json({
       success: true,
@@ -490,85 +477,73 @@ export async function GET() {
 ### SEMANA 1: Base
 
 - ✅ Completar Días 1-3
-- Crear schemas User y Reservation
+- Agregar modelos User y Reservation al schema de Prisma
 - Configurar NextAuth básico
 - Push a GitHub
 
-**Schema User:**
+**Actualizar Schema de Prisma (agregar User y Reservation):**
 
-```typescript
-// src/models/User.ts
-import mongoose, { Schema, Model } from "mongoose";
+```prisma
+// Agregar a prisma/schema.prisma
 
-export interface IUser {
-  nombre: string;
-  email: string;
-  password?: string;
-  rol: "usuario" | "operador";
-  telefono?: string;
-  imagen?: string;
+// Modelo de Usuario
+model User {
+  id            String        @id @default(cuid())
+  nombre        String
+  email         String        @unique
+  password      String?
+  rol           Role          @default(USUARIO)
+  telefono      String?
+  imagen        String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  reservations  Reservation[]
+  
+  @@map("users")
 }
 
-const UserSchema = new Schema<IUser>(
-  {
-    nombre: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: String,
-    rol: { type: String, enum: ["usuario", "operador"], default: "usuario" },
-    telefono: String,
-    imagen: String,
-  },
-  { timestamps: true }
-);
+// Modelo de Reserva
+model Reservation {
+  id                String            @id @default(cuid())
+  userId            String
+  roomId            String
+  fechaEntrada      DateTime
+  fechaSalida       DateTime
+  huespedes         Int
+  precioTotal       Float
+  estado            ReservationStatus @default(PENDIENTE)
+  pagado            Boolean           @default(false)
+  notasEspeciales   String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room              Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([roomId])
+  @@map("reservations")
+}
 
-const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+enum Role {
+  USUARIO
+  OPERADOR
+}
 
-export default User;
+enum ReservationStatus {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+  COMPLETADA
+}
 ```
 
-**Schema Reservation:**
+**Después ejecutar:**
 
-```typescript
-// src/models/Reservation.ts
-import mongoose, { Schema, Model, Types } from "mongoose";
-
-export interface IReservation {
-  usuario: Types.ObjectId;
-  habitacion: Types.ObjectId;
-  fechaEntrada: Date;
-  fechaSalida: Date;
-  huespedes: number;
-  precioTotal: number;
-  estado: "pendiente" | "confirmada" | "cancelada" | "completada";
-  pagado: boolean;
-  notasEspeciales?: string;
-}
-
-const ReservationSchema = new Schema<IReservation>(
-  {
-    usuario: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    habitacion: { type: Schema.Types.ObjectId, ref: "Room", required: true },
-    fechaEntrada: { type: Date, required: true },
-    fechaSalida: { type: Date, required: true },
-    huespedes: { type: Number, required: true },
-    precioTotal: { type: Number, required: true },
-    estado: {
-      type: String,
-      enum: ["pendiente", "confirmada", "cancelada", "completada"],
-      default: "pendiente",
-    },
-    pagado: { type: Boolean, default: false },
-    notasEspeciales: String,
-  },
-  { timestamps: true }
-);
-
-const Reservation: Model<IReservation> =
-  mongoose.models.Reservation ||
-  mongoose.model<IReservation>("Reservation", ReservationSchema);
-
-export default Reservation;
+```bash
+npx prisma generate
+npx prisma db push
 ```
 
 ---
@@ -638,10 +613,10 @@ export function validarReserva(datos: ReservaData): ValidationResult {
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { IRoom } from "@/models/Room";
+import { Room } from "@prisma/client";
 
 interface MapaHabitacionesProps {
-  habitaciones: IRoom[];
+  habitaciones: Room[];
 }
 
 export default function MapaHabitaciones({
@@ -656,10 +631,10 @@ export default function MapaHabitaciones({
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {habitaciones.map(
         (hab) =>
-          hab.coordenadas && (
+          hab.lat && hab.lng && (
             <Marker
-              key={hab.numero}
-              position={[hab.coordenadas.lat, hab.coordenadas.lng]}
+              key={hab.id}
+              position={[hab.lat, hab.lng]}
             >
               <Popup>Habitación {hab.numero}</Popup>
             </Marker>
@@ -774,7 +749,9 @@ vercel
 
 - [Next.js](https://nextjs.org/docs)
 - [TypeScript](https://www.typescriptlang.org/docs/)
-- [MongoDB](https://university.mongodb.com/)
+- [Prisma](https://www.prisma.io/docs)
+- [PostgreSQL](https://www.postgresql.org/docs/)
+- [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
 - [Tailwind CSS](https://tailwindcss.com/docs)
 
 ### Tutoriales TypeScript
@@ -802,7 +779,7 @@ Falla: 4000 0000 0000 0002
 - ES7+ React/Redux/React-Native snippets
 - Prettier
 - ESLint
-- MongoDB for VS Code
+- Prisma (oficial)
 - Tailwind CSS IntelliSense
 - **TypeScript Hero** (para imports automáticos)
 
@@ -816,16 +793,27 @@ Falla: 4000 0000 0000 0002
 npm install
 ```
 
-**Error de tipos en Mongoose**
+**Error: Cannot find module '@prisma/client'**
 
 ```bash
-npm install @types/node --save-dev
+npx prisma generate
 ```
 
-**MongoDB no conecta**
+**Prisma no conecta a la base de datos**
 
-- Revisar MONGODB_URI en .env.local
-- Verificar IP whitelisted en Atlas
+- Revisar POSTGRES_PRISMA_URL en .env.local
+- Verificar que la base de datos esté creada en Vercel
+- Ejecutar `npx prisma db push` para crear las tablas
+
+**Error al hacer migraciones**
+
+```bash
+# Resetear base de datos (solo desarrollo)
+npx prisma migrate reset
+
+# O forzar sincronización del schema
+npx prisma db push --force-reset
+```
 
 **Leaflet no muestra mapa**
 
@@ -850,13 +838,15 @@ npm run dev
 - [ ] Código funciona sin errores
 - [ ] No hay errores de TypeScript (`npx tsc --noEmit`)
 - [ ] Variables sensibles en .env.local
-- [ ] npm run dev funciona
+- [ ] `npm run dev` funciona
+- [ ] `npx prisma generate` ejecutado si cambió el schema
 
 **Antes de cada semana:**
 
-- [ ] Backup de base de datos
+- [ ] Backup de base de datos (exportar con `pg_dump` o usar backups de Vercel)
 - [ ] Documentar cambios en README
 - [ ] Revisar requisitos cumplidos
+- [ ] Schema de Prisma actualizado (`npx prisma db push`)
 
 ---
 
