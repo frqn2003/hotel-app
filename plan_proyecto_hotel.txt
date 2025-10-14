@@ -1,19 +1,21 @@
-# PLAN DE PROYECTO HOTEL (30 SEP - 30 OCT) - VERSION COMPLETA
+# PLAN DE PROYECTO HOTEL (18 OCT - 12 NOV 2025) - VERSION POSTGRESQL
 
 ## DIVISION DETALLADA POR SEMANA (2 INTEGRANTES)
 
-### SEMANA 1 (30 SEP - 4 OCT): BASE DEL PROYECTO
+### SEMANA 1 (18-22 OCT): BASE DEL PROYECTO
 **Integrante 1:**
 - Crear proyecto Next.js (npx create-next-app)
 - Configurar estructura de carpetas
-- diseñar schema de Habitaciones
+- Diseñar schema de Prisma para Habitaciones
+- Ejecutar `npx prisma generate` y `npx prisma db push`
 
 **Integrante 2:**
-- Configurar MongoDB Atlas
-- Crear schema de Usuarios
+- Configurar Vercel Postgres (crear base de datos en Vercel)
+- Agregar modelos User y Reservation al schema de Prisma
 - Instalar NextAuth (Google Auth)
+- Configurar variables de entorno
 
-### SEMANA 2 (7-11 OCT): INTERFAZ USUARIO
+### SEMANA 2 (25-29 OCT): INTERFAZ USUARIO
 **Integrante 1:**
 - Página listado habitaciones
 - Componente Card por habitación
@@ -24,7 +26,7 @@
 - Página perfil usuario
 - Formulario reserva básico
 
-### SEMANA 3 (14-18 OCT): PANEL OPERADOR
+### SEMANA 3 (1-5 NOV): PANEL OPERADOR
 **Integrante 1:**
 - Mapa con Leaflet
 - Marcadores de habitaciones
@@ -35,7 +37,7 @@
 - Cambiar estados habitación
 - Protección de rutas
 
-### SEMANA 4 (21-25 OCT): INTEGRACIONES
+### SEMANA 4 (8-12 NOV): INTEGRACIONES Y FINALIZACION
 **Integrante 1:**
 - Configurar Nodemailer
 - Formulario contacto
@@ -46,11 +48,11 @@
 - Modo prueba con tarjetas
 - Registrar pagos en DB
 
-### SEMANA 5 (28-30 OCT): FINALIZACION
-**Tareas Conjuntas:**
-- Testing manual
+**Tareas Finales (Conjuntas):**
+- Testing manual completo
 - Ajustes responsive
 - Deploy en Vercel
+- Documentación README completa
 
 ## TECNOLOGIAS COMPLETAS
 
@@ -65,15 +67,14 @@
 - Node.js
 - Next.js API Routes
 - NextAuth.js (autenticación)
-- Mongoose (ODM para MongoDB)
+- Prisma ORM (para PostgreSQL)
 
 **Base de Datos:**
-- MongoDB Atlas (cloud)
-- Schemas para:
-  * Usuarios
-  * Habitaciones
-  * Reservas
-  * Pagos
+- Vercel Postgres (PostgreSQL cloud)
+- Modelos Prisma:
+  * User (usuarios)
+  * Room (habitaciones)
+  * Reservation (reservas)
 
 **Herramientas:**
 - Vercel (deploy)
@@ -82,6 +83,8 @@
 - Nodemailer (emails)
 
 **Dependencias clave:**
+- @prisma/client (cliente de Prisma)
+- prisma (dev - CLI de Prisma)
 - react-icons
 - date-fns (manejo fechas)
 - react-hot-toast (notificaciones)
@@ -95,34 +98,38 @@
 
 ## GUIA DE INSTALACION RAPIDA
 1. Node.js v18+ (instalar desde nodejs.org)
-2. MongoDB Atlas (crear cuenta gratis)
+2. Vercel cuenta (para Postgres y deploy)
 3. VS Code con extensiones:
    - ESLint
    - Prettier
-   - MongoDB
+   - Prisma (oficial)
 
 ## SOLUCION DE PROBLEMAS COMUNES
-- **Error de conexión DB**: Verificar string de conexión en .env.local
+- **Error de conexión DB**: Verificar POSTGRES_PRISMA_URL en .env.local
+- **Error '@prisma/client'**: Ejecutar `npx prisma generate`
+- **Tablas no existen**: Ejecutar `npx prisma db push`
 - **Autenticación falla**: Revisar credenciales Google OAuth
-- **Mapa no carga**: Añadir CSS de Leaflet en _app.js
+- **Mapa no carga**: Añadir CSS de Leaflet en layout.tsx
 
 ## RECURSOS DE APRENDIZAJE
 1. [Next.js Docs](https://nextjs.org/docs)
-2. [MongoDB University](https://university.mongodb.com/)
-3. [Tailwind cheat Sheet](https://tailwindcomponents.com/cheatsheet/)
-4. [Stripe Test Cards](https://stripe.com/docs/testing)
+2. [Prisma Docs](https://www.prisma.io/docs)
+3. [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
+4. [Tailwind cheat Sheet](https://tailwindcomponents.com/cheatsheet/)
+5. [Stripe Test Cards](https://stripe.com/docs/testing)
 
 ## CHECKLIST DE VERIFICACION SEMANAL
 - [ ] Commits subidos a GitHub
 - [ ] Variables de entorno en .env.local
-- [ ] Backup de base de datos
+- [ ] Schema de Prisma actualizado (`npx prisma db push`)
+- [ ] Cliente de Prisma generado (`npx prisma generate`)
 
 ## RECOMENDACIONES ADICIONALES
 
 ### Para evitar bloqueos:
-1. **Semana 1**: Configurar MongoDB Atlas ANTES de codear
-2. **Semana 2**: Usar componentes pre-hechos de react-bootstrap (evitar CSS custom)
-3. **Semana 3**: Empezar con datos mock (sin conexión a DB)
+1. **Semana 1**: Configurar Vercel Postgres y ejecutar `npx prisma db push` ANTES de codear
+2. **Semana 2**: Usar componentes pre-hechos (Tailwind) y validar con route /api/seed
+3. **Semana 3**: Empezar con datos de prueba cargados con el seed
 
 ### Prioridades por sprint:
 - **Must Have**: Login, CRUD reservas, mapa básico

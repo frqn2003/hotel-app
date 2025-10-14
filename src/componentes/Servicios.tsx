@@ -35,9 +35,11 @@ export default function Servicios() {
         <section className="bg-gray-100">
             <div className="contenedor py-6 space-y-2">
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black text-center py-4">Servicios & Amenidades</h2>
-                <h4 className="text-black/90 text-xl text-center pb-2">Descripción corta del hotel/página</h4>
+                <p className="text-gray-600 text-lg text-center pb-2 max-w-2xl mx-auto">
+                    Diseñados para hacer tu estadía inolvidable, con comodidades que superan tus expectativas
+                </p>
 
-                <div className="items-center justify-between grid grid-cols-3 gap-4 my-2">
+                <div className="items-center justify-between grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-2">
                     {ServiciosDatos.map((servicio, index) => (
                         <div key={index} className="flex flex-row bg-white p-6 rounded-md shadow-md gap-6">
                             <div className="h-12 w-12 rounded-lg bg-gray-200 flex justify-center items-center"> {servicio.imagen}</div>

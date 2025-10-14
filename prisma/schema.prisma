@@ -1,0 +1,100 @@
+// Configuración de Prisma para PostgreSQL con Prisma Accelerate
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("PRISMA_DATABASE_URL") // Prisma Accelerate URL
+  directUrl = env("POSTGRES_URL")        // Direct connection URL
+}
+
+// Modelo de Usuario
+model User {
+  id            String        @id @default(cuid())
+  nombre        String
+  email         String        @unique
+  password      String?
+  rol           Role          @default(USUARIO)
+  telefono      String?
+  imagen        String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Relaciones
+  reservations  Reservation[]
+  
+  @@map("users")
+}
+
+// Modelo de Habitación
+model Room {
+  id            String        @id @default(cuid())
+  numero        Int           @unique
+  tipo          RoomType
+  precio        Float
+  estado        RoomStatus    @default(DISPONIBLE)
+  capacidad     Int
+  descripcion   String?
+  imagen        String?
+  lat           Float?
+  lng           Float?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Relaciones
+  reservations  Reservation[]
+  
+  @@map("rooms")
+}
+
+// Modelo de Reserva
+model Reservation {
+  id                String            @id @default(cuid())
+  userId            String
+  roomId            String
+  fechaEntrada      DateTime
+  fechaSalida       DateTime
+  huespedes         Int
+  precioTotal       Float
+  estado            ReservationStatus @default(PENDIENTE)
+  pagado            Boolean           @default(false)
+  notasEspeciales   String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relaciones
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room              Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([roomId])
+  @@index([fechaEntrada])
+  @@index([fechaSalida])
+  @@map("reservations")
+}
+
+// Enums
+enum Role {
+  USUARIO
+  OPERADOR
+}
+
+enum RoomType {
+  SIMPLE
+  DOBLE
+  SUITE
+}
+
+enum RoomStatus {
+  DISPONIBLE
+  OCUPADA
+  MANTENIMIENTO
+}
+
+enum ReservationStatus {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+  COMPLETADA
+}
