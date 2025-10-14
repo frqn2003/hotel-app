@@ -14,23 +14,114 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Estructura del Proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+hotel-app/
+├── prisma/
+│   └── schema.prisma          # Schema de base de datos
+├── src/
+│   ├── app/
+│   │   ├── api/               # API Routes
+│   │   ├── habitaciones/      # Páginas de habitaciones
+│   │   ├── layout.tsx         # Layout principal
+│   │   └── page.tsx           # Página de inicio
+│   ├── componentes/           # Componentes React
+│   │   ├── ui/                # Componentes UI reutilizables
+│   │   ├── Navbar.tsx
+│   │   └── ...
+│   └── lib/
+│       ├── prisma.ts          # Cliente de Prisma
+│       └── ...
+├── public/                    # Archivos estáticos
+├── .env.local                 # Variables de entorno (no commitear)
+├── package.json
+└── README.md
+```
 
-## Learn More
+## 🎯 Funcionalidades
 
-To learn more about Next.js, take a look at the following resources:
+### Panel de Usuario
+- ✅ Ver listado de habitaciones disponibles
+- ✅ Filtrar habitaciones por tipo, precio, capacidad
+- ✅ Crear reservas
+- ✅ Ver historial de reservas
+- ✅ Enviar consultas por email
+- ✅ Login con Google OAuth
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Panel de Operador
+- ✅ Vista de mapa con ubicación de habitaciones
+- ✅ CRUD completo de reservas
+- ✅ Cambiar estados de habitaciones (disponible/ocupada/mantenimiento)
+- ✅ Procesar pagos con Stripe
+- ✅ Responder consultas de clientes
+- ✅ Dashboard con estadísticas
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🗄️ Modelos de Base de Datos
 
-## Deploy on Vercel
+### User
+- Información de usuario
+- Rol (USUARIO/OPERADOR)
+- Relación con reservas
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Room
+- Número, tipo, precio
+- Estado (DISPONIBLE/OCUPADA/MANTENIMIENTO)
+- Coordenadas para mapa
+- Relación con reservas
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Reservation
+- Fechas de entrada/salida
+- Número de huéspedes
+- Estado de reserva y pago
+- Relaciones con User y Room
+
+## 🧪 Comandos Útiles
+
+```bash
+# Desarrollo
+npm run dev
+
+# Build de producción
+npm run build
+
+# Iniciar producción
+npm start
+
+# Linting
+npm run lint
+
+# Prisma Studio (GUI para DB)
+npx prisma studio
+
+# Resetear base de datos
+npx prisma migrate reset
+
+# Generar tipos de Prisma
+npx prisma generate
+```
+
+## 🚢 Deploy en Vercel
+
+1. Subir código a GitHub
+2. Conectar repositorio en Vercel
+3. Configurar variables de entorno
+4. Vercel creará automáticamente la base de datos Postgres
+5. Deploy automático
+
+## 📚 Documentación Adicional
+
+- [Guía para Principiantes](./GUIA_PARA_PRINCIPIANTES.md)
+- [Plan del Proyecto](./plan_proyecto_hotel.txt)
+- [Prisma Docs](https://www.prisma.io/docs)
+- [Next.js Docs](https://nextjs.org/docs)
+
+## 👥 Contribuidores
+
+Proyecto académico desarrollado por [tu nombre/equipo]
+
+## 📝 Licencia
+
+MIT
