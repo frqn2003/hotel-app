@@ -29,9 +29,9 @@ export default function Navbar() {
     }
     
     return (
-        <nav className="top-0 sticky bg-white/90 w-full z-50 backdrop-blur-lg flex border-b-2 border-gray-200 gap-2 md:gap-4 py-4 font-sans">
+        <nav className="top-0 sticky bg-[#DBF8FA]/90 w-full z-50 backdrop-blur-lg flex border-b-2 border-gray-200 gap-2 md:gap-4 py-4 font-sans">
             <div className='flex items-center gap-2 md:gap-4 w-full contenedor'>
-                <Icono />
+                <Icono nombre="NextLujos"/>
                 <div className='hidden md:flex md:justify-start md:items-center w-full' id='desktop-navbar'>
                     <div className='gap-2 md:gap-4 flex justify-start items-start text-[15px] font-sans'>
                         <Link href="#habitaciones" className='text-gray-800 hover:text-black transition-all'>Habitaciones</Link>
