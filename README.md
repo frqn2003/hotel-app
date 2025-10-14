@@ -185,8 +185,10 @@ npx prisma generate
 
 ## 📚 Documentación Adicional
 
-- [Guía para Principiantes](./GUIA_PARA_PRINCIPIANTES.md)
-- [Plan del Proyecto](./plan_proyecto_hotel.txt)
+- [Guía para Principiantes](./GUIA_PARA_PRINCIPIANTES.md) - Tutorial paso a paso
+- [Plan del Proyecto](./plan_proyecto_hotel.txt) - Planificación semanal
+- [Setup para Equipo](./SETUP_EQUIPO.md) - Instrucciones para nuevos desarrolladores
+- [Guía de Deployment](./DEPLOYMENT.md) - Deploy a producción paso a paso
 - [Prisma Docs](https://www.prisma.io/docs)
 - [Next.js Docs](https://nextjs.org/docs)
 
