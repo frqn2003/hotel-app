@@ -4,7 +4,7 @@ import Icono from '@/componentes/ui/Icono'
 import Link from 'next/link'
 import { useState } from 'react'
 
-export default function login() {
+export default function Login() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
