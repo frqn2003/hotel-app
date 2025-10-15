@@ -1,7 +1,6 @@
 'use client'
 
 import Icono from '@/componentes/ui/Icono'
-import { set } from 'date-fns'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -41,7 +40,7 @@ export default function login() {
                         <p className='text-sm'>{success}</p>
                     </div>
                 )}
-                <button type="submit" onClick={async (e) => {
+                <button type="submit" disabled={loading} onClick={async (e) => {
                     e.preventDefault(); // Prevent default form submission
                     setLoading(true);
                     setError('');
