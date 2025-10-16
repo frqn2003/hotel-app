@@ -10,7 +10,7 @@ import type { Habitacion } from '@/types/habitacion'
 
 // Importar el mapa dinámicamente para evitar problemas de SSR
 const MapaHabitaciones = dynamic(
-    () => import('@/componentes/MapaHabitaciones'),
+    () => import('@/componentes/Habitaciones/MapaHabitaciones'),
     { ssr: false, loading: () => <div className="flex items-center justify-center h-full"><Loader2 className="h-8 w-8 animate-spin text-gray-400" /></div> }
 )
 
