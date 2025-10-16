@@ -1,100 +1,94 @@
-// Configuración de Prisma para PostgreSQL con Prisma Accelerate
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client-js" // La salida por defecto es node_modules/@prisma/client
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("PRISMA_DATABASE_URL") // Prisma Accelerate URL
-  directUrl = env("POSTGRES_URL")        // Direct connection URL
+  provider     = "postgresql"
+  url          = env("DATABASE_URL") // URL para el cliente de la app (Accelerate)
+  directUrl    = env("DIRECT_URL") // URL para migraciones (Directa)
+  relationMode = "prisma" // Recomendado para Vercel Postgres
 }
 
-// Modelo de Usuario
+// 2. Modelo de Usuario (reemplaza a IUser)
 model User {
-  id            String        @id @default(cuid())
-  nombre        String
-  email         String        @unique
-  password      String?
-  rol           Role          @default(USUARIO)
-  telefono      String?
-  imagen        String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  
-  // Relaciones
-  reservations  Reservation[]
-  
-  @@map("users")
+  id         String        @id @default(cuid()) // CUID es un ID único y seguro
+  nombre     String
+  email      String        @unique
+  rol        Role          @default(usuario)
+  telefono   String? // El '?' lo hace opcional
+  imagen_url String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Relación: Un usuario puede tener muchas reservas
+  reservations Reservation[]
 }
 
-// Modelo de Habitación
+// 3. Modelo de Habitación (reemplaza a IRoom)
 model Room {
-  id            String        @id @default(cuid())
-  numero        Int           @unique
-  tipo          RoomType
-  precio        Float
-  estado        RoomStatus    @default(DISPONIBLE)
-  capacidad     Int
-  descripcion   String?
-  imagen        String?
-  lat           Float?
-  lng           Float?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  
-  // Relaciones
-  reservations  Reservation[]
-  
-  @@map("rooms")
+  id          Int      @id @default(autoincrement())
+  numero      Int      @unique
+  tipo        RoomType
+  precio      Decimal
+  estado      RoomState @default(disponible)
+  capacidad   Int
+  descripcion String?
+  imagen_url  String?
+  lat         Float?
+  lng         Float?
+
+  // Relación: Una habitación puede estar en muchas reservas
+  reservations Reservation[]
 }
 
-// Modelo de Reserva
+// 4. Modelo de Reserva (reemplaza a IReservation)
 model Reservation {
-  id                String            @id @default(cuid())
-  userId            String
-  roomId            String
-  fechaEntrada      DateTime
-  fechaSalida       DateTime
-  huespedes         Int
-  precioTotal       Float
-  estado            ReservationStatus @default(PENDIENTE)
-  pagado            Boolean           @default(false)
-  notasEspeciales   String?
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  
-  // Relaciones
-  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room              Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  
-  @@index([userId])
-  @@index([roomId])
-  @@index([fechaEntrada])
-  @@index([fechaSalida])
-  @@map("reservations")
+  id              Int             @id @default(autoincrement())
+  fechaEntrada    DateTime
+  fechaSalida     DateTime
+  huespedes       Int
+  precioTotal     Decimal
+  estado          ReservationState @default(pendiente)
+  pagado          Boolean         @default(false)
+  notasEspeciales String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relaciones con llaves foráneas
+  usuarioId String
+  usuario   User   @relation(fields: [usuarioId], references: [id])
+
+  roomId Int
+  room   Room @relation(fields: [roomId], references: [id])
 }
 
-// Enums
+// 5. Enums para tipos controlados (más seguro que strings)
 enum Role {
-  USUARIO
-  OPERADOR
+  usuario
+  operador
 }
 
 enum RoomType {
-  SIMPLE
-  DOBLE
-  SUITE
+  Simple
+  Doble
+  Suite
 }
 
-enum RoomStatus {
-  DISPONIBLE
-  OCUPADA
-  MANTENIMIENTO
+enum RoomState {
+  disponible
+  ocupada
+  mantenimiento
 }
 
-enum ReservationStatus {
-  PENDIENTE
-  CONFIRMADA
-  CANCELADA
-  COMPLETADA
+enum ReservationState {
+  pendiente
+  confirmada
+  cancelada
+  completada
 }
