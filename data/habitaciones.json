@@ -1,0 +1,110 @@
+[
+  {
+    "id": "1",
+    "numero": 101,
+    "tipo": "Simple",
+    "estado": "DISPONIBLE",
+    "precio": 50000,
+    "capacidad": 1,
+    "descripcion": "Habitación simple con cama individual y baño privado",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado"],
+    "coordenadas": { "x": 20, "y": 30 },
+    "imagenes": ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400"]
+  },
+  {
+    "id": "2",
+    "numero": 102,
+    "tipo": "Doble",
+    "estado": "OCUPADA",
+    "precio": 80000,
+    "capacidad": 2,
+    "descripcion": "Habitación doble con dos camas individuales",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado", "Minibar"],
+    "coordenadas": { "x": 20, "y": 60 },
+    "imagenes": ["https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400"]
+  },
+  {
+    "id": "3",
+    "numero": 103,
+    "tipo": "Suite",
+    "estado": "DISPONIBLE",
+    "precio": 150000,
+    "capacidad": 2,
+    "descripcion": "Suite de lujo con sala de estar y jacuzzi",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado", "Minibar", "Jacuzzi", "Vista al mar"],
+    "coordenadas": { "x": 20, "y": 90 },
+    "imagenes": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400"]
+  },
+  {
+    "id": "4",
+    "numero": 201,
+    "tipo": "Simple",
+    "estado": "MANTENIMIENTO",
+    "precio": 50000,
+    "capacidad": 1,
+    "descripcion": "Habitación simple con cama individual",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado"],
+    "coordenadas": { "x": 50, "y": 30 },
+    "imagenes": ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400"]
+  },
+  {
+    "id": "5",
+    "numero": 202,
+    "tipo": "Doble",
+    "estado": "DISPONIBLE",
+    "precio": 80000,
+    "capacidad": 2,
+    "descripcion": "Habitación doble con cama matrimonial",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado", "Minibar"],
+    "coordenadas": { "x": 50, "y": 60 },
+    "imagenes": ["https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400"]
+  },
+  {
+    "id": "6",
+    "numero": 203,
+    "tipo": "Suite",
+    "estado": "DISPONIBLE",
+    "precio": 150000,
+    "capacidad": 3,
+    "descripcion": "Suite premium con balcón privado",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado", "Minibar", "Jacuzzi", "Vista al mar", "Balcón"],
+    "coordenadas": { "x": 50, "y": 90 },
+    "imagenes": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400"]
+  },
+  {
+    "id": "7",
+    "numero": 301,
+    "tipo": "Simple",
+    "estado": "DISPONIBLE",
+    "precio": 55000,
+    "capacidad": 1,
+    "descripcion": "Habitación simple en piso superior",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado"],
+    "coordenadas": { "x": 80, "y": 30 },
+    "imagenes": ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400"]
+  },
+  {
+    "id": "8",
+    "numero": 302,
+    "tipo": "Doble",
+    "estado": "OCUPADA",
+    "precio": 85000,
+    "capacidad": 2,
+    "descripcion": "Habitación doble con vista panorámica",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado", "Minibar", "Vista panorámica"],
+    "coordenadas": { "x": 80, "y": 60 },
+    "imagenes": ["https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400"]
+  },
+  {
+    "id": "9",
+    "numero": 303,
+    "tipo": "Suite Presidencial",
+    "estado": "DISPONIBLE",
+    "precio": 250000,
+    "capacidad": 4,
+    "descripcion": "Suite presidencial con todas las comodidades",
+    "comodidades": ["WiFi", "TV", "Aire Acondicionado", "Baño Privado", "Minibar", "Jacuzzi", "Vista al mar", "Balcón", "Cocina", "Sala de reuniones"],
+    "coordenadas": { "x": 80, "y": 90 },
+    "imagenes": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400"]
+  }
+]

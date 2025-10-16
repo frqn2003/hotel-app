@@ -32,7 +32,7 @@ export default function Servicios() {
         }
     ]
     return (
-        <section className="bg-gray-100">
+        <section className="bg-gray-100" id="Nosotros">
             <div className="contenedor py-6 space-y-2">
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black text-center py-4">Servicios & Amenidades</h2>
                 <p className="text-gray-600 text-lg text-center pb-2 max-w-2xl mx-auto">

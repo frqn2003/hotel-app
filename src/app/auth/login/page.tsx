@@ -74,9 +74,9 @@ export default function Login() {
                                 if (result.usuario.rol === 'OPERADOR') {
                                     window.location.href = '/panel-operador'
                                 } else {
-                                    window.location.href = '/panel-usuario'
+                                    window.location.href = '/'
                                 }
-                            }, 2000)
+                            }, 1000)
                         } else {
                             setError(result.mensaje || result.error || 'Error al iniciar sesión');
                         }
