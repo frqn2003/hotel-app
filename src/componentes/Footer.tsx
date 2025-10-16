@@ -31,7 +31,7 @@ export default function Footer() {
                         <div className="flex items-start gap-3">
                             <MapPin className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
                             <span className="text-gray-600 text-sm">
-                                Av. Corrientes 1234, CABA,<br />Buenos Aires, Argentina
+                                Av. Corrientes 1234<br />Salta, Argentina
                             </span>
                         </div>
                         <div className="flex items-center gap-3">

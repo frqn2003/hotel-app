@@ -1,3 +1,5 @@
+'use client'
+
 import Boton from './ui/Boton'
 
 export default function Hero() {
@@ -15,8 +17,8 @@ export default function Hero() {
                             Descubrí el equilibrio perfecto entre confort, elegancia y hospitalidad Argentina
                         </p>
                         <div className="flex gap-4 pt-2">
-                            <Boton texto="Ver Habitaciones"/>
-                            <Boton texto="Reservar Ahora" bgColor='bg-white hover:bg-gray-100 border-2 border-black' textColor='text-black'/>
+                            <Boton texto="Ver Habitaciones" onClick={() => window.location.href = 'habitaciones'}/>
+                            <Boton texto="Reservar Ahora" bgColor='bg-white hover:bg-gray-100 border-2 border-black' textColor='text-black' onClick={() => window.location.href = 'reserva'}/>
                         </div>
                     </div>
                 </div>

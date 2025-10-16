@@ -52,13 +52,18 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // 5. LOGIN EXITOSO / CERRAR SESIÓN
+        // 5. LOGIN EXITOSO / CONFIGURAR SESIÓN
         const { password: _, ...usuarioSesion } = usuario;
 
         // Crear token simple (en producción usar JWT)
         const token = Buffer.from(JSON.stringify(usuarioSesion)).toString('base64');
 
-        return NextResponse.json(
+        // Configurar duración de la sesión según "Recordarme"
+        // Si recordar=true -> 30 días, si no -> 1 día
+        const maxAge = recordar ? 30 * 24 * 60 * 60 : 24 * 60 * 60; // en segundos
+        
+        // Crear respuesta con cookie HTTP
+        const response = NextResponse.json(
             {
                 mensaje: "Login exitoso",
                 success: true,
@@ -68,6 +73,17 @@ export async function POST(request: NextRequest) {
             },
             { status: 200 }
         );
+
+        // Configurar cookie segura (HttpOnly para mayor seguridad)
+        response.cookies.set('authToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: maxAge,
+            path: '/'
+        });
+
+        return response;
 
     } catch (error) {
         console.error('Error en login:', error);
