@@ -2,9 +2,11 @@ import Link from "next/link"
 import Boton from "./ui/Boton"
 import { ArrowRight } from "lucide-react"
 
+/* CAMBIAR */
+
 export default function BannerPromo() {
     return (
-        <section className="bg-gradient-to-r from-gray-900 to-black text-white py-16 md:py-20">
+        <section className="bg-gradient-to-r from-gray-900 to-black text-white py-16 md:py-20" id="reservas">
             <div className="contenedor">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="flex flex-col space-y-4 max-w-2xl">

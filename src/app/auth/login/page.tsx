@@ -1,11 +1,10 @@
 'use client'
 
 import Icono from '@/componentes/ui/Icono'
-import { set } from 'date-fns'
 import Link from 'next/link'
 import { useState } from 'react'
 
-export default function login() {
+export default function Login() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
@@ -41,7 +40,7 @@ export default function login() {
                         <p className='text-sm'>{success}</p>
                     </div>
                 )}
-                <button type="submit" onClick={async (e) => {
+                <button type="submit" disabled={loading} onClick={async (e) => {
                     e.preventDefault(); // Prevent default form submission
                     setLoading(true);
                     setError('');
@@ -75,9 +74,9 @@ export default function login() {
                                 if (result.usuario.rol === 'OPERADOR') {
                                     window.location.href = '/panel-operador'
                                 } else {
-                                    window.location.href = '/panel-usuario'
+                                    window.location.href = '/'
                                 }
-                            }, 2000)
+                            }, 1000)
                         } else {
                             setError(result.mensaje || result.error || 'Error al iniciar sesión');
                         }
