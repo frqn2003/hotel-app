@@ -5,6 +5,12 @@ import Icono from './ui/Icono'
 import { Menu, X, User, PanelBottom } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
+interface UserSession {
+    nombre: string
+    correo: string
+    rol: 'OPERADOR' | 'USUARIO'
+}
+
 interface NavProps {
     onSubPage?: boolean
     onImportantPage?: boolean
@@ -13,7 +19,7 @@ interface NavProps {
 export default function Navbar({ onSubPage = false, onImportantPage = false }: NavProps) {
     const [menuAbierto, setMenuAbierto] = useState(false)
     const [perfilAbierto, setPerfilAbierto] = useState(false)
-    const [userSession, setUserSession] = useState<any>(null)
+    const [userSession, setUserSession] = useState<UserSession | null>(null)
     const [seccionActiva, setSeccionActiva] = useState('')
 
     useEffect(() => {
