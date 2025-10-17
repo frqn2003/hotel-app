@@ -12,7 +12,6 @@ interface HabitacionCardProps {
 }
 
 export default function HabitacionCard({ habitacion, onReservar, onVerDetalles, isSelected = false}: HabitacionCardProps) {
-
     const getEstadoColor = (estado: string) => {
         switch (estado) {
             case 'DISPONIBLE': return 'bg-green-100 text-green-800 border-green-300'
@@ -40,7 +39,7 @@ export default function HabitacionCard({ habitacion, onReservar, onVerDetalles, 
             {/* Imagen */}
             <div className="relative h-48 overflow-hidden">
                 <img
-                    src={habitacion.imagenes[0]}
+                    src={habitacion.imagen || habitacion.imagenes?.[0] || '/images/room-default.jpg'}
                     alt={`Habitación ${habitacion.numero}`}
                     className="w-full h-full object-cover"
                 />
@@ -74,22 +73,45 @@ export default function HabitacionCard({ habitacion, onReservar, onVerDetalles, 
                 </p>
 
                 {/* Comodidades */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {habitacion.comodidades.slice(0, 4).map((comodidad, index) => (
-                        <div
-                            key={index}
-                            className="flex items-center gap-1 text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-700"
-                        >
-                            {getIconoComodidad(comodidad)}
-                            <span>{comodidad}</span>
+                {habitacion.comodidades && habitacion.comodidades.length > 0 && (() => {
+                    // Manejar diferentes formatos de comodidades
+                    let comodidadesArray: string[] = []
+                    
+                    if (Array.isArray(habitacion.comodidades)) {
+                        // Si es array pero el primer elemento contiene comillas simples
+                        if (habitacion.comodidades.length === 1 && typeof habitacion.comodidades[0] === 'string' && habitacion.comodidades[0].includes("'")) {
+                            // Caso: ["'WiFi', 'TV', 'Aire Acondicionado'"]
+                            comodidadesArray = habitacion.comodidades[0]
+                                .split("', '")
+                                .map(c => c.replace(/^'|'$/g, '').trim())
+                        } else {
+                            // Caso normal: ["WiFi", "TV", "Aire Acondicionado"]
+                            comodidadesArray = habitacion.comodidades
+                        }
+                    } else if (typeof habitacion.comodidades === 'string') {
+                        // Caso: "WiFi, TV, Aire Acondicionado"
+                        comodidadesArray = habitacion.comodidades.split(',').map(c => c.trim())
+                    }
+                    
+                    return (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            {comodidadesArray.slice(0, 4).map((comodidad, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-1 text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-700"
+                                >
+                                    {getIconoComodidad(comodidad)}
+                                    <span>{comodidad}</span>
+                                </div>
+                            ))}
+                            {comodidadesArray.length > 4 && (
+                                <div className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-700">
+                                    +{comodidadesArray.length - 4} más
+                                </div>
+                            )}
                         </div>
-                    ))}
-                    {habitacion.comodidades.length > 4 && (
-                        <div className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-700">
-                            +{habitacion.comodidades.length - 4} más
-                        </div>
-                    )}
-                </div>
+                    )
+                })()}
 
                 {/* Botones */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-200">

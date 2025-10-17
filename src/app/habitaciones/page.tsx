@@ -19,7 +19,7 @@ export default function Habitaciones() {
     const [habitacionesFiltradas, setHabitacionesFiltradas] = useState<Habitacion[]>([])
     const [loading, setLoading] = useState(true)
     const [vistaActual, setVistaActual] = useState<'lista' | 'mapa'>('lista')
-    const [habitacionSeleccionada, setHabitacionSeleccionada] = useState<string | null>(null)
+    const [habitacionSeleccionada, setHabitacionSeleccionada] = useState<number | null>(null)
     
     // Estados de filtros
     const [filtros, setFiltros] = useState({
@@ -77,7 +77,7 @@ export default function Habitaciones() {
             resultado = resultado.filter(h => 
                 h.numero.toString().includes(busqueda) ||
                 h.tipo.toLowerCase().includes(busqueda) ||
-                h.descripcion.toLowerCase().includes(busqueda)
+                h.descripcion?.toLowerCase().includes(busqueda)
             )
         }
 

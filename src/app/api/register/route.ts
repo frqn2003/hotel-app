@@ -1,25 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-const FilePathUsers = path.join(process.cwd(), "data", "usuarios.json");
-
-interface Usuario {
-    id: string;
-    nombre: string;
-    correo: string;
-    password: string;
-    rol: 'USUARIO' | 'OPERADOR';
-    fecha_creacion: string;
-}
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { nombre, correo, password, passwordConfirmada } = body;
-        const fecha_creacion = new Date().toISOString();
-        const id = Date.now().toString();
 
+        // 1. VALIDACIONES
         if (!nombre || !correo || !password || !passwordConfirmada) {
             return NextResponse.json(
                 { success: false, error: "Todos los campos son obligatorios" },
@@ -48,18 +35,12 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
-        
-        let usuarios: Usuario[] = [];
-        try {
-            const usuariosLeidos = JSON.parse(fs.readFileSync(FilePathUsers, "utf-8"));
-            usuarios = usuariosLeidos;
-        } catch (error) {
-            usuarios = []
-            console.error("Error al leer el archivo de usuarios:", error);
 
-        }
+        // 2. VERIFICAR SI EL USUARIO YA EXISTE
+        const usuarioExistente = await prisma.user.findUnique({
+            where: { email: correo }
+        });
 
-        const usuarioExistente = usuarios.find((usuario) => usuario.correo === correo);
         if (usuarioExistente) {
             return NextResponse.json(
                 { success: false, error: "El correo electrónico ya está registrado" },
@@ -67,42 +48,36 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const nuevoUsuario : Usuario = {
-            id,
-            nombre,
-            correo,
-            password,
-            rol: 'USUARIO',
-            fecha_creacion,
-        };
+        // 3. HASHEAR LA CONTRASEÑA (TODO: implementar bcrypt)
+        // const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = password; // ⚠️ Temporal: sin hashear
 
-        usuarios.push(nuevoUsuario);
-        fs.writeFileSync(FilePathUsers, JSON.stringify(usuarios, null, 2), 'utf-8');
+        // 4. CREAR USUARIO EN LA BASE DE DATOS
+        const nuevoUsuario = await prisma.user.create({
+            data: {
+                nombre,
+                email: correo,
+                password: hashedPassword,
+                rol: 'USUARIO',
+            }
+        });
 
-        const {password: _, ...usuarioSinpassword} = nuevoUsuario;
-
-        return NextResponse.json({mensaje: "Usuario registrado exitosamente", success: true, data: usuarioSinpassword });
+        // 5. RETORNAR USUARIO SIN CONTRASEÑA
+        const { password: _passwordField, ...usuarioSinpassword } = nuevoUsuario;
+        return NextResponse.json({
+            mensaje: "Usuario registrado exitosamente",
+            success: true,
+            data: usuarioSinpassword
+        });
     } catch (error) {
+        console.error('Error en registro:', error);
         return NextResponse.json(
-            {mensaje: "Error al registrar el usuario", success: false, error: (error as Error).message },
-            { status: 400 }
+            {
+                mensaje: "Error al registrar el usuario",
+                success: false,
+                error: (error as Error).message
+            },
+            { status: 500 }
         );
     }
 }
-
-/* import { prisma } from "@/lib/prisma";
-
-export async function POST(request: NextRequest) {
-    try {
-        const body = await request.json();
-        const user = await prisma.user.create({
-            data: body,
-        });
-        return NextResponse.json({ success: true, data: user });
-    } catch (error) {
-        return NextResponse.json(
-            { success: false, error: (error as Error).message },
-            { status: 400 }
-        );
-    }
-} */

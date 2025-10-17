@@ -1,23 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-const FilePathUsers = path.join(process.cwd(), "data", "usuarios.json");
-
-interface Usuario {
-    id: string;
-    nombre: string;
-    correo: string;
-    password: string;
-    rol: 'USUARIO' | 'OPERADOR';
-    fecha_creacion: string;
-}
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { correo, password, recordar } = body;
-
+        // 1. VALIDAR CAMPOS REQUERIDOS
         if (!correo || !password) {
             return NextResponse.json(
                 { success: false, error: "Todos los campos son obligatorios" },
@@ -25,35 +13,31 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        let usuarios: Usuario[] = [];
-        try {
-            const usuariosLeidos = JSON.parse(fs.readFileSync(FilePathUsers, "utf-8"));
-            usuarios = usuariosLeidos;
-        } catch (error) {
-            return NextResponse.json(
-                { mensaje: "No hay usuarios registrados", success: false },
-                { status: 404 }
-            );
-        }
-        // 3. BUSCAR USUARIO POR CORREO
-        const usuario = usuarios.find((u) => u.correo === correo);
+        // 2. BUSCAR USUARIO POR EMAIL EN LA BASE DE DATOS
+        const usuario = await prisma.user.findUnique({
+            where: { email: correo }
+        });
+
         if (!usuario) {
             return NextResponse.json(
                 { mensaje: "Credenciales incorrectas", success: false },
                 { status: 401 }
             );
         }
-        // 4. VERIFICAR CONTRASEÑA
-        // ⚠️ En producción usar bcrypt.compare()
-        if (usuario.password !== password) {
+
+        // 3. VERIFICAR CONTRASEÑA
+        // TODO: En producción usar: const isValid = await bcrypt.compare(password, usuario.password);
+        const isValid = usuario.password === password; // ⚠️ Temporal: sin hashear
+        
+        if (!isValid) {
             return NextResponse.json(
                 { mensaje: "Credenciales incorrectas", success: false },
                 { status: 401 }
             );
         }
 
-        // 5. LOGIN EXITOSO / CONFIGURAR SESIÓN
-        const { password: _, ...usuarioSesion } = usuario;
+        // 4. LOGIN EXITOSO / PREPARAR SESIÓN
+        const { password: _passwordField, ...usuarioSesion } = usuario;
 
         // Crear token simple (en producción usar JWT)
         const token = Buffer.from(JSON.stringify(usuarioSesion)).toString('base64');

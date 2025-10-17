@@ -3,12 +3,17 @@
 import Icono from '@/componentes/ui/Icono'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Login() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const redirect = searchParams.get('redirect')
+    
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
-
+    
     return (
         <section className="flex flex-col items-center justify-center h-screen space-y-6 bg-blue-100/20">
             <Icono />
@@ -63,18 +68,25 @@ export default function Login() {
                         });
                         const result = await response.json()
                         if (response.ok) {
-                            setSuccess(result.mensaje + ' redirigiendote!')
+                            setSuccess(result.mensaje + ' redirigiendo...')
                             form.reset();
 
                             // Guardar sesión en localStorage
                             localStorage.setItem('userToken', result.token)
                             localStorage.setItem('userSession', JSON.stringify(result.usuario))
+                            
                             setTimeout(() => {
-                                // Redirigir según el rol
-                                if (result.usuario.rol === 'OPERADOR') {
-                                    window.location.href = '/panel-operador'
-                                } else {
-                                    window.location.href = '/'
+                                // Si hay redirect, ir ahí
+                                if (redirect) {
+                                    router.push(redirect)
+                                } 
+                                // Si es operador, ir al panel
+                                else if (result.usuario.rol === 'OPERADOR') {
+                                    router.push('/panel-operador')
+                                } 
+                                // Usuario normal, ir a inicio
+                                else {
+                                    router.push('/')
                                 }
                             }, 1000)
                         } else {
