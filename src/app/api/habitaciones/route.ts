@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 // OBTENER TODAS LAS HABITACIONES (con filtros opcionales)
 export async function GET(request: NextRequest) {
@@ -9,14 +10,18 @@ export async function GET(request: NextRequest) {
         const estado = searchParams.get('estado');
 
         // Construir objeto where dinámicamente
-        const where: any = {}
+        const where: Prisma.RoomWhereInput = {}
         
         if (tipo && tipo !== 'todos') {
             where.tipo = tipo
         }
         
         if (estado && estado !== 'todos') {
-            where.estado = estado
+            // Validar que el estado sea un valor válido del enum RoomStatus
+            const estadosValidos = ['DISPONIBLE', 'RESERVADA', 'OCUPADA', 'MANTENIMIENTO']
+            if (estadosValidos.includes(estado)) {
+                where.estado = estado as 'DISPONIBLE' | 'RESERVADA' | 'OCUPADA' | 'MANTENIMIENTO'
+            }
         }
 
         const habitaciones = await prisma.room.findMany({
