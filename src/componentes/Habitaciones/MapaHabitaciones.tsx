@@ -9,7 +9,7 @@ import type { Habitacion } from '@/types/habitacion'
 interface MapaHabitacionesProps {
     habitaciones: Habitacion[];
     onHabitacionClick?: (habitacion: Habitacion) => void;
-    habitacionSeleccionada?: string | null;
+    habitacionSeleccionada?: number | null;
 }
 
 export default function MapaHabitaciones({ 
@@ -67,7 +67,9 @@ export default function MapaHabitaciones({
 
         // Agregar marcadores para cada habitación
         habitaciones.forEach(habitacion => {
-            const { x, y } = habitacion.coordenadas
+            // Usar lat/lng del schema de Prisma
+            if (!habitacion.lat || !habitacion.lng) return // Saltar si no tiene coordenadas
+            
             const color = getColor(habitacion.estado)
             const isSelected = habitacionSeleccionada === habitacion.id
 
@@ -98,7 +100,7 @@ export default function MapaHabitaciones({
                 iconAnchor: [20, 20]
             })
 
-            const marker = L.marker([y, x], { icon })
+            const marker = L.marker([habitacion.lat, habitacion.lng], { icon })
                 .addTo(map)
                 .bindPopup(`
                     <div style="min-width: 200px;">

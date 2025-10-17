@@ -10,8 +10,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // Renombrado para coincidir con la guía
-  directUrl = env("POSTGRES_URL_NON_POOLING") // Renombrado para coincidir con la guía
+  url       = env("PRISMA_DATABASE_URL") // URL con Prisma Accelerate (pooling)
+  directUrl = env("POSTGRES_URL") // URL directa sin pooling
   relationMode = "foreignKeys" // Cambiado para permitir onDelete: Cascade
 }
 
@@ -20,6 +20,7 @@ model User {
   id         String        @id @default(cuid()) // CUID es un ID único y seguro
   nombre     String
   email      String        @unique
+  password   String        // Contraseña hasheada
   rol        Role          @default(USUARIO)
   telefono   String? // El '?' lo hace opcional
   imagen     String?
@@ -32,13 +33,14 @@ model User {
 
 // 3. Modelo de Habitación (reemplaza a IRoom)
 model Room {
-  id          String   @id @default(cuid()) // Cambiado a String con cuid()
+  id          Int      @id @default(autoincrement()) // Más simple
   numero      Int      @unique
-  tipo        RoomType
+  tipo        String   // Cambiado a String para permitir capitalización personalizada
   precio      Float // Cambiado a Float para coincidir con la guía
   estado      RoomStatus @default(DISPONIBLE)
   capacidad   Int
   descripcion String?
+  comodidades String[] // Array de comodidades (WiFi, TV, etc.)
   imagen      String?
   lat         Float? // Coordenadas para el mapa
   lng         Float?
@@ -64,7 +66,7 @@ model Reservation {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  roomId String
+  roomId Int
   room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
@@ -74,14 +76,9 @@ enum Role {
   OPERADOR
 }
 
-enum RoomType {
-  SIMPLE
-  DOBLE
-  SUITE
-}
-
 enum RoomStatus {
   DISPONIBLE
+  RESERVADA
   OCUPADA
   MANTENIMIENTO
 }

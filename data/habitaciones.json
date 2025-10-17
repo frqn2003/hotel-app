@@ -1,6 +1,5 @@
 [
   {
-    "id": "1",
     "numero": 101,
     "tipo": "Simple",
     "estado": "DISPONIBLE",
@@ -12,7 +11,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400"]
   },
   {
-    "id": "2",
     "numero": 102,
     "tipo": "Doble",
     "estado": "OCUPADA",
@@ -24,7 +22,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400"]
   },
   {
-    "id": "3",
     "numero": 103,
     "tipo": "Suite",
     "estado": "DISPONIBLE",
@@ -36,7 +33,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400"]
   },
   {
-    "id": "4",
     "numero": 201,
     "tipo": "Simple",
     "estado": "MANTENIMIENTO",
@@ -48,7 +44,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400"]
   },
   {
-    "id": "5",
     "numero": 202,
     "tipo": "Doble",
     "estado": "DISPONIBLE",
@@ -60,7 +55,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400"]
   },
   {
-    "id": "6",
     "numero": 203,
     "tipo": "Suite",
     "estado": "DISPONIBLE",
@@ -72,7 +66,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400"]
   },
   {
-    "id": "7",
     "numero": 301,
     "tipo": "Simple",
     "estado": "DISPONIBLE",
@@ -84,7 +77,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400"]
   },
   {
-    "id": "8",
     "numero": 302,
     "tipo": "Doble",
     "estado": "OCUPADA",
@@ -96,7 +88,6 @@
     "imagenes": ["https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400"]
   },
   {
-    "id": "9",
     "numero": 303,
     "tipo": "Suite Presidencial",
     "estado": "DISPONIBLE",

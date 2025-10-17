@@ -72,7 +72,7 @@ export default function Register() {
                             setSuccess(result.mensaje + ' Redirigiendo al login...');
                             form.reset();
                             setTimeout(() => {
-                                window.location.href = '/login';
+                                window.location.href = '/auth/login';
                             }, 2000);
                         } else {
                             setError(result.mensaje || result.error || 'Error al registrar');
@@ -85,7 +85,7 @@ export default function Register() {
                 }} className='bg-black hover:bg-black/90 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-2 rounded-lg font-bold cursor-pointer transition-all'>
                     {loading ? 'Registrando...' : 'Registrarte'}
                 </button>
-                <p>¿Ya tienes cuenta? <Link href="/login" className='text-blue-500 hover:text-blue-600 transition-all mx-2'>Inicia Sesión</Link></p>
+                <p>¿Ya tienes cuenta? <Link href="/auth/login" className='text-blue-500 hover:text-blue-600 transition-all mx-2'>Inicia Sesión</Link></p>
             </form>
         </section>
     )

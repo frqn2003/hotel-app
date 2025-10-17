@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate-data": "tsx scripts/migrar-datos.ts",
+    "seed:rooms": "tsx scripts/seed-rooms.ts",
+    "create-test-user": "tsx scripts/create-test-user.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
@@ -35,6 +38,7 @@
     "eslint-config-next": "15.5.4",
     "prisma": "^6.1.0",
     "tailwindcss": "^4",
+    "tsx": "^4.7.0",
     "typescript": "^5"
   }
 }

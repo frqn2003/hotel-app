@@ -173,7 +173,7 @@ export default function Navbar({ onSubPage = false, onImportantPage = false }: N
                                 )}
                             </div>
                         ) : (
-                            <Link href="/login">
+                            <Link href="/auth/login">
                                 <Boton texto="Iniciar Sesión" bgColor="bg-gray-200 hover:bg-gray-200/70" textColor="text-black" />
                             </Link>
                         )}
@@ -261,7 +261,7 @@ export default function Navbar({ onSubPage = false, onImportantPage = false }: N
                                 </button>
                             </>
                         ) : (
-                            <Link href="/login" onClick={cerrarMenu}>
+                            <Link href="/auth/login" onClick={cerrarMenu}>
                                 <Boton texto="Iniciar Sesión" bgColor="bg-gray-200 hover:bg-gray-200/70" textColor="text-black" />
                             </Link>
                         )}
