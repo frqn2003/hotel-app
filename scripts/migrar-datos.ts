@@ -1,4 +1,4 @@
-/* import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -70,7 +70,7 @@ async function migrarHabitaciones() {
             else if (tipoPalabra === 'DOBLE') tipoMapeado = 'DOBLE'
             else if (tipoPalabra === 'SUITE') tipoMapeado = 'SUITE'
             else {
-                console.log(`⚠️  Tipo desconocido "${habitacion.tipo}", usando SIMPLE por defecto`)
+                console.log(`  Tipo desconocido "${habitacion.tipo}", usando SIMPLE por defecto`)
                 tipoMapeado = 'SIMPLE'
             }
 
@@ -83,45 +83,45 @@ async function migrarHabitaciones() {
                     estado: habitacion.estado as 'DISPONIBLE' | 'OCUPADA' | 'MANTENIMIENTO',
                     capacidad: habitacion.capacidad,
                     descripcion: habitacion.descripcion || null,
+                    comodidades: habitacion.comodidades || [], // Array de comodidades
                     imagen: habitacion.imagenes?.[0] || null, // Toma la primera imagen
                     lat: habitacion.coordenadas?.y || null,  // y → lat
                     lng: habitacion.coordenadas?.x || null   // x → lng
                 }
             })
 
-            console.log(`✅ Habitación creada: ${nuevaHabitacion.numero} - ${nuevaHabitacion.tipo} (ID: ${nuevaHabitacion.id})`)
+            console.log(` Habitación creada: ${nuevaHabitacion.numero} - ${nuevaHabitacion.tipo} (ID: ${nuevaHabitacion.id})`)
         } catch (error) {
-            console.error(`❌ Error al crear habitación ${habitacion.numero}:`, error)
+            console.error(` Error al crear habitación ${habitacion.numero}:`, error)
         }
     }
 
-    console.log('✅ Migración de habitaciones completada\n')
+    console.log(' Migración de habitaciones completada\n')
 }
 
 async function main() {
-    console.log('🚀 Iniciando migración de datos JSON a PostgreSQL\n')
+    console.log(' Iniciando migración de datos JSON a PostgreSQL\n')
     
     try {
         // Migrar en orden: primero usuarios, luego habitaciones
         await migrarUsuarios()
         await migrarHabitaciones()
         
-        console.log('🎉 ¡Migración completada exitosamente!')
+        console.log(' ¡Migración completada exitosamente!')
         
         // Mostrar resumen
         const totalUsuarios = await prisma.user.count()
         const totalHabitaciones = await prisma.room.count()
         
-        console.log('\n📊 Resumen:')
+        console.log('\n Resumen:')
         console.log(`   Usuarios en BD: ${totalUsuarios}`)
         console.log(`   Habitaciones en BD: ${totalHabitaciones}`)
         
     } catch (error) {
-        console.error('❌ Error durante la migración:', error)
+        console.error(' Error durante la migración:', error)
     } finally {
         await prisma.$disconnect()
     }
 }
 
 main()
- */
