@@ -83,6 +83,9 @@ type NuevaFacturaData = {
   datosFacturacion?: DatosFacturacion
 }
 
+type NuevaFacturaCampo = "reservaId" | "tipo" | "moneda" | "descripcion"
+type ConsumoEditableCampo = "descripcion" | "cantidad" | "precioUnitario"
+
 const facturas: Factura[] = [
   {
     id: "F-2025-001",
@@ -283,7 +286,10 @@ export default function GestionFacturas() {
     }
   }
 
-  const handleNuevaFacturaChange = (campo: string, valor: any) => {
+  const handleNuevaFacturaChange = <K extends NuevaFacturaCampo>(
+    campo: K,
+    valor: NuevaFacturaData[K]
+  ) => {
     setNuevaFactura(prev => ({
       ...prev,
       [campo]: valor
@@ -375,7 +381,11 @@ export default function GestionFacturas() {
     }))
   }
 
-  const actualizarConsumo = (index: number, campo: string, valor: any) => {
+  const actualizarConsumo = <K extends ConsumoEditableCampo>(
+    index: number,
+    campo: K,
+    valor: Consumo[K]
+  ) => {
     const nuevosConsumos = [...nuevaFactura.consumos]
     nuevosConsumos[index] = {
       ...nuevosConsumos[index],
@@ -706,7 +716,7 @@ export default function GestionFacturas() {
                   <select
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
                     value={nuevaFactura.tipo}
-                    onChange={(e) => handleNuevaFacturaChange('tipo', e.target.value)}
+                    onChange={(e) => handleNuevaFacturaChange('tipo', e.target.value as "A" | "B" | "C")}
                   >
                     <option value="A">Factura A - Responsable Inscripto</option>
                     <option value="B">Factura B - Consumidor Final</option>
@@ -723,7 +733,7 @@ export default function GestionFacturas() {
                   <select
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
                     value={nuevaFactura.moneda}
-                    onChange={(e) => handleNuevaFacturaChange('moneda', e.target.value)}
+                    onChange={(e) => handleNuevaFacturaChange('moneda', e.target.value as "ARS" | "USD")}
                   >
                     <option value="ARS">Pesos Argentinos (ARS)</option>
                     <option value="USD">Dólares Americanos (USD)</option>

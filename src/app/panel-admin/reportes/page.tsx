@@ -31,7 +31,7 @@ type MetricaFinanciera = {
   valor: string
   variacion: string
   tendencia: "up" | "down" | "neutral"
-  icon: any
+  icon: React.ComponentType<{ className?: string }>
   descripcion: string
 }
 

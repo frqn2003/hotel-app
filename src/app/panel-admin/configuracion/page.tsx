@@ -184,7 +184,7 @@ export default function ConfiguracionSistema() {
     }
   }, [])
 
-  const handleConfigChange = (seccion: keyof ConfiguracionSistema, campo: string, valor: any) => {
+  const handleConfigChange = (seccion: keyof ConfiguracionSistema, campo: string, valor: unknown) => {
     setConfiguracion(prev => ({
       ...prev,
       [seccion]: {
@@ -195,13 +195,13 @@ export default function ConfiguracionSistema() {
     setCambiosSinGuardar(true)
   }
 
-  const handleNestedConfigChange = (seccion: keyof ConfiguracionSistema, subseccion: string, campo: string, valor: any) => {
+  const handleNestedConfigChange = (seccion: keyof ConfiguracionSistema, subseccion: string, campo: string, valor: unknown) => {
     setConfiguracion(prev => ({
       ...prev,
       [seccion]: {
         ...prev[seccion],
         [subseccion]: {
-          ...(prev[seccion] as any)[subseccion],
+          ...(((prev[seccion] as unknown) as Record<string, unknown>)[subseccion] as Record<string, unknown> || {}),
           [campo]: valor
         }
       }

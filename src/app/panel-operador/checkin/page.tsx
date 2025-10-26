@@ -69,6 +69,8 @@ type FormData = {
   aceptaTerminos: boolean
 }
 
+type FormDataField = keyof FormData
+
 const reservasPendientes: Reserva[] = [
   {
     id: "R-87346",
@@ -145,7 +147,7 @@ export default function CheckinOperador() {
     reserva.habitacion.toLowerCase().includes(busqueda.toLowerCase())
   )
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: FormDataField, value: FormData[FormDataField]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
