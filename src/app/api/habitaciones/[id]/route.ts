@@ -8,12 +8,12 @@ export async function PUT(
 ) {
     try {
         const { id: idStr } = await params;
-        const id = parseInt(idStr, 10);
+        const roomId = parseInt(idStr, 10);
         const body = await request.json();
 
         // Verificar que la habitación existe
         const habitacionExistente = await prisma.room.findUnique({
-            where: { id }
+            where: { id: roomId }
         });
 
         if (!habitacionExistente) {
@@ -25,7 +25,7 @@ export async function PUT(
 
         // Actualizar solo los campos enviados
         const habitacionActualizada = await prisma.room.update({
-            where: { id },
+            where: { id: roomId },
             data: body
         });
 
@@ -51,11 +51,11 @@ export async function DELETE(
 ) {
     try {
         const { id: idStr } = await params;
-        const id = parseInt(idStr, 10);
+        const roomId = parseInt(idStr, 10);
 
         // Verificar que la habitación existe
         const habitacion = await prisma.room.findUnique({
-            where: { id },
+            where: { id: roomId },
             include: {
                 reservations: true
             }
@@ -85,7 +85,7 @@ export async function DELETE(
 
         // Eliminar la habitación (las reservas se eliminan en cascada por el schema)
         await prisma.room.delete({
-            where: { id }
+            where: { id: roomId }
         });
 
         return NextResponse.json({
