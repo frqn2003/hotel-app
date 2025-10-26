@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Navbar from '@/componentes/Navbar'
 import Footer from '@/componentes/Footer'
@@ -26,7 +26,7 @@ interface Usuario {
     rol: string
 }
 
-export default function Reserva() {
+function ReservaContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const habitacionId = searchParams.get('habitacion')
@@ -439,5 +439,13 @@ export default function Reserva() {
             </main>
             <Footer />
         </>
+    )
+}
+
+export default function Reserva() {
+    return (
+        <Suspense fallback={<div>Cargando...</div>}>
+            <ReservaContent />
+        </Suspense>
     )
 }
