@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+/* import { PrismaClient } from '@prisma/client'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -124,4 +124,4 @@ async function main() {
     }
 }
 
-main()
+main() */
