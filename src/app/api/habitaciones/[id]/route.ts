@@ -4,11 +4,10 @@ import { prisma } from "@/lib/prisma";
 // ACTUALIZAR UNA HABITACIÓN
 export async function PUT(
     request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: number }> }
 ) {
     try {
-        const { id: idStr } = await params;
-        const id = Number(idStr);
+        const { id } = await params;
         const body = await request.json();
 
         // Verificar que la habitación existe
@@ -47,11 +46,10 @@ export async function PUT(
 // ELIMINAR UNA HABITACIÓN
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: number }> }
 ) {
     try {
-        const { id: idStr } = await params;
-        const id = Number(idStr);
+        const { id } = await params;
 
         // Verificar que la habitación existe
         const habitacion = await prisma.room.findUnique({
