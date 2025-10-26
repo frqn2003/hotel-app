@@ -1,11 +1,11 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USUARIO', 'OPERADOR');
+CREATE TYPE "Role" AS ENUM ('USUARIO', 'OPERADOR', 'ADMINISTRADOR');
 
 -- CreateEnum
-CREATE TYPE "RoomStatus" AS ENUM ('DISPONIBLE', 'OCUPADA', 'MANTENIMIENTO');
+CREATE TYPE "RoomStatus" AS ENUM ('DISPONIBLE', 'RESERVADA', 'OCUPADA', 'MANTENIMIENTO');
 
 -- CreateEnum
-CREATE TYPE "ReservationStatus" AS ENUM ('PENDIENTE', 'CONFIRMADA', 'CANCELADA', 'COMPLETADA');
+CREATE TYPE "ReservationStatus" AS ENUM ('PENDIENTE', 'CONFIRMADA', 'CANCELADA');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -24,14 +24,14 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Room" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "numero" INTEGER NOT NULL,
     "tipo" TEXT NOT NULL,
     "precio" DOUBLE PRECISION NOT NULL,
     "estado" "RoomStatus" NOT NULL DEFAULT 'DISPONIBLE',
     "capacidad" INTEGER NOT NULL,
     "descripcion" TEXT,
-    "comodidades" TEXT[],
+    "comodidades" JSONB NOT NULL DEFAULT '[]',
     "imagen" TEXT,
     "lat" DOUBLE PRECISION,
     "lng" DOUBLE PRECISION,
@@ -52,7 +52,7 @@ CREATE TABLE "Reservation" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
-    "roomId" INTEGER NOT NULL,
+    "roomId" TEXT NOT NULL,
 
     CONSTRAINT "Reservation_pkey" PRIMARY KEY ("id")
 );

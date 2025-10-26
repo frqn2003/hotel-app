@@ -32,7 +32,7 @@ async function migrarUsuarios() {
                     nombre: usuario.nombre,
                     email: usuario.correo,
                     password: usuario.password, // ⚠️ En texto plano - considerar hashear
-                    rol: usuario.rol as 'USUARIO' | 'OPERADOR',
+                    rol: usuario.rol as 'USUARIO' | 'OPERADOR' | 'ADMINISTRADOR',
                     // createdAt se asigna automáticamente
                 }
             })
@@ -83,16 +83,16 @@ async function migrarHabitaciones() {
                     estado: habitacion.estado as 'DISPONIBLE' | 'OCUPADA' | 'MANTENIMIENTO',
                     capacidad: habitacion.capacidad,
                     descripcion: habitacion.descripcion || null,
-                    comodidades: habitacion.comodidades || [], // Array de comodidades
+                    comodidades: Array.isArray(habitacion.comodidades) ? habitacion.comodidades : [], // Array de comodidades
                     imagen: habitacion.imagenes?.[0] || null, // Toma la primera imagen
                     lat: habitacion.coordenadas?.y || null,  // y → lat
                     lng: habitacion.coordenadas?.x || null   // x → lng
                 }
             })
 
-            console.log(` Habitación creada: ${nuevaHabitacion.numero} - ${nuevaHabitacion.tipo} (ID: ${nuevaHabitacion.id})`)
+            console.log(`  Habitación creada: ${nuevaHabitacion.numero} - ${nuevaHabitacion.tipo} (ID: ${nuevaHabitacion.id})`)
         } catch (error) {
-            console.error(` Error al crear habitación ${habitacion.numero}:`, error)
+            console.error(`  Error al crear habitación ${habitacion.numero}:`, error)
         }
     }
 
