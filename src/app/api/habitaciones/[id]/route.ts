@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-/* hello */
+
 // ACTUALIZAR UNA HABITACIÓN
 export async function PUT(
     request: NextRequest,
