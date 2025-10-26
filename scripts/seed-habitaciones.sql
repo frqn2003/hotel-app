@@ -1,4 +1,4 @@
--- Script para insertar habitaciones con comodidades
+/* -- Script para insertar habitaciones con comodidades
 -- Ejecutar después de: npx prisma migrate reset --force
 
 -- Limpiar tabla Room (por si acaso)
@@ -48,3 +48,4 @@ INSERT INTO "Room" (numero, tipo, estado, precio, capacidad, descripcion, comodi
 -- Verificar inserción
 SELECT COUNT(*) as total_habitaciones FROM "Room";
 SELECT * FROM "Room" ORDER BY numero;
+ */
