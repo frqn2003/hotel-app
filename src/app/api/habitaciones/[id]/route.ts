@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-/* hola */
+
 // ACTUALIZAR UNA HABITACIÓN
 export async function PUT(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id: idStr } = await params;
-        const roomId = parseInt(idStr, 10);
+        const { id } = await params;
         const body = await request.json();
 
         // Verificar que la habitación existe
         const habitacionExistente = await prisma.room.findUnique({
-            where: { id: roomId }
+            where: { id }
         });
 
         if (!habitacionExistente) {
@@ -25,7 +24,7 @@ export async function PUT(
 
         // Actualizar solo los campos enviados
         const habitacionActualizada = await prisma.room.update({
-            where: { id: roomId },
+            where: { id },
             data: body
         });
 
@@ -50,12 +49,11 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id: idStr } = await params;
-        const roomId = parseInt(idStr, 10);
+        const { id } = await params;
 
         // Verificar que la habitación existe
         const habitacion = await prisma.room.findUnique({
-            where: { id: roomId },
+            where: { id },
             include: {
                 reservations: true
             }
@@ -85,7 +83,7 @@ export async function DELETE(
 
         // Eliminar la habitación (las reservas se eliminan en cascada por el schema)
         await prisma.room.delete({
-            where: { id: roomId }
+            where: { id }
         });
 
         return NextResponse.json({
