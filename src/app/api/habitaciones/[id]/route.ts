@@ -13,7 +13,7 @@ export async function PUT(
 
         // Verificar que la habitación existe
         const habitacionExistente = await prisma.room.findUnique({
-            where: { id }
+            where: { id: parseInt(idStr) }
         });
 
         if (!habitacionExistente) {
@@ -25,7 +25,7 @@ export async function PUT(
 
         // Actualizar solo los campos enviados
         const habitacionActualizada = await prisma.room.update({
-            where: { id },
+            where: { id: parseInt(idStr) },
             data: body
         });
 
@@ -55,7 +55,7 @@ export async function DELETE(
 
         // Verificar que la habitación existe
         const habitacion = await prisma.room.findUnique({
-            where: { id },
+            where: { id: parseInt(idStr) },
             include: {
                 reservations: true
             }
@@ -85,7 +85,7 @@ export async function DELETE(
 
         // Eliminar la habitación (las reservas se eliminan en cascada por el schema)
         await prisma.room.delete({
-            where: { id }
+            where: { id: parseInt(idStr) }
         });
 
         return NextResponse.json({
