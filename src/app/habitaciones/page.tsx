@@ -94,15 +94,15 @@ export default function Habitaciones() {
     }
 
     const handleHabitacionClick = (habitacion: Habitacion) => {
-        setHabitacionSeleccionada(habitacion.id)
+        setHabitacionSeleccionada(habitacion.numero)
         if (vistaActual === 'lista') {
-            const element = document.getElementById(`habitacion-${habitacion.id}`)
+            const element = document.getElementById(`habitacion-${habitacion.numero}`)
             element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
     }
 
     const handleReservar = (habitacion: Habitacion) => {
-        window.location.href = `/reserva?habitacion=${habitacion.id}`
+        window.location.href = `/reserva?habitacion=${habitacion.numero}`
     }
 
     const tiposUnicos = ['todos', ...new Set(habitaciones.map(h => h.tipo))]
@@ -254,11 +254,11 @@ export default function Habitaciones() {
                             {vistaActual === 'lista' ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {habitacionesFiltradas.map(habitacion => (
-                                        <div key={habitacion.id} id={`habitacion-${habitacion.id}`}>
+                                        <div key={habitacion.numero} id={`habitacion-${habitacion.numero}`}>
                                             <HabitacionCard
                                                 habitacion={habitacion}
                                                 onReservar={handleReservar}
-                                                isSelected={habitacionSeleccionada === habitacion.id}
+                                                isSelected={habitacionSeleccionada === habitacion.numero}
                                             />
                                         </div>
                                     ))}

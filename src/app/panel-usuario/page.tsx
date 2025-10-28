@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import Navbar from "@/componentes/Navbar"
 import Footer from "@/componentes/Footer"
+import ResumenReservas from "@/componentes/PanelUsuario/ResumenReservas"
+import MisReservas from "@/componentes/PanelUsuario/MisReservas"
 import {
   ArrowRightCircle,
   Bell,
@@ -13,13 +15,15 @@ import {
   MapPin,
   Settings,
   ShieldCheck,
-  Star
+  Star,
+  MessageCircle
 } from "lucide-react"
 
 type UserSession = {
+  id: string
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type Reserva = {
@@ -51,23 +55,6 @@ const resumenPanel = [
   }
 ]
 
-const reservasRecientes: Reserva[] = [
-  {
-    id: "R-87345",
-    habitacion: "Suite Deluxe",
-    fechaEntrada: "12 Nov 2025",
-    fechaSalida: "15 Nov 2025",
-    estado: "Confirmada"
-  },
-  {
-    id: "R-87211",
-    habitacion: "Loft Ejecutivo",
-    fechaEntrada: "04 Dic 2025",
-    fechaSalida: "07 Dic 2025",
-    estado: "Pendiente"
-  }
-]
-
 const beneficiosDisponibles = [
   {
     icon: ShieldCheck,
@@ -95,15 +82,21 @@ const accionesRapidas = [
   },
   {
     icon: Settings,
-    titulo: "Gestionar preferencias",
-    descripcion: "Actualiza métodos de pago y solicitudes especiales",
-    enlace: "#"
+    titulo: "Configuración de la cuenta",
+    descripcion: "Actualiza tus datos, contraseña y métodos de pago",
+    enlace: "/configuracion"
   },
   {
     icon: ShieldCheck,
-    titulo: "Seguridad de la cuenta",
-    descripcion: "Activa verificaciones y revisa accesos recientes",
-    enlace: "#"
+    titulo: "Mis Reservas",
+    descripcion: "Ver todas tus reservas y su estado",
+    enlace: "/mis-reservas"
+  },
+  {
+    icon: MessageCircle,
+    titulo: "Contacto y Consultas",
+    descripcion: "Envía tus preguntas y recibe asistencia",
+    enlace: "/consulta"
   }
 ]
 
@@ -127,15 +120,36 @@ const recomendaciones = [
 
 export default function PanelUsuario() {
   const [userSession, setUserSession] = useState<UserSession | null>(null)
+  const [isLoadingSession, setIsLoadingSession] = useState(true)
 
   useEffect(() => {
     const session = localStorage.getItem("userSession")
     if (session) {
       setUserSession(JSON.parse(session))
     }
+    setIsLoadingSession(false)
   }, [])
 
   const nombreUsuario = userSession?.nombre ?? "Invitado"
+  const userId = userSession?.id ?? ''
+
+  if (isLoadingSession) {
+    return (
+      <>
+        <Navbar onSubPage />
+        <main className="bg-[#F3F6FA] min-h-screen py-16 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <div className="h-16 w-16 rounded-full border-4 border-gray-200"></div>
+              <div className="absolute top-0 left-0 h-16 w-16 rounded-full border-4 border-black border-t-transparent animate-spin"></div>
+            </div>
+            <p className="text-lg font-medium text-gray-900">Cargando panel...</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    )
+  }
 
   return (
     <>
@@ -155,98 +169,28 @@ export default function PanelUsuario() {
                   Gestiona reservas, personaliza tu estadía y accede a beneficios exclusivos de Next Lujos.
                 </p>
               </div>
-              <a
-                href="/reserva"
-                className="inline-flex items-center gap-2 bg-black text-white text-sm font-medium px-6 py-3 rounded-xl shadow-md hover:bg-black/90 transition-all"
-              >
-                Gestionar próxima reserva
-                <ArrowRightCircle className="h-4 w-4" />
-              </a>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {resumenPanel.map((dato) => {
-                const Icono = dato.icon
-                return (
-                  <div
-                    key={dato.etiqueta}
-                    className="bg-[#F8FBFF] border border-gray-100 rounded-2xl p-6 flex flex-col gap-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="h-11 w-11 rounded-full bg-black/90 text-white flex items-center justify-center">
-                          <Icono className="h-5 w-5" />
-                        </span>
-                        <span className="text-xs uppercase tracking-widest text-gray-500">
-                          {dato.etiqueta}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-3xl font-semibold text-gray-900">{dato.valor}</p>
-                    <p className="text-sm text-gray-500">{dato.descripcion}</p>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-
-          <section className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-            <div className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8 flex flex-col gap-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">Reservas recientes</h2>
-                  <p className="text-sm text-gray-500">Consultá el detalle de tus próximas estadías</p>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="/configuracion"
+                  className="inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-700 text-sm font-medium px-6 py-3 rounded-xl hover:bg-gray-200 transition-all"
+                >
+                  <Settings className="h-4 w-4" />
+                  Configuración
+                </a>
                 <a
                   href="/reserva"
-                  className="text-sm font-medium text-black inline-flex items-center gap-2 hover:gap-3 transition-all"
+                  className="inline-flex items-center justify-center gap-2 bg-black text-white text-sm font-medium px-6 py-3 rounded-xl shadow-md hover:bg-black/90 transition-all"
                 >
-                  Ver historial completo
+                  Nueva Reserva
                   <ArrowRightCircle className="h-4 w-4" />
                 </a>
               </div>
-              <div className="flex flex-col divide-y divide-gray-100">
-                {reservasRecientes.map((reserva) => (
-                  <div key={reserva.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-5">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-sm uppercase tracking-widest text-gray-400">
-                        {reserva.id}
-                      </span>
-                      <p className="text-lg font-semibold text-gray-900">{reserva.habitacion}</p>
-                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500">
-                        <span className="inline-flex items-center gap-2">
-                          <CalendarDays className="h-4 w-4" />
-                          {reserva.fechaEntrada}
-                        </span>
-                        <span className="inline-flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          Check-out {reserva.fechaSalida}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center md:flex-col gap-4 md:gap-2">
-                      <span
-                        className={`px-4 py-1.5 rounded-full text-sm font-medium ${
-                          reserva.estado === "Confirmada"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : reserva.estado === "Pendiente"
-                              ? "bg-amber-50 text-amber-700"
-                              : "bg-red-50 text-red-600"
-                        }`}
-                      >
-                        {reserva.estado}
-                      </span>
-                      <a
-                        href="#"
-                        className="text-sm font-medium text-black inline-flex items-center gap-2 hover:gap-3 transition-all"
-                      >
-                        Detalles
-                        <ArrowRightCircle className="h-4 w-4" />
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
+            <ResumenReservas userId={userId} />
+          </section>
+
+          <section className="grid gap-8 lg:grid-cols-[2fr_1fr]">
+            <MisReservas userId={userId} />
 
             <aside className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8 flex flex-col gap-6">
               <div>

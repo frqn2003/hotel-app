@@ -1,27 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(){
+export async function GET(request: NextRequest){
     try{
+        const { searchParams } = new URL(request.url)
+        const userId = searchParams.get('userId')
+        const roomId = searchParams.get('roomId')
+        const estado = searchParams.get('estado')
+        const fechaDesde = searchParams.get('fechaDesde')
+        const fechaHasta = searchParams.get('fechaHasta')
+
+        console.log('📋 GET /api/reservas - Filtros:', { userId, roomId, estado, fechaDesde, fechaHasta })
+
+        // Construir filtros dinámicamente
+        const where: any = {}
+        
+        if (userId) where.userId = userId
+        if (roomId) where.roomId = roomId
+        if (estado) where.estado = estado
+        
+        if (fechaDesde || fechaHasta) {
+            where.fechaEntrada = {}
+            if (fechaDesde) where.fechaEntrada.gte = new Date(fechaDesde)
+            if (fechaHasta) where.fechaEntrada.lte = new Date(fechaHasta)
+        }
+
+        console.log('🔍 Prisma query where:', JSON.stringify(where, null, 2))
+
         const reservas = await prisma.reservation.findMany({
+            where,
             include: {
-                user: true,
-                room: true
+                user: {
+                    select: {
+                        id: true,
+                        nombre: true,
+                        email: true,
+                        telefono: true
+                    }
+                },
+                room: {
+                    select: {
+                        id: true,
+                        numero: true,
+                        tipo: true
+                    }
+                }
             },
             orderBy: {
-                createdAt: 'asc'
+                createdAt: 'desc'
             }
         })
 
+        console.log(`✅ Encontradas ${reservas.length} reservas`)
+
         return NextResponse.json({
             success: true,
-            data: reservas
+            data: reservas,
+            message: `${reservas.length} reserva(s) encontrada(s)`
         })
     }
     catch (error){
-        console.error('Error al obtener reservas:', error);
+        console.error('❌ Error al obtener reservas:', error);
+        console.error('Stack trace:', (error as Error).stack);
         return NextResponse.json(
-            { success: false, error: (error as Error).message },
+            { 
+                success: false, 
+                error: (error as Error).message,
+                details: process.env.NODE_ENV === 'development' ? (error as Error).stack : undefined
+            },
             { status: 500 }
         )
     }

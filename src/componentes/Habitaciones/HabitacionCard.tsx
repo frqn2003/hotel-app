@@ -118,10 +118,10 @@ export default function HabitacionCard({ habitacion, onReservar, onVerDetalles, 
 
                     <div className="flex gap-2 ">
                         {onVerDetalles && (
-                            <Boton texto="Ver más" onClick={() => window.location.href = `/habitaciones/#${habitacion.id}`} />
+                            <Boton texto="Ver más" onClick={() => window.location.href = `/habitaciones/#${habitacion.numero}`} />
                         )}
                         {onReservar && habitacion.estado === 'DISPONIBLE' && (
-                            <Boton texto="Reservar" onClick={() => window.location.href = `/reserva?habitacion=${habitacion.id}`} />
+                            <Boton texto="Reservar" onClick={() => onReservar(habitacion)} />
                         )}
                     </div>
                 </div>

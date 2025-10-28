@@ -1,57 +1,68 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js" // La salida por defecto es node_modules/@prisma/client
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("PRISMA_DATABASE_URL") // URL con Prisma Accelerate (pooling)
-  directUrl = env("POSTGRES_URL") // URL directa sin pooling
-  relationMode = "foreignKeys" // Cambiado para permitir onDelete: Cascade
+  url       = env("POSTGRES_URL") // Usar conexión directa
+  relationMode = "foreignKeys"
 }
 
-// 2. Modelo de Usuario (reemplaza a IUser)
+// ==========================================
+// MODELOS PRINCIPALES
+// ==========================================
+
+// Modelo de Usuario
 model User {
-  id         String        @id @default(cuid()) // CUID es un ID único y seguro
+  id         String        @id @default(cuid())
   nombre     String
   email      String        @unique
   password   String        // Contraseña hasheada
   rol        Role          @default(USUARIO)
-  telefono   String? // El '?' lo hace opcional
+  telefono   String?
   imagen     String?
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
 
-  // Relación: Un usuario puede tener muchas reservas
-  reservations Reservation[]
+  // Relaciones
+  reservations        Reservation[]
+  contacts            Contact[]           @relation("UserContacts")
+  contactsAsOperador  Contact[]           @relation("OperadorRespuestas")
+  activities          Activity[]          @relation("ActivityUser")
+  activitiesAsOperador Activity[]         @relation("ActivityOperador")
+  notifications       Notification[]
+  
+  @@index([email])
+  @@index([rol])
 }
 
-// 3. Modelo de Habitación (reemplaza a IRoom)
+// Modelo de Habitación
 model Room {
-  id          String   @id @default(cuid()) // Cambiar a String con cuid()
+  id          String   @id @default(cuid())
   numero      Int      @unique
-  tipo        String   // Cambiado a String para permitir capitalización personalizada
-  precio      Float // Cambiado a Float para coincidir con la guía
+  tipo        String
+  precio      Float
   estado      RoomStatus @default(DISPONIBLE)
   capacidad   Int
   descripcion String?
-  comodidades Json // Array de comodidades (WiFi, TV, etc.)
+  comodidades Json // Array de comodidades
   imagen      String?
-  lat         Float? // Coordenadas para el mapa
+  lat         Float? // Coordenadas para mapa
   lng         Float?
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
 
-  // Relación: Una habitación puede estar en muchas reservas
+  // Relaciones
   reservations Reservation[]
+  activities   Activity[]
 }
 
-// 4. Modelo de Reserva (reemplaza a IReservation)
+// Modelo de Reserva
 model Reservation {
-  id              String          @id @default(cuid()) // Cambiado a String con cuid()
+  id              String          @id @default(cuid())
   fechaEntrada    DateTime
   fechaSalida     DateTime
   huespedes       Int
@@ -68,9 +79,132 @@ model Reservation {
 
   roomId String
   room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  // Relaciones inversas
+  payment     Payment?
+  activities  Activity[]
+  
+  @@index([userId])
+  @@index([roomId])
+  @@index([estado])
+  @@index([fechaEntrada])
+  @@index([fechaSalida])
 }
 
-// 5. Enums para tipos controlados (más seguro que strings)
+// ==========================================
+// CONSULTAS Y MENSAJES
+// ==========================================
+
+model Contact {
+  id          String        @id @default(cuid())
+  nombre      String
+  email       String
+  telefono    String?
+  asunto      String
+  mensaje     String        @db.Text
+  estado      ContactStatus @default(PENDIENTE)
+  respuesta   String?       @db.Text
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  // Usuario que envía la consulta (opcional)
+  userId      String?
+  user        User?         @relation("UserContacts", fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Operador que responde
+  operadorId  String?
+  operador    User?         @relation("OperadorRespuestas", fields: [operadorId], references: [id], onDelete: SetNull)
+}
+
+// ==========================================
+// PAGOS Y FACTURAS
+// ==========================================
+
+model Payment {
+  id              String        @id @default(cuid())
+  monto           Float
+  metodoPago      PaymentMethod
+  estado          PaymentStatus @default(PENDIENTE)
+  stripePaymentId String?       @unique // ID de pago de Stripe
+  fechaPago       DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relación con reserva (1-a-1)
+  reservationId   String        @unique
+  reservation     Reservation   @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  
+  // Factura asociada
+  invoice         Invoice?
+}
+
+model Invoice {
+  id              String        @id @default(cuid())
+  numeroFactura   String        @unique // Ej: FAC-2025-0001
+  subtotal        Float
+  impuestos       Float
+  total           Float
+  detalles        Json          // Array de ítems [{descripcion, cantidad, precio}]
+  emitidaEl       DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  
+  // Relación con pago (1-a-1)
+  paymentId       String        @unique
+  payment         Payment       @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+}
+
+// ==========================================
+// ACTIVIDADES Y LOGS
+// ==========================================
+
+model Activity {
+  id          String       @id @default(cuid())
+  tipo        ActivityType
+  descripcion String
+  metadata    Json?        // Información adicional en formato JSON
+  createdAt   DateTime     @default(now())
+  
+  // Usuario relacionado con la actividad
+  userId      String
+  user        User         @relation("ActivityUser", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Operador que procesó la actividad (para check-in/out)
+  operadorId  String?
+  operador    User?        @relation("ActivityOperador", fields: [operadorId], references: [id], onDelete: SetNull)
+  
+  // Relación opcional con reserva
+  reservationId String?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  
+  // Relación opcional con habitación
+  roomId      String?
+  room        Room?        @relation(fields: [roomId], references: [id], onDelete: SetNull)
+}
+
+// ==========================================
+// NOTIFICACIONES
+// ==========================================
+
+model Notification {
+  id        String             @id @default(cuid())
+  titulo    String
+  mensaje   String
+  tipo      NotificationType
+  leido     Boolean            @default(false)
+  createdAt DateTime           @default(now())
+  
+  // Usuario que recibe la notificación
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Enlace opcional para la acción
+  enlace    String?
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
 enum Role {
   USUARIO
   OPERADOR
@@ -87,5 +221,50 @@ enum RoomStatus {
 enum ReservationStatus {
   PENDIENTE
   CONFIRMADA
+  CHECKIN
+  CHECKOUT
   CANCELADA
+  NO_SHOW
+}
+
+enum ContactStatus {
+  PENDIENTE
+  EN_PROCESO
+  RESPONDIDO
+  CERRADO
+}
+
+enum PaymentMethod {
+  EFECTIVO
+  TARJETA_CREDITO
+  TARJETA_DEBITO
+  TRANSFERENCIA
+  STRIPE
+}
+
+enum PaymentStatus {
+  PENDIENTE
+  PROCESANDO
+  COMPLETADO
+  FALLIDO
+  REEMBOLSADO
+}
+
+enum ActivityType {
+  CHECKIN
+  CHECKOUT
+  RESERVA_CREADA
+  RESERVA_MODIFICADA
+  RESERVA_CANCELADA
+  PAGO_PROCESADO
+  CAMBIO_ESTADO_HABITACION
+  MANTENIMIENTO_INICIADO
+  MANTENIMIENTO_COMPLETADO
+}
+
+enum NotificationType {
+  INFO
+  ALERTA
+  RECORDATORIO
+  CONFIRMACION
 }

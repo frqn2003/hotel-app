@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react"
 import Navbar from "@/componentes/Navbar"
 import Footer from "@/componentes/Footer"
+import ConsultasPendientes from "@/componentes/PanelOperador/ConsultasPendientes"
+import ActividadesRecientes from "@/componentes/PanelOperador/ActividadesRecientes"
+import EstadisticasPagos from "@/componentes/PanelOperador/EstadisticasPagos"
+import MetricasDashboard from "@/componentes/PanelOperador/MetricasDashboard"
+import ReservasHoy from "@/componentes/PanelOperador/ReservasHoy"
 import {
   ArrowRightCircle,
   Users,
@@ -178,18 +183,11 @@ const habitacionesEstado = [
 
 const accionesRapidas = [
   {
-    icon: UserCheck,
-    titulo: "Procesar check-in",
-    descripcion: "Registrar llegada de huésped",
-    enlace: "/panel-operador/checkin",
-    color: "bg-emerald-500"
-  },
-  {
-    icon: Key,
-    titulo: "Procesar check-out",
-    descripcion: "Registrar salida y facturación",
-    enlace: "/panel-operador/checkout",
-    color: "bg-blue-500"
+    icon: CalendarDays,
+    titulo: "Gestionar Reservas",
+    descripcion: "Check-in y Check-out rápido",
+    enlace: "/panel-operador/gestionar-reservas",
+    color: "bg-black"
   },
   {
     icon: Receipt,
@@ -204,6 +202,13 @@ const accionesRapidas = [
     descripcion: "Ver disponibilidad en tiempo real",
     enlace: "/panel-operador/habitaciones",
     color: "bg-amber-500"
+  },
+  {
+    icon: MessageCircle,
+    titulo: "Consultas",
+    descripcion: "Gestionar mensajes de clientes",
+    enlace: "/panel-operador/consultas",
+    color: "bg-blue-500"
   }
 ]
 
@@ -339,38 +344,7 @@ export default function PanelOperador() {
             </div>
             
             {/* Métricas principales */}
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {metricasPanel.map((dato) => {
-                const Icono = dato.icon
-                const colorTendencia = dato.tendencia === "positive" 
-                  ? "text-emerald-600" 
-                  : dato.tendencia === "negative" 
-                    ? "text-red-600" 
-                    : "text-gray-600"
-                
-                return (
-                  <div
-                    key={dato.etiqueta}
-                    className="bg-[#F8FBFF] border border-gray-100 rounded-2xl p-6 flex flex-col gap-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className={`h-11 w-11 rounded-full ${
-                          dato.tendencia === "negative" ? "bg-red-500" : "bg-black/90"
-                        } text-white flex items-center justify-center`}>
-                          <Icono className="h-5 w-5" />
-                        </span>
-                        <span className="text-xs uppercase tracking-widest text-gray-500">
-                          {dato.etiqueta}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-3xl font-semibold text-gray-900">{dato.valor}</p>
-                    <p className={`text-sm ${colorTendencia}`}>{dato.descripcion}</p>
-                  </div>
-                )
-              })}
-            </div>
+            <MetricasDashboard />
 
             {/* Acciones rápidas */}
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 mt-4">
@@ -397,8 +371,11 @@ export default function PanelOperador() {
 
           {/* Contenido principal */}
           <section className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-            {/* Reservas de hoy */}
-            <div className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8 flex flex-col gap-6">
+            {/* Reservas de hoy con datos reales */}
+            <ReservasHoy />
+
+            {/* Tareas pendientes - Componente original comentado para evitar duplicación */}
+            {/* <div className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8 flex flex-col gap-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
                   <h2 className="text-2xl font-semibold text-gray-900">Reservas de hoy</h2>
@@ -525,7 +502,20 @@ export default function PanelOperador() {
 
           {/* Información adicional */}
           <section className="grid gap-8 lg:grid-cols-2">
-            {/* Estado de habitaciones */}
+            {/* Consultas pendientes */}
+            <ConsultasPendientes />
+
+            {/* Actividades recientes */}
+            <ActividadesRecientes />
+          </section>
+
+          {/* Estadísticas de pagos */}
+          <section>
+            <EstadisticasPagos />
+          </section>
+
+          {/* Estado de habitaciones */}
+          <section className="grid gap-8 lg:grid-cols-2">
             <div className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8 flex flex-col gap-6">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-900">Estado de habitaciones</h2>
