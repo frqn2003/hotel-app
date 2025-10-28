@@ -2,10 +2,10 @@
 
 import Icono from '@/componentes/ui/Icono'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function Login() {
+function LoginContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const redirect = searchParams.get('redirect')
@@ -101,5 +101,13 @@ export default function Login() {
                 <p>¿No tienes cuenta? <Link href="/register" className='text-blue-500 hover:text-blue-600 transition-all mx-2'>Registrate</Link></p>
             </form>
         </section >
+    )
+}
+
+export default function Login() {
+    return (
+        <Suspense fallback={<div>Cargando...</div>}>
+            <LoginContent />
+        </Suspense>
     )
 }

@@ -30,5 +30,13 @@
     "password": "123456789",
     "rol": "USUARIO",
     "fecha_creacion": "2025-10-14T18:01:05.393Z"
+  },
+  {
+    "id": "1760464865394",
+    "nombre": "ADMIN",
+    "correo": "francogiardino3@gmail.com",
+    "password": "ADMIN",
+    "rol": "ADMINISTRADOR",
+    "fecha_creacion": "2025-10-26T18:01:05.393Z"
   }
 ]

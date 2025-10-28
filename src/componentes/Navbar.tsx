@@ -151,7 +151,7 @@ export default function Navbar({ onSubPage = false, onImportantPage = false }: N
                                             </div>
                                             <button
                                                 onClick={() => {
-                                                    const panel = userSession.rol === 'OPERADOR' ? '/panel-operador' :(('ADMIN') ? '/panel-admin' : '/panel-usuario') 
+                                                    const panel = userSession.rol === 'OPERADOR' ? '/panel-operador' : (userSession.rol === 'ADMIN' ? '/panel-admin' : '/panel-usuario') 
                                                     window.location.href = panel
                                                 }}
                                                 className="flex items-center gap-2 w-full px-2 py-2 hover:bg-gray-100 rounded-md transition-all"

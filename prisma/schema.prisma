@@ -33,14 +33,14 @@ model User {
 
 // 3. Modelo de Habitación (reemplaza a IRoom)
 model Room {
-  id          Int      @id @default(autoincrement()) // Más simple
+  id          String   @id @default(cuid()) // Cambiar a String con cuid()
   numero      Int      @unique
   tipo        String   // Cambiado a String para permitir capitalización personalizada
   precio      Float // Cambiado a Float para coincidir con la guía
   estado      RoomStatus @default(DISPONIBLE)
   capacidad   Int
   descripcion String?
-  comodidades String[] // Array de comodidades (WiFi, TV, etc.)
+  comodidades Json // Array de comodidades (WiFi, TV, etc.)
   imagen      String?
   lat         Float? // Coordenadas para el mapa
   lng         Float?
@@ -66,7 +66,7 @@ model Reservation {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  roomId Int
+  roomId String
   room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 

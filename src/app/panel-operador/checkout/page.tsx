@@ -81,6 +81,8 @@ type FormData = {
   }
 }
 
+type FormDataField = keyof FormData
+
 const reservasCheckout: Reserva[] = [
   {
     id: "R-87345",
@@ -191,11 +193,16 @@ export default function CheckoutOperador() {
     facturaSolicitada: false
   })
   const [mostrarAgregarConsumo, setMostrarAgregarConsumo] = useState(false)
-  const [nuevoConsumo, setNuevoConsumo] = useState({
+  const [nuevoConsumo, setNuevoConsumo] = useState<{
+    descripcion: string
+    cantidad: number
+    precioUnitario: number
+    categoria: "restaurante" | "minibar" | "spa" | "lavanderia" | "otros"
+  }>({
     descripcion: "",
     cantidad: 1,
     precioUnitario: 0,
-    categoria: "otros" as const
+    categoria: "otros"
   })
 
   useEffect(() => {
@@ -217,7 +224,7 @@ export default function CheckoutOperador() {
     reserva.habitacion.toLowerCase().includes(busqueda.toLowerCase())
   )
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: FormDataField, value: FormData[FormDataField]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -512,7 +519,7 @@ export default function CheckoutOperador() {
                               <select
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black"
                                 value={nuevoConsumo.categoria}
-                                onChange={(e) => setNuevoConsumo(prev => ({ ...prev, categoria: e.target.value as any }))}
+                                onChange={(e) => setNuevoConsumo(prev => ({ ...prev, categoria: e.target.value as "restaurante" | "minibar" | "spa" | "lavanderia" | "otros" }))}
                               >
                                 <option value="restaurante">Restaurante</option>
                                 <option value="minibar">Minibar</option>

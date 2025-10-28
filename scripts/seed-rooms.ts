@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+/* import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -85,7 +85,8 @@ async function main() {
         
         console.log('\n📋 Habitaciones insertadas:')
         habitacionesDB.forEach(h => {
-            console.log(`  - Hab ${h.numero} (${h.tipo}) - ${h.estado} - ${h.comodidades.length} comodidades`)
+            const comodidadesCount = Array.isArray(h.comodidades) ? h.comodidades.length : 0
+            console.log(`  - Hab ${h.numero} (${h.tipo}) - ${h.estado} - ${comodidadesCount} comodidades`)
         })
         
     } catch (error) {
@@ -97,3 +98,4 @@ async function main() {
 }
 
 main()
+ */
