@@ -97,13 +97,13 @@ const accionesRapidas = [
     icon: Settings,
     titulo: "Gestionar preferencias",
     descripcion: "Actualiza métodos de pago y solicitudes especiales",
-    enlace: "#"
+    enlace: "/panel-usuario/preferencias"
   },
   {
     icon: ShieldCheck,
     titulo: "Seguridad de la cuenta",
     descripcion: "Activa verificaciones y revisa accesos recientes",
-    enlace: "#"
+    enlace: "panel-usuario/seguridad"
   }
 ]
 
