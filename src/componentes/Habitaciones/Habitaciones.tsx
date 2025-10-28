@@ -8,7 +8,7 @@ export default function Habitaciones() {
     const [habitaciones, setHabitaciones] = useState<Habitacion[]>([])
     const [habitacionesFiltradas, setHabitacionesFiltradas] = useState<Habitacion[]>([])
     const [loading, setLoading] = useState(true)
-    const [habitacionSeleccionada, setHabitacionSeleccionada] = useState<string | null>(null)
+    const [habitacionSeleccionada, setHabitacionSeleccionada] = useState<number | null>(null)
 
     // Cargar habitaciones al montar el componente
     useEffect(() => {
