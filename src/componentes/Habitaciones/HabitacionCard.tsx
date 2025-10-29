@@ -46,7 +46,7 @@ export default function HabitacionCard({ habitacion, onReservar, onVerDetalles, 
         if (onVerDetalles) {
             onVerDetalles(habitacion)
         } else {
-            router.push(`/habitaciones/${habitacion.id}`)
+            router.push(`/habitaciones/detalles/${habitacion.id}`)
         }
     }
 
