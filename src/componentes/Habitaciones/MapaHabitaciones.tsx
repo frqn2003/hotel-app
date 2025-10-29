@@ -71,7 +71,7 @@ export default function MapaHabitaciones({
             if (!habitacion.lat || !habitacion.lng) return // Saltar si no tiene coordenadas
             
             const color = getColor(habitacion.estado)
-            const isSelected = habitacionSeleccionada === habitacion.id
+            const isSelected = habitacionSeleccionada === habitacion.numero
 
             // Crear ícono personalizado
             const icon = L.divIcon({

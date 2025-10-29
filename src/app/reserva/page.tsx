@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 import { differenceInDays } from 'date-fns'
 
 interface Habitacion {
-    id: number
+    id: string
     numero: number
     tipo: string
     precio: number
@@ -85,18 +85,21 @@ function ReservaContent() {
     const cargarHabitacion = async () => {
         try {
             setLoading(true)
-            const response = await fetch('/api/habitaciones', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: habitacionId })
-            })
-            
+            // Buscar habitación por número
+            const response = await fetch('/api/habitaciones')
             const data = await response.json()
             
             if (data.success) {
-                setHabitacion(data.data)
+                // Buscar la habitación que coincida con el número
+                const habitacionEncontrada = data.data.find((h: Habitacion) => h.numero.toString() === habitacionId)
+                if (habitacionEncontrada) {
+                    setHabitacion(habitacionEncontrada)
+                } else {
+                    toast.error('Habitación no encontrada')
+                    router.push('/habitaciones')
+                }
             } else {
-                toast.error('Habitación no encontrada')
+                toast.error('Error al cargar habitaciones')
                 router.push('/habitaciones')
             }
         } catch (error) {
@@ -133,10 +136,18 @@ function ReservaContent() {
             return false
         }
 
+        // Crear fechas en hora local para evitar problemas de zona horaria
         const hoy = new Date()
         hoy.setHours(0, 0, 0, 0)
-        const entrada = new Date(formData.fechaEntrada)
-        const salida = new Date(formData.fechaSalida)
+        
+        // Parsear las fechas en hora local (no UTC)
+        const [yearEntrada, mesEntrada, diaEntrada] = formData.fechaEntrada.split('-').map(Number)
+        const entrada = new Date(yearEntrada, mesEntrada - 1, diaEntrada)
+        
+        const [yearSalida, mesSalida, diaSalida] = formData.fechaSalida.split('-').map(Number)
+        const salida = new Date(yearSalida, mesSalida - 1, diaSalida)
+
+        console.log('🔍 Validación de fechas:', { hoy, entrada, salida })
 
         if (entrada < hoy) {
             toast.error('La fecha de entrada no puede ser anterior a hoy')
@@ -168,6 +179,8 @@ function ReservaContent() {
         console.log('📋 FormData:', formData)
         console.log('👤 Usuario:', usuario)
         console.log('🏨 Habitación:', habitacion)
+        console.log('💰 Precio Total:', precioTotal)
+        console.log('📅 Días Estadía:', diasEstadia)
         
         if (!validarFormulario()) {
             console.log('❌ Validación fallida')

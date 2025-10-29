@@ -98,11 +98,15 @@ export default function Habitaciones() {
     }
 
     const handleHabitacionClick = (habitacion: Habitacion) => {
-        setHabitacionSeleccionada(habitacion.id)
+        setHabitacionSeleccionada(habitacion.numero)
         if (vistaActual === 'lista') {
-            const element = document.getElementById(`habitacion-${habitacion.id}`)
+            const element = document.getElementById(`habitacion-${habitacion.numero}`)
             element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
+    }
+
+    const handleReservar = (habitacion: Habitacion) => {
+        window.location.href = `/reserva?habitacion=${habitacion.numero}`
     }
 
     const tiposUnicos = ['todos', ...new Set(habitaciones.map(h => h.tipo))]

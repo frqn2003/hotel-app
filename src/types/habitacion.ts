@@ -1,6 +1,6 @@
 // Tipo que coincide con el schema de Prisma (Room)
 export interface Habitacion {
-    id: number; // Cambio: ahora es Int en Prisma
+    id: string; // String con cuid() según el schema de Prisma
     numero: number;
     tipo: string;
     estado: 'DISPONIBLE' | 'RESERVADA' | 'OCUPADA' | 'MANTENIMIENTO';

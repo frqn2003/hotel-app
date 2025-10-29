@@ -110,30 +110,35 @@ export default function PaginaContacto() {
     setFormEstado(prev => ({ ...prev, enviando: true, error: "" }))
 
     try {
+      // Preparar datos
+      const payload = {
+        nombre: formData.nombre,
+        email: formData.email,
+        telefono: formData.telefono,
+        asunto: formData.asunto || `Consulta: ${formData.tipoConsulta}`,
+        mensaje: `
+Tipo de Consulta: ${formData.tipoConsulta}
+
+${formData.mensaje}
+
+---
+Enviado desde el formulario de contacto de Next Lujos Hotel
+        `.trim()
+      }
+      
+      console.log('Enviando payload:', payload)
+
       // Envío real a la API
       const response = await fetch('/api/contacto', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json' 
         },
-        body: JSON.stringify({
-          nombre: formData.nombre,
-          email: formData.email,
-          telefono: formData.telefono,
-          mensaje: `
-Tipo de Consulta: ${formData.tipoConsulta}
-Asunto: ${formData.asunto || 'No especificado'}
-
-Mensaje:
-${formData.mensaje}
-
----
-Enviado desde el formulario de contacto de Next Lujos Hotel
-          `.trim()
-        })
+        body: JSON.stringify(payload)
       })
 
       const data = await response.json()
+      console.log('Respuesta del servidor:', { status: response.status, data })
 
       if (!response.ok) {
         throw new Error(data.message || 'Error al enviar el mensaje')
