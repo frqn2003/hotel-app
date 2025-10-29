@@ -1,5 +1,5 @@
 'use client'
-
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import Navbar from '@/componentes/Navbar'
@@ -15,6 +15,7 @@ const MapaHabitaciones = dynamic(
 )
 
 export default function Habitaciones() {
+    const router = useRouter()
     const [habitaciones, setHabitaciones] = useState<Habitacion[]>([])
     const [habitacionesFiltradas, setHabitacionesFiltradas] = useState<Habitacion[]>([])
     const [loading, setLoading] = useState(true)
@@ -29,6 +30,11 @@ export default function Habitaciones() {
         busqueda: ''
     })
     const [mostrarFiltros, setMostrarFiltros] = useState(false)
+
+    // Función para reservar habitación
+    const reservarHabitacion = (habitacionId: string) => {
+        router.push(`/personalizar-reserva?habitacionId=${habitacionId}`)
+    }
 
     // Cargar habitaciones al montar el componente
     useEffect(() => {
@@ -67,8 +73,6 @@ export default function Habitaciones() {
         if (filtros.estado !== 'todos') {
             resultado = resultado.filter(h => h.estado === filtros.estado)
         }
-
-
 
         resultado = resultado.filter(h => h.precio <= filtros.precioMax)
 
@@ -109,7 +113,6 @@ export default function Habitaciones() {
 
     return (
         <>
-            
             <Navbar 
                 onSubPage={true}
             />
@@ -254,14 +257,16 @@ export default function Habitaciones() {
                             {vistaActual === 'lista' ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {habitacionesFiltradas.map(habitacion => (
-                                        <div key={habitacion.numero} id={`habitacion-${habitacion.numero}`}>
-                                            <HabitacionCard
-                                                habitacion={habitacion}
-                                                onReservar={handleReservar}
-                                                isSelected={habitacionSeleccionada === habitacion.numero}
-                                            />
+                                        <div key={habitacion.id} id={`habitacion-${habitacion.id}`}>
+
+                                    <HabitacionCard
+                                        habitacion={habitacion}
+                                        onReservar={(habitacionId) => router.push(`/personalizar-reserva?habitacionId=${habitacionId}`)}
+                                        isSelected={habitacionSeleccionada === habitacion.id}
+                                    />
                                         </div>
                                     ))}
+                                    
                                 </div>
                             ) : (
                                 <div className="h-[600px] rounded-lg overflow-hidden shadow-lg">
@@ -292,6 +297,7 @@ export default function Habitaciones() {
                                     </button>
                                 </div>
                             )}
+                            
                         </>
                     )}
                 </section>
