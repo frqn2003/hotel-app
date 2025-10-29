@@ -25,7 +25,7 @@ export default function BannerPromo() {
                                 textColor="text-black"
                             />
                         </Link>
-                        <Link href="#contacto">
+                        <Link href="/contacto">
                             <button className="flex items-center gap-2 px-6 py-3 border-2 border-white rounded-lg hover:bg-white hover:text-black transition-all">
                                 Contactanos
                                 <ArrowRight className="w-5 h-5" />
