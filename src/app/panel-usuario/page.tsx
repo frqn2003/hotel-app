@@ -88,15 +88,9 @@ const accionesRapidas = [
   },
   {
     icon: ShieldCheck,
-    titulo: "Mis Reservas",
-    descripcion: "Ver todas tus reservas y su estado",
-    enlace: "/mis-reservas"
-  },
-  {
-    icon: MessageCircle,
-    titulo: "Contacto y Consultas",
-    descripcion: "Envía tus preguntas y recibe asistencia",
-    enlace: "/consulta"
+    titulo: "Seguridad de la cuenta",
+    descripcion: "Activa verificaciones y revisa accesos recientes",
+    enlace: "#"
   }
 ]
 
