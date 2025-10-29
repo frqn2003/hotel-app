@@ -221,7 +221,7 @@ export default function PersonalizarReserva() {
         }))
     }
 
-    const continuarAlPago = () => {
+    const continuarAlPago = async () => {
         if (!habitacion) return
         
         // Validaciones
@@ -242,35 +242,82 @@ export default function PersonalizarReserva() {
             return
         }
 
-        // Guardar datos completos de reserva
-        const reserva = {
-            habitacionId: habitacion.id,
-            tipo: habitacion.tipo,
-            precio: habitacion.precio,
-            noches: noches,
-            fechaCheckin: datosReserva.checkin,
-            fechaCheckout: datosReserva.checkout,
-            adultos: datosReserva.adultos,
-            niños: datosReserva.niños,
-            bebés: datosReserva.bebés,
-            imagen: habitacion.imagen || '/images/room-default.jpg',
-            opcionesExtras: Object.entries(opcionesSeleccionadas).map(([opcionId, cantidad]) => {
-                const opcion = opcionesExtras.find(o => o.id === opcionId)
-                return {
-                    id: opcionId,
-                    nombre: opcion?.nombre,
-                    cantidad: cantidad,
-                    precioUnitario: opcion?.precio,
-                    subtotal: opcion ? opcion.precio * cantidad : 0
-                }
-            }),
-            pedidosEspeciales: pedidosEspeciales,
-            total: calcularTotalReserva()
+        // Obtener userId de la sesión
+        const session = localStorage.getItem('userSession')
+        if (!session) {
+            alert('Por favor inicia sesión para continuar')
+            router.push('/login')
+            return
         }
 
-        console.log('Guardando reserva completa:', reserva)
-        sessionStorage.setItem('reservaActual', JSON.stringify(reserva))
-        router.push('/checkout')
+        const userData = JSON.parse(session)
+        const userId = userData.id
+
+        const huespedes = datosReserva.adultos + datosReserva.niños + datosReserva.bebés
+        const precioTotal = calcularTotalReserva()
+
+        // Preparar datos para enviar a la API
+        const datosReservaAPI = {
+            userId: userId,
+            roomId: habitacion.id,
+            fechaEntrada: datosReserva.checkin,
+            fechaSalida: datosReserva.checkout,
+            huespedes: huespedes,
+            precioTotal: precioTotal,
+            estado: 'PENDIENTE',
+            pagado: false,
+            notasEspeciales: pedidosEspeciales.notasAdicionales || ''
+        }
+
+        try {
+            const response = await fetch('/api/reservas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datosReservaAPI)
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                // Guardar también en sessionStorage para referencia
+                const reserva = {
+                    id: data.data.id,
+                    habitacionId: habitacion.id,
+                    tipo: habitacion.tipo,
+                    precio: habitacion.precio,
+                    noches: noches,
+                    fechaCheckin: datosReserva.checkin,
+                    fechaCheckout: datosReserva.checkout,
+                    huespedes: huespedes,
+                    imagen: habitacion.imagen || '/images/room-default.jpg',
+                    opcionesExtras: Object.entries(opcionesSeleccionadas).map(([opcionId, cantidad]) => {
+                        const opcion = opcionesExtras.find(o => o.id === opcionId)
+                        return {
+                            id: opcionId,
+                            nombre: opcion?.nombre,
+                            cantidad: cantidad,
+                            precioUnitario: opcion?.precio,
+                            subtotal: opcion ? opcion.precio * cantidad : 0
+                        }
+                    }),
+                    pedidosEspeciales: pedidosEspeciales,
+                    total: precioTotal
+                }
+
+                console.log('Reserva creada exitosamente:', reserva)
+                sessionStorage.setItem('reservaActual', JSON.stringify(reserva))
+                
+                // Redirigir a mis-reservas
+                router.push('/mis-reservas')
+            } else {
+                alert('Error al crear la reserva: ' + (data.error || 'Error desconocido'))
+            }
+        } catch (error) {
+            console.error('Error al crear reserva:', error)
+            alert('Error de conexión al crear la reserva')
+        }
     }
 
     if (cargando) {

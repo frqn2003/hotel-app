@@ -126,9 +126,9 @@ const alertasActivas = [
 const accionesRapidas = [
   {
     icon: Users,
-    titulo: "Gestionar huéspedes",
-    descripcion: "Ver check-ins y check-outs del día",
-    enlace: "/panel-admin/huespedes"
+    titulo: "Gestionar operadores",
+    descripcion: "Crear y administrar el equipo de operadores",
+    enlace: "/panel-admin/operadores"
   },
   {
     icon: Building,
@@ -144,9 +144,9 @@ const accionesRapidas = [
   },
   {
     icon: Settings,
-    titulo: "Configuración del sistema",
-    descripcion: "Parámetros y preferencias del hotel",
-    enlace: "/panel-admin/configuracion"
+    titulo: "Gestionar consultas",
+    descripcion: "Responder y gestionar consultas de clientes",
+    enlace: "/panel-admin/consultas"
   }
 ]
 

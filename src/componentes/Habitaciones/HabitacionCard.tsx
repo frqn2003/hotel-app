@@ -142,11 +142,6 @@ export default function HabitacionCard({ habitacion, onReservar, onVerDetalles, 
                                     onClick={handleReservar}
                                 />
                             )}
-                            {habitacion.estado !== 'DISPONIBLE' && (
-                                <div className="text-sm text-gray-500 italic">
-                                    No disponible
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>

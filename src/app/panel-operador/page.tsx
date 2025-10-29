@@ -52,73 +52,6 @@ type Tarea = {
   prioridad: "alta" | "media" | "baja"
 }
 
-const metricasPanel = [
-  {
-    etiqueta: "Check-ins hoy",
-    valor: "8",
-    descripcion: "5 completados • 3 pendientes",
-    icon: UserCheck,
-    tendencia: "neutral"
-  },
-  {
-    etiqueta: "Check-outs hoy",
-    valor: "6",
-    descripcion: "4 completados • 2 pendientes",
-    icon: Key,
-    tendencia: "neutral"
-  },
-  {
-    etiqueta: "Habitaciones ocupadas",
-    valor: "24",
-    descripcion: "85% de ocupación actual",
-    icon: Building,
-    tendencia: "positive"
-  },
-  {
-    etiqueta: "Tareas pendientes",
-    valor: "7",
-    descripcion: "3 requieren atención urgente",
-    icon: AlertTriangle,
-    tendencia: "negative"
-  }
-]
-
-const reservasHoy: Reserva[] = [
-  {
-    id: "R-87345",
-    habitacion: "Suite Deluxe (301)",
-    fechaEntrada: "12 Nov 2025",
-    fechaSalida: "15 Nov 2025",
-    estado: "Activa",
-    huesped: "María González",
-    telefono: "+54 11 2345-6789",
-    checkIn: "14:00",
-    checkOut: "12:00"
-  },
-  {
-    id: "R-87346",
-    habitacion: "Habitación Ejecutiva (204)",
-    fechaEntrada: "12 Nov 2025",
-    fechaSalida: "14 Nov 2025",
-    estado: "Check-in Pendiente",
-    huesped: "Carlos Rodríguez",
-    telefono: "+54 11 3456-7890",
-    checkIn: "15:30",
-    checkOut: "11:00"
-  },
-  {
-    id: "R-87347",
-    habitacion: "Suite Presidencial (401)",
-    fechaEntrada: "13 Nov 2025",
-    fechaSalida: "16 Nov 2025",
-    estado: "Check-out Pendiente",
-    huesped: "Ana Martínez",
-    telefono: "+54 11 4567-8901",
-    checkIn: "16:00",
-    checkOut: "10:00"
-  }
-]
-
 const tareasPendientes: Tarea[] = [
   {
     id: "T-001",
@@ -243,7 +176,7 @@ export default function PanelOperador() {
       const userData = JSON.parse(session)
       // Verificar que el usuario sea operador o admin
       if (userData.rol !== "OPERADOR" && userData.rol !== "ADMIN") {
-        window.location.href = "/panel"
+        window.location.href = "/panel-usuario"
         return
       }
       setUserSession(userData)
@@ -373,76 +306,6 @@ export default function PanelOperador() {
           <section className="grid gap-8 lg:grid-cols-[2fr_1fr]">
             {/* Reservas de hoy con datos reales */}
             <ReservasHoy />
-
-            {/* Tareas pendientes - Componente original comentado para evitar duplicación */}
-            {/* <div className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8 flex flex-col gap-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">Reservas de hoy</h2>
-                  <p className="text-sm text-gray-500">Gestiona las llegadas y salidas programadas</p>
-                </div>
-                <a
-                  href="/panel-operador/reservas"
-                  className="text-sm font-medium text-black inline-flex items-center gap-2 hover:gap-3 transition-all"
-                >
-                  Ver calendario completo
-                  <ArrowRightCircle className="h-4 w-4" />
-                </a>
-              </div>
-              <div className="flex flex-col divide-y divide-gray-100">
-                {reservasHoy.map((reserva) => (
-                  <div key={reserva.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-5">
-                    <div className="flex flex-col gap-1 flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm uppercase tracking-widest text-gray-400">
-                          {reserva.id}
-                        </span>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getEstadoColor(reserva.estado)}`}>
-                          {reserva.estado}
-                        </span>
-                      </div>
-                      <p className="text-lg font-semibold text-gray-900">{reserva.habitacion}</p>
-                      <p className="text-sm text-gray-600">{reserva.huesped}</p>
-                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500 mt-2">
-                        <span className="inline-flex items-center gap-2">
-                          <Phone className="h-4 w-4" />
-                          {reserva.telefono}
-                        </span>
-                        <span className="inline-flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          Check-in: {reserva.checkIn}
-                        </span>
-                        <span className="inline-flex items-center gap-2">
-                          <Key className="h-4 w-4" />
-                          Check-out: {reserva.checkOut}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {reserva.estado === "Check-in Pendiente" && (
-                        <button className="inline-flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-600 transition-colors">
-                          <UserCheck className="h-4 w-4" />
-                          Check-in
-                        </button>
-                      )}
-                      {reserva.estado === "Check-out Pendiente" && (
-                        <button className="inline-flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">
-                          <Key className="h-4 w-4" />
-                          Check-out
-                        </button>
-                      )}
-                      <a
-                        href="#"
-                        className="text-sm font-medium text-black inline-flex items-center gap-2 hover:gap-3 transition-all"
-                      >
-                        Detalles
-                        <ArrowRightCircle className="h-4 w-4" />
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             {/* Tareas pendientes */}
             <aside className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8 flex flex-col gap-6">
