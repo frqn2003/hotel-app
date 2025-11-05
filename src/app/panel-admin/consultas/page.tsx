@@ -76,11 +76,12 @@ export default function ConsultasPage() {
       setLoading(true)
       const res = await fetch("/api/contacto")
       if (!res.ok) throw new Error("Error al cargar consultas")
-      const data = await res.json()
-      setConsultas(data)
+      const response = await res.json()
+      setConsultas(response.data || []) // Extraer el array de la respuesta
     } catch (err) {
       setError("Error al cargar las consultas")
       console.error(err)
+      setConsultas([]) // Asegurar que siempre sea un array
     } finally {
       setLoading(false)
     }
@@ -154,7 +155,7 @@ export default function ConsultasPage() {
     setError("")
   }
 
-  const filteredConsultas = consultas.filter(c => {
+  const filteredConsultas = (consultas || []).filter(c => {
     const matchesSearch = c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          c.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          c.asunto.toLowerCase().includes(searchTerm.toLowerCase())

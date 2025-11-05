@@ -7,11 +7,13 @@ const prisma = new PrismaClient()
 // GET: Obtener un operador específico
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     const operador = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: {
         id: true,
         nombre: true,
@@ -53,14 +55,15 @@ export async function GET(
 // PUT: Actualizar operador
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const body = await req.json()
     const { nombre, email, telefono, password } = body
 
     const operador = await prisma.user.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!operador || operador.rol !== "OPERADOR") {
@@ -97,7 +100,7 @@ export async function PUT(
     }
 
     const operadorActualizado = await prisma.user.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       select: {
         id: true,
@@ -124,11 +127,21 @@ export async function PUT(
 // DELETE: Eliminar operador
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     const operador = await prisma.user.findUnique({
-      where: { id: params.id }
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            contactsAsOperador: true,
+            reservations: true
+          }
+        }
+      }
     })
 
     if (!operador || operador.rol !== "OPERADOR") {
@@ -139,8 +152,17 @@ export async function DELETE(
       )
     }
 
+    // Verificar si tiene reservas o consultas activas
+    if (operador._count.reservations > 0 || operador._count.contactsAsOperador > 0) {
+      await prisma.$disconnect()
+      return NextResponse.json(
+        { error: "No se puede eliminar un operador con reservas o consultas asociadas" },
+        { status: 400 }
+      )
+    }
+
     await prisma.user.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     await prisma.$disconnect()

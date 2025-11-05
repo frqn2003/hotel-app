@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// OBTENER UNA HABITACIÓN POR ID - ¡ESTE ES EL QUE TE FALTA!
+// OBTENER UNA HABITACIÓN POR ID
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -69,6 +69,7 @@ export async function PUT(
     try {
         const { id } = await params;
         const body = await request.json();
+        const { numero, tipo, precio, capacidad, descripcion, comodidades, imagen, lat, lng, estado } = body;
 
         // Verificar que la habitación existe
         const habitacionExistente = await prisma.room.findUnique({
@@ -82,10 +83,35 @@ export async function PUT(
             );
         }
 
-        // Actualizar solo los campos enviados
+        // Si se cambia el número, verificar que no exista otra habitación con ese número
+        if (numero && numero !== habitacionExistente.numero) {
+            const numeroExistente = await prisma.room.findUnique({
+                where: { numero }
+            });
+
+            if (numeroExistente) {
+                return NextResponse.json(
+                    { success: false, error: `Ya existe una habitación con el número ${numero}` },
+                    { status: 409 }
+                );
+            }
+        }
+
+        // Actualizar habitación
         const habitacionActualizada = await prisma.room.update({
             where: { id },
-            data: body
+            data: {
+                ...(numero && { numero }),
+                ...(tipo && { tipo }),
+                ...(precio && { precio }),
+                ...(capacidad && { capacidad }),
+                ...(estado && { estado }),
+                ...(descripcion !== undefined && { descripcion }),
+                ...(comodidades !== undefined && { comodidades }),
+                ...(imagen !== undefined && { imagen }),
+                ...(lat !== undefined && { lat }),
+                ...(lng !== undefined && { lng })
+            }
         });
 
         return NextResponse.json({

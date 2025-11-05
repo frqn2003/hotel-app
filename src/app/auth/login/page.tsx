@@ -98,7 +98,7 @@ function LoginContent() {
                         setLoading(false);
                     }
                 }} className='bg-black hover:bg-black/90 text-white py-2 rounded-lg font-bold cursor-pointer transition-all'>Iniciar Sesión</button>
-                <p>¿No tienes cuenta? <Link href="register/" className='text-blue-500 hover:text-blue-600 transition-all mx-2'>Registrate</Link></p>
+                <p>¿No tienes cuenta? <Link href="/auth/register" className='text-blue-500 hover:text-blue-600 transition-all mx-2'>Registrate</Link></p>
             </form>
         </section >
     )

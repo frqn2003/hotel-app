@@ -4,15 +4,20 @@ import HabitacionCard from "@/componentes/Habitaciones/HabitacionCard"
 import { useState } from "react"
 import { useHabitaciones } from "@/hooks"
 import type { Habitacion } from '@/types/habitacion'
+import { useRouter } from 'next/navigation'
 
 export default function Habitaciones() {
     const { habitaciones, loading, error } = useHabitaciones()
     const [habitacionesFiltradas, setHabitacionesFiltradas] = useState<Habitacion[]>([])
     const [habitacionSeleccionada, setHabitacionSeleccionada] = useState<number | null>(null)
+    const router = useRouter()
     const handleReservar = (habitacion: Habitacion) => {
-        window.location.href = `/reserva?habitacion=${habitacion.numero}`
+        window.location.href = `/personalizar-reserva?habitacion=${habitacion.numero}`
     }
 
+    const handleVerDetalles = (habitacion: Habitacion) => {
+        router.push(`/habitaciones/detalles/${habitacion.id}`)
+    }
     // Mostrar error si existe
     if (error) {
         return (
@@ -43,7 +48,7 @@ export default function Habitaciones() {
                         <HabitacionCard
                             habitacion={habitacion}
                             onReservar={handleReservar}
-                            onVerDetalles={() => setHabitacionSeleccionada(habitacion.numero)}
+                            onVerDetalles={handleVerDetalles}
                             isSelected={habitacionSeleccionada === habitacion.numero}
                         />
                     </div>
