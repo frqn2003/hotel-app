@@ -1,6 +1,66 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// OBTENER UNA HABITACIÓN POR ID - ¡ESTE ES EL QUE TE FALTA!
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        const { id } = await params;
+        
+        console.log('🔍 Buscando habitación con ID:', id);
+
+        // Buscar la habitación por ID
+        const habitacion = await prisma.room.findUnique({
+            where: { 
+                id: id
+            },
+            select: {
+                id: true,
+                numero: true,
+                tipo: true,
+                precio: true,
+                capacidad: true,
+                estado: true,
+                descripcion: true,
+                comodidades: true,
+                imagen: true,
+                lat: true,
+                lng: true,
+            }
+        });
+
+        console.log('📊 Resultado de la consulta:', habitacion);
+
+        if (!habitacion) {
+            console.log('❌ Habitación no encontrada con ID:', id);
+            return NextResponse.json(
+                { 
+                    success: false,
+                    message: 'Habitación no encontrada' 
+                },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json({
+            success: true,
+            data: habitacion
+        });
+
+    } catch (error) {
+        console.error('❌ Error al obtener habitación:', error);
+        return NextResponse.json(
+            { 
+                success: false,
+                message: 'Error interno del servidor' 
+            },
+            { status: 500 }
+        );
+    }
+}
+
 // ACTUALIZAR UNA HABITACIÓN
 export async function PUT(
     request: NextRequest,
