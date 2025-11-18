@@ -69,10 +69,6 @@ export default function ResumenReservas({ userId }: ResumenReservasProps) {
     r.estado === 'CONFIRMADA' || r.estado === 'CHECKIN'
   ).length
 
-  const totalGastado = reservas
-    .filter(r => r.estado === 'CHECKOUT')
-    .reduce((sum, r) => sum + r.precioTotal, 0)
-
   const ultimoPago = reservas
     .filter(r => r.estado === 'CHECKOUT')
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0]

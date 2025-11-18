@@ -20,7 +20,7 @@ export function getUserSession() {
  * Guarda la sesión del usuario en localStorage
  * @param session - Datos de la sesión del usuario
  */
-export function setUserSession(session: any) {
+export function setUserSession(session: Record<string, unknown>) {
   try {
     localStorage.setItem('userSession', JSON.stringify(session))
   } catch (error) {

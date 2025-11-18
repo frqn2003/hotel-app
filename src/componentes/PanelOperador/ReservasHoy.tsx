@@ -52,7 +52,7 @@ export default function ReservasHoy() {
         ])
         
         setLoading(false)
-      } catch (err) {
+      } catch (error) {
         setError('Error al cargar reservas')
         setLoading(false)
       }

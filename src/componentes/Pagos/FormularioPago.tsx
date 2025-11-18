@@ -7,13 +7,11 @@ import { useState } from 'react'
 import type { MetodoPago } from '@/types'
 
 interface FormularioPagoProps {
-  reservationId: string
   monto: number
   onSuccess?: () => void
 }
 
 export default function FormularioPago({
-  reservationId,
   monto,
   onSuccess,
 }: FormularioPagoProps) {

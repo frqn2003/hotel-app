@@ -3,6 +3,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { CalendarDays, Clock, ArrowRightCircle, MapPin } from 'lucide-react'
 
 interface MisReservasProps {
@@ -168,26 +169,26 @@ export default function MisReservas({ userId }: MisReservasProps) {
             {reservasActivas.length} reserva{reservasActivas.length !== 1 ? 's' : ''} activa{reservasActivas.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <a
+        <Link
           href="/mis-reservas"
           className="text-sm font-medium text-black inline-flex items-center gap-2 hover:gap-3 transition-all"
         >
           Ver historial completo
           <ArrowRightCircle className="h-4 w-4" />
-        </a>
+        </Link>
       </div>
 
       {reservas.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-xl">
           <CalendarDays className="h-12 w-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-600">No tienes reservas</p>
-          <a
+          <Link
             href="/habitaciones"
             className="inline-flex items-center gap-2 mt-4 bg-black text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-black/90 transition-colors"
           >
             Explorar habitaciones
             <ArrowRightCircle className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="flex flex-col divide-y divide-gray-100">
