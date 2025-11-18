@@ -85,21 +85,45 @@ function ReservaContent() {
     const cargarHabitacion = async () => {
         try {
             setLoading(true)
-            // Buscar habitación por número
-            const response = await fetch('/api/habitaciones')
-            const data = await response.json()
-            
-            if (data.success) {
-                // Buscar la habitación que coincida con el número
-                const habitacionEncontrada = data.data.find((h: Habitacion) => h.numero.toString() === habitacionId)
-                if (habitacionEncontrada) {
-                    setHabitacion(habitacionEncontrada)
-                } else {
-                    toast.error('Habitación no encontrada')
-                    router.push('/habitaciones')
+            // Backend deshabilitado - Usando datos mock
+            const habitacionesMock: Habitacion[] = [
+                {
+                    id: '1',
+                    numero: 101,
+                    tipo: 'SIMPLE',
+                    precio: 50000,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Habitación simple con vista a la ciudad',
+                    capacidad: 1,
+                    imagen: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop'
+                },
+                {
+                    id: '2',
+                    numero: 102,
+                    tipo: 'DOBLE',
+                    precio: 80000,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Habitación doble con dos camas',
+                    capacidad: 2,
+                    imagen: 'https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?w=3000'
+                },
+                {
+                    id: '3',
+                    numero: 201,
+                    tipo: 'SUITE',
+                    precio: 150000,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Suite de lujo con vista al mar',
+                    capacidad: 4,
+                    imagen: 'https://images.unsplash.com/photo-1631049552057-403cdb8f0658?w=3000'
                 }
+            ]
+            
+            const habitacionEncontrada = habitacionesMock.find((h: Habitacion) => h.numero.toString() === habitacionId)
+            if (habitacionEncontrada) {
+                setHabitacion(habitacionEncontrada)
             } else {
-                toast.error('Error al cargar habitaciones')
+                toast.error('Habitación no encontrada')
                 router.push('/habitaciones')
             }
         } catch (error) {
@@ -216,6 +240,16 @@ function ReservaContent() {
 
             console.log('📤 Enviando reserva:', reservaData)
 
+            // Backend deshabilitado - Simulación de éxito
+            toast.success('¡Reserva simulada exitosamente! (Demo visual)')
+            console.log('✅ Reserva simulada:', reservaData)
+            
+            // Redirigir a página de habitaciones
+            setTimeout(() => {
+                router.push('/habitaciones')
+            }, 2000)
+            
+            /* Código original comentado
             const response = await fetch('/api/reservas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -228,7 +262,6 @@ function ReservaContent() {
             if (data.success) {
                 toast.success('¡Reserva creada exitosamente!')
                 console.log('✅ Reserva creada:', data.data)
-                // Redirigir a página de confirmación o mis reservas
                 setTimeout(() => {
                     router.push('/habitaciones')
                 }, 2000)
@@ -236,6 +269,7 @@ function ReservaContent() {
                 console.log('❌ Error del servidor:', data.error)
                 toast.error(data.error || 'Error al crear la reserva')
             }
+            */
         } catch (error) {
             console.error('❌ Error al enviar reserva:', error)
             toast.error('Error al procesar la reserva')

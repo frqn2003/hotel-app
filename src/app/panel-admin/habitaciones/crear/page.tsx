@@ -105,26 +105,16 @@ export default function CrearHabitacion() {
       setError("")
       setSuccess("")
 
-      const response = await fetch("/api/habitaciones/crear", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      })
-
-      const data = await response.json()
+      // Backend deshabilitado - Simular creación
+      await new Promise(resolve => setTimeout(resolve, 800))
       
-      if (data.success) {
-        setSuccess("Habitación creada exitosamente")
-        setTimeout(() => {
-          router.push("/panel-admin/habitaciones")
-        }, 2000)
-      } else {
-        setError(data.error || "Error al crear habitación")
-      }
+      setSuccess(`Habitación #${formData.numero} creada exitosamente`)
+      
+      setTimeout(() => {
+        router.push("/panel-admin/habitaciones")
+      }, 1500)
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al crear habitación")
       console.error(err)
     } finally {
       setLoading(false)

@@ -39,13 +39,19 @@ export default function Configuracion() {
   const [notificacionesPromociones, setNotificacionesPromociones] = useState(true)
 
   useEffect(() => {
-    const session = localStorage.getItem("userSession")
-    if (session) {
-      const userData = JSON.parse(session)
-      setUserSession(userData)
-      setNombre(userData.nombre || '')
-      setEmail(userData.correo || '')
-      setTelefono(userData.telefono || '')
+    try {
+      const session = localStorage.getItem("userSession")
+      if (session) {
+        const userData = JSON.parse(session)
+        setUserSession(userData)
+        setNombre(userData.nombre || '')
+        setEmail(userData.correo || '')
+        setTelefono(userData.telefono || '')
+      }
+    } catch (error) {
+      console.error('Error al cargar sesión:', error)
+      localStorage.removeItem('userSession')
+      localStorage.removeItem('userToken')
     }
   }, [])
 
@@ -54,6 +60,18 @@ export default function Configuracion() {
       setLoading(true)
       setError(null)
 
+      // Backend deshabilitado - Simulando actualización
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Actualizar localStorage con datos simulados
+      const updatedSession = { ...userSession, nombre, correo: email, telefono }
+      localStorage.setItem('userSession', JSON.stringify(updatedSession))
+      setUserSession(updatedSession as UserSession)
+      
+      setGuardado(true)
+      setTimeout(() => setGuardado(false), 3000)
+      
+      /* Código original comentado
       const response = await fetch(`/api/usuarios/${userSession?.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -63,7 +81,6 @@ export default function Configuracion() {
       const data = await response.json()
 
       if (data.success) {
-        // Actualizar localStorage
         const updatedSession = { ...userSession, nombre, correo: email, telefono }
         localStorage.setItem('userSession', JSON.stringify(updatedSession))
         setUserSession(updatedSession as UserSession)
@@ -73,6 +90,7 @@ export default function Configuracion() {
       } else {
         setError(data.message || 'Error al actualizar perfil')
       }
+      */
     } catch (err) {
       setError('Error al guardar los cambios')
     } finally {
@@ -97,6 +115,18 @@ export default function Configuracion() {
         return
       }
 
+      // Backend deshabilitado - Simulando cambio de contraseña
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      setGuardado(true)
+      setTimeout(() => setGuardado(false), 3000)
+      
+      // Limpiar campos
+      setPasswordActual('')
+      setPasswordNueva('')
+      setPasswordConfirmar('')
+      
+      /* Código original comentado
       const response = await fetch(`/api/usuarios/${userSession?.id}/cambiar-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -117,6 +147,7 @@ export default function Configuracion() {
       } else {
         setError(data.message || 'Error al cambiar contraseña')
       }
+      */
     } catch (err) {
       setError('Error al cambiar la contraseña')
     } finally {

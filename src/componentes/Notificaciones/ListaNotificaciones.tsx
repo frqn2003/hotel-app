@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useNotificaciones } from '@/hooks'
+// import { useNotificaciones } from '@/hooks' // Hook eliminado - frontend only
 import type { TipoNotificacion } from '@/types'
 
 interface ListaNotificacionesProps {

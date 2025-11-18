@@ -65,18 +65,51 @@ export default function GestionConsultas() {
       setLoading(true)
       setError(null)
       
-      const url = filtroEstado 
-        ? `/api/contactos?estado=${filtroEstado}`
-        : '/api/contactos'
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
       
-      const response = await fetch(url)
-      const data = await response.json()
-
-      if (data.success) {
-        setConsultas(data.data)
-      } else {
-        setError('Error al cargar consultas')
+      let consultasMock: Consulta[] = [
+        {
+          id: 'C-001',
+          nombre: 'Carlos Rodríguez',
+          email: 'carlos@example.com',
+          telefono: '+598 99 123 456',
+          asunto: 'Consulta sobre reserva',
+          mensaje: '¿Es posible cambiar la fecha de mi reserva?',
+          estado: 'PENDIENTE',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: 'C-002',
+          nombre: 'María González',
+          email: 'maria@example.com',
+          telefono: '+598 99 234 567',
+          asunto: 'Pregunta sobre servicios',
+          mensaje: '¿Incluyen desayuno las habitaciones?',
+          respuesta: 'Sí, todas nuestras habitaciones incluyen desayuno buffet.',
+          estado: 'RESPONDIDO',
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: 'C-003',
+          nombre: 'Ana Martínez',
+          email: 'ana@example.com',
+          asunto: 'Solicitud de información',
+          mensaje: '¿Tienen estacionamiento disponible?',
+          estado: 'EN_PROCESO',
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
+          updatedAt: new Date(Date.now() - 86400000).toISOString()
+        }
+      ]
+      
+      // Filtrar por estado si es necesario
+      if (filtroEstado) {
+        consultasMock = consultasMock.filter(c => c.estado === filtroEstado)
       }
+      
+      setConsultas(consultasMock)
     } catch (err) {
       setError('Error al cargar consultas')
     } finally {
@@ -104,6 +137,19 @@ export default function GestionConsultas() {
     try {
       setEnviandoRespuesta(true)
       
+      // Backend deshabilitado - Simulando envío de respuesta
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      setConsultas(prev => prev.map(c => 
+        c.id === consultaSeleccionada.id 
+          ? { ...c, respuesta, estado: 'RESPONDIDO' as const, updatedAt: new Date().toISOString() }
+          : c
+      ))
+      
+      alert('Respuesta enviada exitosamente')
+      cerrarModal()
+      
+      /* Código original comentado
       const response = await fetch(`/api/contactos/${consultaSeleccionada.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -123,6 +169,7 @@ export default function GestionConsultas() {
       } else {
         alert(data.error || 'Error al enviar respuesta')
       }
+      */
     } catch (err) {
       alert('Error al enviar respuesta')
     } finally {
@@ -132,6 +179,14 @@ export default function GestionConsultas() {
 
   const cambiarEstado = async (id: string, nuevoEstado: string) => {
     try {
+      // Backend deshabilitado - Simulando cambio de estado
+      await new Promise(resolve => setTimeout(resolve, 300))
+      
+      setConsultas(prev => prev.map(c => 
+        c.id === id ? { ...c, estado: nuevoEstado as any, updatedAt: new Date().toISOString() } : c
+      ))
+      
+      /* Código original comentado
       const response = await fetch(`/api/contactos/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -145,6 +200,7 @@ export default function GestionConsultas() {
       } else {
         alert('Error al cambiar estado')
       }
+      */
     } catch (err) {
       alert('Error al cambiar estado')
     }

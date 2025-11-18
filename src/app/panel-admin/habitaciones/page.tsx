@@ -85,15 +85,73 @@ export default function HabitacionesAdmin() {
       setLoading(true)
       setError("")
       
-      const params = new URLSearchParams()
-      if (filtros.estado) params.append('estado', filtros.estado)
-      if (filtros.tipo) params.append('tipo', filtros.tipo)
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
       
-      const response = await fetch(`/api/habitaciones?${params.toString()}`)
-      if (!response.ok) throw new Error("Error al cargar habitaciones")
+      let habitacionesMock: Habitacion[] = [
+        {
+          id: '1',
+          numero: 101,
+          tipo: 'SIMPLE',
+          precio: 50000,
+          capacidad: 1,
+          estado: 'DISPONIBLE',
+          descripcion: 'Habitación simple con vista a la ciudad',
+          comodidades: ['WiFi', 'TV', 'Aire Acondicionado'],
+          imagen: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          numero: 102,
+          tipo: 'DOBLE',
+          precio: 80000,
+          capacidad: 2,
+          estado: 'OCUPADA',
+          descripcion: 'Habitación doble con dos camas',
+          comodidades: ['WiFi', 'TV', 'Minibar'],
+          imagen: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '3',
+          numero: 201,
+          tipo: 'SUITE',
+          precio: 150000,
+          capacidad: 4,
+          estado: 'DISPONIBLE',
+          descripcion: 'Suite de lujo con vista al mar',
+          comodidades: ['WiFi', 'TV', 'Jacuzzi', 'Vista al mar'],
+          imagen: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '4',
+          numero: 202,
+          tipo: 'SUITE',
+          precio: 150000,
+          capacidad: 4,
+          estado: 'MANTENIMIENTO',
+          descripcion: 'Suite presidencial en mantenimiento',
+          comodidades: ['WiFi', 'TV', 'Jacuzzi', 'Balcón'],
+          imagen: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ]
       
-      const data = await response.json()
-      setHabitaciones(data.data || [])
+      // Aplicar filtros
+      if (filtros.estado) {
+        habitacionesMock = habitacionesMock.filter(h => h.estado === filtros.estado)
+      }
+      if (filtros.tipo) {
+        habitacionesMock = habitacionesMock.filter(h => h.tipo === filtros.tipo)
+      }
+      
+      setHabitaciones(habitacionesMock)
     } catch (err) {
       setError("Error al cargar las habitaciones")
       console.error(err)

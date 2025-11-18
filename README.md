@@ -1,6 +1,8 @@
 # 🏨 Hotel App - Sistema de Reservas Hoteleras
 
-Aplicación web completa para gestión hotelera con Next.js, TypeScript, PostgreSQL y Prisma. Proyecto académico desarrollado para el curso de programación web con stack moderno y escalable.
+Aplicación web frontend-only para gestión hotelera con Next.js, TypeScript y Tailwind CSS. Proyecto académico desarrollado para demostración visual con datos simulados (mock data).
+
+> ⚠️ **NOTA IMPORTANTE:** Esta es una versión **frontend-only** sin backend real. Todos los datos son simulados para propósitos de demostración visual.
 
 ## 🚀 Tecnologías
 
@@ -11,35 +13,38 @@ Aplicación web completa para gestión hotelera con Next.js, TypeScript, Postgre
 - **React Leaflet** - Mapas interactivos para ubicación de habitaciones
 - **Lucide React** - Iconos modernos y ligeros
 - **React Hot Toast** - Notificaciones elegantes
+- **Mock Data** - Datos simulados para demostración
 
-### Backend
-- **Next.js API Routes** - Endpoints RESTful con TypeScript
-- **Prisma ORM** - ORM moderno para PostgreSQL con type-safety
-- **NextAuth.js** - Autenticación completa (Google OAuth + credenciales)
-- **Nodemailer** - Envío de emails transaccionales
-- **Stripe** - Procesamiento de pagos seguro
-- **bcryptjs** - Encriptación de contraseñas
+## 🔑 Usuarios de Prueba
 
-### Base de Datos
-- **Vercel Postgres** - PostgreSQL serverless y escalable
-- **Prisma Client** - Type-safe database queries
-- **Seed automático** - Datos de prueba iniciales
+La aplicación incluye 3 usuarios de prueba para explorar todas las funcionalidades:
 
-### DevOps & Deploy
-- **Vercel** - Deploy automático y serverless
-- **GitHub** - Control de versiones
-- **ESLint + Prettier** - Calidad de código
-- **TypeScript** - Validación en tiempo de desarrollo
+### 👤 Usuario Normal
+- **Email:** `usuario@demo.com`
+- **Contraseña:** `demo123`
+- **Panel:** Ver habitaciones, hacer reservas, contactar
+
+### 👨‍💼 Operador
+- **Email:** `operador@demo.com`
+- **Contraseña:** `operador123`
+- **Panel:** Gestionar reservas, check-in/out, facturas, consultas
+
+### 👑 Administrador
+- **Email:** `admin@demo.com`
+- **Contraseña:** `admin123`
+- **Panel:** CRUD habitaciones, gestión operadores, reportes
+
+> 💡 **Tip:** En la página de login puedes hacer clic directamente en cualquier usuario para acceso rápido.
+> 📄 Ver [CREDENCIALES_DEMO.md](./CREDENCIALES_DEMO.md) para más detalles.
 
 ## 📋 Requisitos Previos
 
-- Node.js 18+
-- npm o yarn
-- Cuenta de Vercel (para PostgreSQL)
-- Cuenta de Google Cloud Console (OAuth)
-- Cuenta de Stripe (pagos)
+- **Node.js 18+**
+- **npm o yarn**
 
-## 🛠️ Instalación y Configuración
+¡Eso es todo! No necesitas configurar base de datos ni servicios externos.
+
+## 🛠️ Instalación y Ejecución
 
 ### 1. **Clonar el repositorio**
 
@@ -54,55 +59,30 @@ cd hotel-app
 npm install
 ```
 
-### 3. **Configurar variables de entorno**
-
-Crear archivo `.env.local` con las siguientes variables:
-
-```env
-# Base de datos (Vercel Postgres)
-POSTGRES_PRISMA_URL="postgresql://usuario:password@host:5432/database?sslmode=require"
-POSTGRES_URL_NON_POOLING="postgresql://usuario:password@host:5432/database"
-
-# Autenticación NextAuth
-NEXTAUTH_SECRET="tu_secret_key_aqui_min_32_caracteres"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Google OAuth (opcional)
-GOOGLE_CLIENT_ID="tu_google_client_id.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="tu_google_client_secret"
-
-# Servicios externos
-STRIPE_SECRET_KEY="sk_tu_stripe_secret_key"
-STRIPE_PUBLISHABLE_KEY="tu_stripe_publishable_key"
-
-# Email (Gmail o SMTP)
-EMAIL_USER="tu_email@gmail.com"
-EMAIL_PASSWORD="tu_app_password_gmail"
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_PORT="587"
-
-# URL de la aplicación
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-```
-
-### 4. **Configurar base de datos con Prisma**
-
-```bash
-# Generar cliente de Prisma
-npx prisma generate
-
-# Sincronizar schema con la base de datos
-npx prisma db push
-
-```
-
-### 5. **Iniciar servidor de desarrollo**
+### 3. **Iniciar servidor de desarrollo**
 
 ```bash
 npm run dev
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
+### 4. **Abrir en el navegador**
+
+Visita [http://localhost:3000](http://localhost:3000)
+
+### 5. **Probar la aplicación**
+
+Ve a [http://localhost:3000/auth/login](http://localhost:3000/auth/login) y usa las credenciales de prueba.
+
+## 🎯 Inicio Rápido
+
+```bash
+# Instalación y ejecución en 3 comandos
+git clone https://github.com/tu-usuario/hotel-app.git
+cd hotel-app
+npm install && npm run dev
+```
+
+Luego accede a `http://localhost:3000/auth/login` y haz clic en cualquier usuario de prueba.
 
 ## 📁 Estructura del Proyecto
 

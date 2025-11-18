@@ -26,7 +26,7 @@ import {
 type UserSession = {
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO" | "ADMIN"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type Habitacion = {
@@ -197,7 +197,7 @@ export default function EstadoHabitaciones() {
     const session = localStorage.getItem("userSession")
     if (session) {
       const userData = JSON.parse(session)
-      if (userData.rol !== "OPERADOR" && userData.rol !== "ADMIN") {
+      if (userData.rol !== "OPERADOR" && userData.rol !== "ADMINISTRADOR") {
         window.location.href = "/panel"
         return
       }

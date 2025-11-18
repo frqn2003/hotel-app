@@ -78,24 +78,44 @@ export default function DetalleHabitacion() {
   const fetchHabitacion = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/habitaciones/${id}`)
-      if (!response.ok) {
-        if (response.status === 404) {
-          setError("Habitación no encontrada")
-        } else {
-          throw new Error("Error al cargar habitación")
+      
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 400))
+      
+      const habitacionesMock: any[] = [
+        {
+          id: '1',
+          numero: 101,
+          tipo: 'SIMPLE',
+          precio: 50000,
+          descripcion: 'Habitación simple con cama individual',
+          capacidad: 1,
+          estado: 'DISPONIBLE',
+          amenities: ['WiFi', 'TV', 'Aire Acondicionado'],
+          imagenes: ['/placeholder-room.jpg']
+        },
+        {
+          id: '2',
+          numero: 102,
+          tipo: 'DOBLE',
+          precio: 80000,
+          descripcion: 'Habitación doble con cama matrimonial',
+          capacidad: 2,
+          estado: 'OCUPADA',
+          amenities: ['WiFi', 'TV', 'Aire Acondicionado', 'Minibar'],
+          imagenes: ['/placeholder-room.jpg']
         }
-        return
-      }
-
-      const data = await response.json()
-      if (data.success) {
-        setHabitacion(data.data)
+      ]
+      
+      const habitacionEncontrada = habitacionesMock.find(h => h.id === id)
+      
+      if (habitacionEncontrada) {
+        setHabitacion(habitacionEncontrada)
       } else {
-        setError(data.error || "Error al cargar habitación")
+        setError("Habitación no encontrada")
       }
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al cargar habitación")
       console.error(err)
     } finally {
       setLoading(false)

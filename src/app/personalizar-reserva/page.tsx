@@ -135,24 +135,48 @@ export default function PersonalizarReserva() {
 
     const cargarHabitacion = async (id: string) => {
         try {
-            const response = await fetch(`/api/habitaciones/${id}`)
-            const data = await response.json()
-            
-            if (data.success) {
-                setHabitacion(data.data)
-            } else {
-                const habitacionesGuardadas = sessionStorage.getItem('habitacionesLista')
-                if (habitacionesGuardadas) {
-                    const habitaciones = JSON.parse(habitacionesGuardadas)
-                    const habitacionEncontrada = habitaciones.find((h: any) => h.id === id)
-                    if (habitacionEncontrada) {
-                        setHabitacion(habitacionEncontrada)
-                    } else {
-                        setError('Habitación no encontrada')
-                    }
-                } else {
-                    setError('Error al cargar habitación')
+            // Backend deshabilitado - Usando datos mock
+            const habitacionesMock = [
+                {
+                    id: '1',
+                    numero: 101,
+                    tipo: 'SIMPLE',
+                    precio: 50000,
+                    capacidad: 1,
+                    descripcion: 'Habitación simple con vista a la ciudad',
+                    imagen: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop',
+                    comodidades: ['WiFi', 'TV', 'Aire Acondicionado'],
+                    estado: 'DISPONIBLE'
+                },
+                {
+                    id: '2',
+                    numero: 102,
+                    tipo: 'DOBLE',
+                    precio: 80000,
+                    capacidad: 2,
+                    descripcion: 'Habitación doble con dos camas',
+                    imagen: 'https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?w=3000',
+                    comodidades: ['WiFi', 'TV', 'Minibar'],
+                    estado: 'DISPONIBLE'
+                },
+                {
+                    id: '3',
+                    numero: 201,
+                    tipo: 'SUITE',
+                    precio: 150000,
+                    capacidad: 4,
+                    descripcion: 'Suite de lujo con vista al mar',
+                    imagen: 'https://images.unsplash.com/photo-1631049552057-403cdb8f0658?w=3000',
+                    comodidades: ['WiFi', 'TV', 'Jacuzzi', 'Vista al mar'],
+                    estado: 'DISPONIBLE'
                 }
+            ]
+            
+            const habitacionEncontrada = habitacionesMock.find((h: any) => h.id === id)
+            if (habitacionEncontrada) {
+                setHabitacion(habitacionEncontrada)
+            } else {
+                setError('Habitación no encontrada')
             }
         } catch (error) {
             console.error('Error al cargar habitación:', error)
@@ -250,7 +274,17 @@ export default function PersonalizarReserva() {
             return
         }
 
-        const userData = JSON.parse(session)
+        let userData
+        try {
+          userData = JSON.parse(session)
+        } catch (error) {
+          console.error('Error al parsear sesión:', error)
+          localStorage.removeItem('userSession')
+          localStorage.removeItem('userToken')
+          alert('Sesión inválida. Por favor inicia sesión nuevamente.')
+          router.push('/auth/login')
+          return
+        }
         const userId = userData.id
 
         const huespedes = datosReserva.adultos + datosReserva.niños + datosReserva.bebés
@@ -270,50 +304,39 @@ export default function PersonalizarReserva() {
         }
 
         try {
-            const response = await fetch('/api/reservas', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datosReservaAPI)
-            })
-
-            const data = await response.json()
-
-            if (data.success) {
-                // Guardar también en sessionStorage para referencia
-                const reserva = {
-                    id: data.data.id,
-                    habitacionId: habitacion.id,
-                    tipo: habitacion.tipo,
-                    precio: habitacion.precio,
-                    noches: noches,
-                    fechaCheckin: datosReserva.checkin,
-                    fechaCheckout: datosReserva.checkout,
-                    huespedes: huespedes,
-                    imagen: habitacion.imagen || '/images/room-default.jpg',
-                    opcionesExtras: Object.entries(opcionesSeleccionadas).map(([opcionId, cantidad]) => {
-                        const opcion = opcionesExtras.find(o => o.id === opcionId)
-                        return {
-                            id: opcionId,
-                            nombre: opcion?.nombre,
-                            cantidad: cantidad,
-                            precioUnitario: opcion?.precio,
-                            subtotal: opcion ? opcion.precio * cantidad : 0
-                        }
-                    }),
-                    pedidosEspeciales: pedidosEspeciales,
-                    total: precioTotal
-                }
-
-                console.log('Reserva creada exitosamente:', reserva)
-                sessionStorage.setItem('reservaActual', JSON.stringify(reserva))
-                
-                // Redirigir a mis-reservas
-                router.push('/mis-reservas')
-            } else {
-                alert('Error al crear la reserva: ' + (data.error || 'Error desconocido'))
+            // Backend deshabilitado - Simulando reserva
+            const reserva = {
+                id: Math.random().toString(36).substr(2, 9),
+                habitacionId: habitacion.id,
+                tipo: habitacion.tipo,
+                precio: habitacion.precio,
+                noches: noches,
+                fechaCheckin: datosReserva.checkin,
+                fechaCheckout: datosReserva.checkout,
+                adultos: datosReserva.adultos,
+                niños: datosReserva.niños,
+                huespedes: huespedes,
+                imagen: habitacion.imagen || '/images/room-default.jpg',
+                opcionesExtras: Object.entries(opcionesSeleccionadas).map(([opcionId, cantidad]) => {
+                    const opcion = opcionesExtras.find(o => o.id === opcionId)
+                    return {
+                        id: opcionId,
+                        nombre: opcion?.nombre,
+                        cantidad: cantidad,
+                        precioUnitario: opcion?.precio,
+                        subtotal: opcion ? opcion.precio * cantidad : 0
+                    }
+                }),
+                pedidosEspeciales: pedidosEspeciales,
+                total: precioTotal
             }
+
+            console.log('Reserva simulada exitosamente:', reserva)
+            sessionStorage.setItem('reservaActual', JSON.stringify(reserva))
+            
+            // Redirigir a checkout
+            alert('¡Reserva simulada! (Demo visual) Redirigiendo al checkout...')
+            router.push('/checkout')
         } catch (error) {
             console.error('Error al crear reserva:', error)
             alert('Error de conexión al crear la reserva')

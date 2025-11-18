@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 interface UserSession {
     nombre: string
     correo: string
-    rol: 'OPERADOR' | 'USUARIO' | 'ADMIN'
+    rol: 'OPERADOR' | 'USUARIO' | 'ADMINISTRADOR'
 }
 
 interface NavProps {
@@ -23,9 +23,16 @@ export default function Navbar({ onSubPage = false, onImportantPage = false }: N
     const [seccionActiva, setSeccionActiva] = useState('')
 
     useEffect(() => {
-        const session = localStorage.getItem('userSession')
-        if (session) {
-            setUserSession(JSON.parse(session))
+        try {
+            const session = localStorage.getItem('userSession')
+            if (session) {
+                setUserSession(JSON.parse(session))
+            }
+        } catch (error) {
+            // Si hay un error al parsear, limpiar localStorage
+            console.error('Error al parsear sesión:', error)
+            localStorage.removeItem('userSession')
+            localStorage.removeItem('userToken')
         }
     }, [])
 
@@ -151,7 +158,7 @@ export default function Navbar({ onSubPage = false, onImportantPage = false }: N
                                             </div>
                                             <button
                                                 onClick={() => {
-                                                    const panel = userSession.rol === 'OPERADOR' ? '/panel-operador' : (userSession.rol === 'ADMIN' ? '/panel-admin' : '/panel-usuario') 
+                                                    const panel = userSession.rol === 'OPERADOR' ? '/panel-operador' : (userSession.rol === 'ADMINISTRADOR' ? '/panel-admin' : '/panel-usuario') 
                                                     window.location.href = panel
                                                 }}
                                                 className="flex items-center gap-2 w-full px-2 py-2 hover:bg-gray-100 rounded-md transition-all"
@@ -238,7 +245,7 @@ export default function Navbar({ onSubPage = false, onImportantPage = false }: N
                                 </div>
                                 <button
                                     onClick={() => {
-                                        const panel = userSession.rol === 'OPERADOR' ? '/panel-operador' : '/panel-usuario'
+                                        const panel = userSession.rol === 'OPERADOR' ? '/panel-operador' : (userSession.rol === 'ADMINISTRADOR' ? '/panel-admin' : '/panel-usuario')
                                         cerrarMenu()
                                         window.location.href = panel
                                     }}

@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useActividades } from '@/hooks'
+// import { useActividades } from '@/hooks' // Hook eliminado - frontend only
 import type { TipoActividad, FiltrosActividad } from '@/types'
 
 interface ListaActividadesProps {

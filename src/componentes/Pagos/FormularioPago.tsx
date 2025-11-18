@@ -3,7 +3,7 @@
 'use client'
 
 import { useState } from 'react'
-import { usePagos } from '@/hooks'
+// import { usePagos } from '@/hooks' // Hook eliminado - frontend only
 import type { MetodoPago } from '@/types'
 
 interface FormularioPagoProps {
@@ -17,7 +17,9 @@ export default function FormularioPago({
   monto,
   onSuccess,
 }: FormularioPagoProps) {
-  const { crearPago, loading, error } = usePagos()
+  // Backend deshabilitado - Estado local
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('TARJETA_CREDITO')
   const [success, setSuccess] = useState(false)
 
@@ -32,18 +34,17 @@ export default function FormularioPago({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSuccess(false)
+    setLoading(true)
+    setError(null)
 
-    const result = await crearPago({
-      reservationId,
-      monto,
-      metodoPago,
-    })
+    // Backend deshabilitado - Simular procesamiento de pago
+    await new Promise(resolve => setTimeout(resolve, 1500))
 
-    if (result) {
-      setSuccess(true)
-      if (onSuccess) {
-        setTimeout(() => onSuccess(), 2000)
-      }
+    setSuccess(true)
+    setLoading(false)
+    
+    if (onSuccess) {
+      setTimeout(() => onSuccess(), 2000)
     }
   }
 

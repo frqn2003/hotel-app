@@ -58,16 +58,18 @@ export default function ConsultasAvanzadas() {
 
   const fetchConsultasDisponibles = async () => {
     try {
-      const response = await fetch("/api/consultas-avanzadas")
-      const data = await response.json()
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 200))
       
-      if (data.success) {
-        setConsultasDisponibles(data.data)
-      } else {
-        setError("Error al cargar consultas disponibles")
-      }
+      const consultasMock = [
+        { id: 'ocupacion', nombre: 'Análisis de Ocupación', descripcion: 'Estadísticas de ocupación por período', parametros: ['fechaInicio', 'fechaFin'] },
+        { id: 'ingresos', nombre: 'Reporte de Ingresos', descripcion: 'Desglose de ingresos por fuente', parametros: ['fechaInicio', 'fechaFin'] },
+        { id: 'clientes', nombre: 'Análisis de Clientes', descripcion: 'Segmentación y comportamiento de clientes', parametros: [] }
+      ]
+      
+      setConsultasDisponibles(consultasMock)
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al cargar consultas disponibles")
       console.error(err)
     }
   }
@@ -96,26 +98,31 @@ export default function ConsultasAvanzadas() {
       setLoading(true)
       setError("")
       
-      const response = await fetch("/api/consultas-avanzadas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          tipoConsulta: consultaSeleccionada,
-          ...parametros
-        })
-      })
-
-      const data = await response.json()
+      // Backend deshabilitado - Simular consulta con datos mock
+      await new Promise(resolve => setTimeout(resolve, 800))
       
-      if (data.success) {
-        setResultados(data.data)
-      } else {
-        setError(data.error || "Error al ejecutar la consulta")
+      const resultadosMock = {
+        ocupacion: [
+          { periodo: 'Enero 2025', ocupacion: 75, habitaciones: 30 },
+          { periodo: 'Febrero 2025', ocupacion: 82, habitaciones: 33 },
+          { periodo: 'Marzo 2025', ocupacion: 78, habitaciones: 31 }
+        ],
+        ingresos: [
+          { fuente: 'Habitaciones', monto: 1850000 },
+          { fuente: 'Servicios', monto: 320000 },
+          { fuente: 'Extras', monto: 180000 }
+        ],
+        clientes: [
+          { segmento: 'VIP', cantidad: 45, porcentaje: 15 },
+          { segmento: 'Regular', cantidad: 180, porcentaje: 60 },
+          { segmento: 'Nuevo', cantidad: 75, porcentaje: 25 }
+        ]
       }
+      
+      const resultado = resultadosMock[consultaSeleccionada as keyof typeof resultadosMock] || []
+      setResultados(resultado)
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al ejecutar la consulta")
       console.error(err)
     } finally {
       setLoading(false)

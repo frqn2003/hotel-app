@@ -44,6 +44,10 @@ export default function NuevaConsulta() {
       setEnviando(true)
       setError(null)
 
+      // Backend deshabilitado - Solo UI visual
+      setEnviado(true)
+      
+      /* Código original comentado
       const response = await fetch('/api/contactos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,18 +65,18 @@ export default function NuevaConsulta() {
 
       if (data.success) {
         setEnviado(true)
-        setNombre('')
-        setEmail('')
-        setTelefono('')
-        setAsunto('')
-        setMensaje('')
-        
-        setTimeout(() => {
-          setEnviado(false)
-        }, 5000)
-      } else {
-        setError(data.error || 'Error al enviar la consulta')
       }
+      */
+      
+      setNombre('')
+      setEmail('')
+      setTelefono('')
+      setAsunto('')
+      setMensaje('')
+      
+      setTimeout(() => {
+        setEnviado(false)
+      }, 5000)
     } catch (err) {
       setError('Error al enviar la consulta')
     } finally {

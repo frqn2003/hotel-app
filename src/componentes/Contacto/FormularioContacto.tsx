@@ -3,10 +3,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useContacto } from '@/hooks'
+// import { useContacto } from '@/hooks' // Hook eliminado - frontend only
 
 export default function FormularioContacto() {
-  const { crearConsulta, loading, error } = useContacto()
+  // const { crearConsulta, loading, error } = useContacto() // Backend deshabilitado
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',

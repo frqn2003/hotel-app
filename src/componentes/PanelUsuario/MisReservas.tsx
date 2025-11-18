@@ -2,19 +2,80 @@
 
 'use client'
 
-import { useEffect } from 'react'
-import { useReservas } from '@/hooks'
+import { useEffect, useState } from 'react'
 import { CalendarDays, Clock, ArrowRightCircle, MapPin } from 'lucide-react'
 
 interface MisReservasProps {
   userId: string
 }
 
+type Reserva = {
+  id: string
+  fechaEntrada: string
+  fechaSalida: string
+  estado: string
+  huespedes: number
+  precioTotal: number
+  room?: {
+    tipo: string
+    numero: number
+  }
+}
+
 export default function MisReservas({ userId }: MisReservasProps) {
-  // Solo cargar reservas si hay userId válido
-  const { reservas, loading, error, cargarReservas } = useReservas(
-    userId ? { userId } : undefined
-  )
+  const [reservas, setReservas] = useState<Reserva[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const cargarReservas = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const reservasMock: Reserva[] = [
+        {
+          id: 'RSV-001',
+          fechaEntrada: new Date(Date.now() + 86400000 * 2).toISOString(),
+          fechaSalida: new Date(Date.now() + 86400000 * 5).toISOString(),
+          estado: 'CONFIRMADA',
+          huespedes: 2,
+          precioTotal: 240000,
+          room: {
+            tipo: 'DOBLE',
+            numero: 102
+          }
+        },
+        {
+          id: 'RSV-002',
+          fechaEntrada: new Date(Date.now() - 86400000 * 10).toISOString(),
+          fechaSalida: new Date(Date.now() - 86400000 * 7).toISOString(),
+          estado: 'CHECKOUT',
+          huespedes: 1,
+          precioTotal: 150000,
+          room: {
+            tipo: 'SIMPLE',
+            numero: 101
+          }
+        }
+      ]
+      
+      setReservas(reservasMock)
+    } catch (err) {
+      setError('Error al cargar las reservas')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (userId) {
+      cargarReservas()
+    }
+  }, [userId])
 
   // Recargar reservas cuando el usuario vuelve a la pestaña
   useEffect(() => {
@@ -37,7 +98,7 @@ export default function MisReservas({ userId }: MisReservasProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('focus', handleFocus)
     }
-  }, [cargarReservas, userId])
+  }, [userId])
 
   if (!userId) {
     return (

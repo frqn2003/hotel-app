@@ -2,11 +2,64 @@
 
 'use client'
 
-import { useReservasHoy } from '@/hooks'
+import { useEffect, useState } from 'react'
 import { Phone, Clock, Key, UserCheck, ArrowRightCircle } from 'lucide-react'
 
+type Reserva = {
+  id: string
+  estado: string
+  fechaEntrada: string
+  fechaSalida: string
+  room?: { tipo: string; numero: number }
+  user?: { nombre: string; telefono?: string }
+}
+
 export default function ReservasHoy() {
-  const { checkinsHoy, checkoutsHoy, loading, error } = useReservasHoy()
+  const [checkinsHoy, setCheckinsHoy] = useState<Reserva[]>([])
+  const [checkoutsHoy, setCheckoutsHoy] = useState<Reserva[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const cargarReservas = async () => {
+      try {
+        setLoading(true)
+        // Backend deshabilitado - Datos mock
+        await new Promise(resolve => setTimeout(resolve, 300))
+        
+        const hoy = new Date()
+        
+        setCheckinsHoy([
+          {
+            id: 'R-001',
+            estado: 'CONFIRMADA',
+            fechaEntrada: hoy.toISOString(),
+            fechaSalida: new Date(Date.now() + 86400000 * 3).toISOString(),
+            room: { tipo: 'DOBLE', numero: 102 },
+            user: { nombre: 'María González', telefono: '+598 99 123 456' }
+          }
+        ])
+        
+        setCheckoutsHoy([
+          {
+            id: 'R-002',
+            estado: 'CHECKIN',
+            fechaEntrada: new Date(Date.now() - 86400000 * 2).toISOString(),
+            fechaSalida: hoy.toISOString(),
+            room: { tipo: 'SUITE', numero: 201 },
+            user: { nombre: 'Carlos Pérez', telefono: '+598 99 654 321' }
+          }
+        ])
+        
+        setLoading(false)
+      } catch (err) {
+        setError('Error al cargar reservas')
+        setLoading(false)
+      }
+    }
+    
+    cargarReservas()
+  }, [])
 
   if (loading) {
     return (
