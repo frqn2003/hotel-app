@@ -81,10 +81,10 @@ export default function ConsultasAvanzadas() {
     setError("")
   }
 
-  const handleParametroChange = (key: string, value: string) => {
+  const handleParametroChange = (key: string, value: string | number) => {
     setParametros(prev => ({
       ...prev,
-      [key]: value
+      [key]: String(value)
     }))
   }
 
@@ -352,6 +352,7 @@ export default function ConsultasAvanzadas() {
                 {consultaSeleccionada && (
                   <div className="space-y-4">
                     <h3 className="text-sm font-medium text-gray-700 mb-3">Parámetros</h3>
+                    <button
                       onClick={ejecutarConsulta}
                       disabled={loading}
                       className="w-full bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"

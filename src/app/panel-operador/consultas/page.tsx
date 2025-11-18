@@ -177,13 +177,13 @@ export default function GestionConsultas() {
     }
   }
 
-  const cambiarEstado = async (id: string, nuevoEstado: string) => {
+  const cambiarEstado = async (id: string, nuevoEstado: 'PENDIENTE' | 'EN_PROCESO' | 'RESPONDIDO' | 'CERRADO') => {
     try {
       // Backend deshabilitado - Simulando cambio de estado
       await new Promise(resolve => setTimeout(resolve, 300))
       
       setConsultas(prev => prev.map(c => 
-        c.id === id ? { ...c, estado: nuevoEstado as any, updatedAt: new Date().toISOString() } : c
+        c.id === id ? { ...c, estado: nuevoEstado, updatedAt: new Date().toISOString() } : c
       ))
       
       /* Código original comentado
@@ -388,7 +388,7 @@ export default function GestionConsultas() {
 
                         <div className="flex flex-col gap-2">
                           <button
-                            onClick={() => abrirConsulta(consulta)}
+                            onClick={() => setConsultaSeleccionada(consulta)}
                             className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-black text-white rounded-xl text-sm font-medium hover:bg-black/90 transition-all"
                           >
                             <MessageSquare className="h-4 w-4" />

@@ -172,7 +172,7 @@ export default function PersonalizarReserva() {
                 }
             ]
             
-            const habitacionEncontrada = habitacionesMock.find((h: any) => h.id === id)
+            const habitacionEncontrada = habitacionesMock.find((h) => h.id === id)
             if (habitacionEncontrada) {
                 setHabitacion(habitacionEncontrada)
             } else {
