@@ -123,7 +123,7 @@ export default function NuevaFactura() {
     }
   }
 
-  const actualizarDetalle = (index: number, campo: keyof DetalleItem, valor: any) => {
+  const actualizarDetalle = (index: number, campo: keyof DetalleItem, valor: string | number) => {
     const nuevosDetalles = [...detalles]
     nuevosDetalles[index] = { ...nuevosDetalles[index], [campo]: valor }
     setDetalles(nuevosDetalles)

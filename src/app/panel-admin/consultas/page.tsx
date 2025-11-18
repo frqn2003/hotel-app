@@ -136,7 +136,7 @@ export default function ConsultasPage() {
     }
   }
 
-  const handleViewDetail = (consulta: Consulta) => {
+  const handleConsultaChange = (consulta: Consulta) => {
     setSelectedConsulta(consulta)
     setShowDetailModal(true)
   }

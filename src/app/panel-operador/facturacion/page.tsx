@@ -27,7 +27,7 @@ type Factura = {
       }
     }
   }
-  detalles: any[]
+  detalles: Array<{descripcion: string; cantidad: number; precio: number}>
 }
 
 export default function GestionFacturas() {

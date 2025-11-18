@@ -31,13 +31,13 @@ type ConsultaDisponible = {
   parametros: string[]
 }
 
-type ResultadoConsulta = any
+type ResultadoConsulta = Record<string, unknown> | Array<Record<string, unknown>>
 
 export default function ConsultasAvanzadas() {
   const [userSession, setUserSession] = useState<UserSession | null>(null)
   const [consultasDisponibles, setConsultasDisponibles] = useState<ConsultaDisponible[]>([])
   const [consultaSeleccionada, setConsultaSeleccionada] = useState<string>("")
-  const [parametros, setParametros] = useState<Record<string, any>>({})
+  const [parametros, setParametros] = useState<Record<string, string>>({})
   const [resultados, setResultados] = useState<ResultadoConsulta | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -81,7 +81,7 @@ export default function ConsultasAvanzadas() {
     setError("")
   }
 
-  const handleParametroChange = (key: string, value: any) => {
+  const handleParametroChange = (key: string, value: string) => {
     setParametros(prev => ({
       ...prev,
       [key]: value
@@ -120,7 +120,7 @@ export default function ConsultasAvanzadas() {
       }
       
       const resultado = resultadosMock[consultaSeleccionada as keyof typeof resultadosMock] || []
-      setResultados(resultado)
+      setResultados(resultado as ResultadoConsulta)
     } catch (err) {
       setError("Error al ejecutar la consulta")
       console.error(err)
@@ -352,18 +352,6 @@ export default function ConsultasAvanzadas() {
                 {consultaSeleccionada && (
                   <div className="space-y-4">
                     <h3 className="text-sm font-medium text-gray-700 mb-3">Parámetros</h3>
-                    {consultasDisponibles
-                      .find(c => c.id === consultaSeleccionada)
-                      ?.parametros.map(parametro => (
-                        <div key={parametro}>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            {parametro.replace(/_/g, ' ').charAt(0).toUpperCase() + parametro.replace(/_/g, ' ').slice(1)}
-                          </label>
-                          {renderParametroInput(parametro)}
-                        </div>
-                      ))}
-                    
-                    <button
                       onClick={ejecutarConsulta}
                       disabled={loading}
                       className="w-full bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"

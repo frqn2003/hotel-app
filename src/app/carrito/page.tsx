@@ -13,8 +13,15 @@ import {
   Edit
 } from "lucide-react"
 
+type Habitacion = {
+  id: string
+  numero: number
+  tipo: string
+  precio: number
+}
+
 type ReservaCarrito = {
-  habitacion: any
+  habitacion: Habitacion
   fechaEntrada: string
   fechaSalida: string
   noches: number

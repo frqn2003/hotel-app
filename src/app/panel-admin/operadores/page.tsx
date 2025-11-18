@@ -178,7 +178,7 @@ export default function OperadoresPage() {
     }
   }
 
-  const handleEdit = (operador: Operador) => {
+  const handleOperadorChange = (operador: Operador) => {
     setFormData({
       nombre: operador.nombre,
       email: operador.email,

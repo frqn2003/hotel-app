@@ -121,7 +121,7 @@ export default function GestionConsultas() {
     cargarConsultas()
   }, [filtroEstado])
 
-  const abrirConsulta = (consulta: Consulta) => {
+  const handleConsultaChange = (consulta: Consulta) => {
     setConsultaSeleccionada(consulta)
     setRespuesta(consulta.respuesta || '')
   }

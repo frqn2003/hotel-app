@@ -82,7 +82,7 @@ export default function DetalleHabitacion() {
       // Backend deshabilitado - Datos mock
       await new Promise(resolve => setTimeout(resolve, 400))
       
-      const habitacionesMock: any[] = [
+      const habitacionesMock: Habitacion[] = [
         {
           id: '1',
           numero: 101,

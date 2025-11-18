@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useEffect, useState } from 'react'
+import Link from 'next/link'
 import Navbar from '@/componentes/Navbar'
 import Footer from '@/componentes/Footer'
 import type { Reserva } from '@/types'
@@ -54,7 +55,7 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
           estado: 'RESERVADA',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
-        } as any,
+        } as unknown as Reserva['room'],
         userId: 'user-001',
         roomId: '2',
         createdAt: new Date().toISOString(),
@@ -62,7 +63,7 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
       }
       
       setReserva(reservaMock)
-    } catch (err) {
+    } catch (_err) {
       setError('Error al cargar la reserva')
     } finally {
       setLoading(false)
@@ -173,13 +174,13 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
       <main className="bg-[#F3F6FA] min-h-screen py-16">
         <div className="contenedor flex flex-col gap-8">
           {/* Breadcrumb */}
-          <a
+          <Link
             href="/panel-usuario"
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black transition-all hover:gap-3"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver al Panel
-          </a>
+          </Link>
 
           {/* Header con Estado */}
           <section className="bg-white shadow-xl rounded-3xl px-8 py-10">
@@ -355,7 +356,6 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
               {!reserva.pagado && mostrarPago && (
                 <section>
                   <FormularioPago
-                    reservationId={reserva.id}
                     monto={reserva.precioTotal}
                     onSuccess={async () => {
                       setMostrarPago(false)
