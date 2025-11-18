@@ -92,8 +92,10 @@ export default function DetalleHabitacion() {
           descripcion: 'Habitación simple con cama individual',
           capacidad: 1,
           estado: 'DISPONIBLE',
-          amenities: ['WiFi', 'TV', 'Aire Acondicionado'],
-          imagenes: ['/placeholder-room.jpg']
+          comodidades: ['WiFi', 'TV', 'Aire Acondicionado'],
+          imagen: '/placeholder-room.jpg',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         },
         {
           id: '2',
@@ -103,8 +105,10 @@ export default function DetalleHabitacion() {
           descripcion: 'Habitación doble con cama matrimonial',
           capacidad: 2,
           estado: 'OCUPADA',
-          amenities: ['WiFi', 'TV', 'Aire Acondicionado', 'Minibar'],
-          imagenes: ['/placeholder-room.jpg']
+          comodidades: ['WiFi', 'TV', 'Aire Acondicionado', 'Minibar'],
+          imagen: '/placeholder-room.jpg',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         }
       ]
       
