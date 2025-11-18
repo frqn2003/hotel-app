@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import Navbar from "@/componentes/Navbar"
 import Footer from "@/componentes/Footer"
@@ -233,24 +234,24 @@ export default function HabitacionesAdmin() {
         <div className="contenedor">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <a
+            <Link
               href="/panel-admin"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               Volver al panel
-            </a>
+            </Link>
             <div className="flex-1">
               <h1 className="text-3xl font-semibold text-gray-900">Gestión de Habitaciones</h1>
               <p className="text-gray-600">Administra el estado y disponibilidad de las habitaciones</p>
             </div>
-            <a
+            <Link
               href="/panel-admin/habitaciones/crear"
               className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
             >
               <Bed className="h-5 w-5" />
               Nueva Habitación
-            </a>
+            </Link>
           </div>
 
           {/* Filtros */}
@@ -440,20 +441,20 @@ export default function HabitacionesAdmin() {
                         </div>
 
                         <div className="flex gap-2">
-                          <a
+                          <Link
                             href={`/panel-admin/habitaciones/${habitacion.id}`}
                             className="flex-1 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors text-center"
                           >
                             <Eye className="h-4 w-4 inline mr-1" />
                             Ver detalles
-                          </a>
-                          <a
+                          </Link>
+                          <Link
                             href={`/panel-admin/habitaciones/${habitacion.id}/editar`}
                             className="flex-1 bg-gray-50 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors text-center"
                           >
                             <Edit className="h-4 w-4 inline mr-1" />
                             Editar
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     ))}
@@ -497,18 +498,18 @@ export default function HabitacionesAdmin() {
                             </td>
                             <td className="py-3 px-4">
                               <div className="flex gap-2">
-                                <a
+                                <Link
                                   href={`/panel-admin/habitaciones/${habitacion.id}`}
                                   className="text-blue-600 hover:text-blue-700 text-sm"
                                 >
                                   <Eye className="h-4 w-4" />
-                                </a>
-                                <a
+                                </Link>
+                                <Link
                                   href={`/panel-admin/habitaciones/${habitacion.id}/editar`}
                                   className="text-gray-600 hover:text-gray-700 text-sm"
                                 >
                                   <Edit className="h-4 w-4" />
-                                </a>
+                                </Link>
                               </div>
                             </td>
                           </tr>

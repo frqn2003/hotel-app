@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Navbar from "@/componentes/Navbar"
@@ -239,13 +240,13 @@ export default function EditarHabitacion() {
         <div className="contenedor">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <a
+            <Link
               href="/panel-admin/habitaciones"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               Volver a habitaciones
-            </a>
+            </Link>
             <div className="flex-1">
               <h1 className="text-3xl font-semibold text-gray-900">
                 Editar Habitación #{formData.numero}
@@ -483,12 +484,12 @@ export default function EditarHabitacion() {
 
             {/* Botones de acción */}
             <div className="flex items-center gap-4">
-              <a
+              <Link
                 href="/panel-admin/habitaciones"
                 className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
               >
                 Cancelar
-              </a>
+              </Link>
               <button
                 type="submit"
                 disabled={saving}

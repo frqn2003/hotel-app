@@ -146,13 +146,13 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
                   <p className="text-sm">{error || 'Reserva no encontrada'}</p>
                 </div>
               </div>
-              <a
+              <Link
                 href="/mis-reservas"
                 className="inline-flex items-center gap-2 mt-4 text-sm font-medium text-black hover:gap-3 transition-all"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Volver a Mis Reservas
-              </a>
+              </Link>
             </div>
           </div>
         </main>

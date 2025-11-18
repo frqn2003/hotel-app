@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Navbar from "@/componentes/Navbar"
@@ -219,13 +220,13 @@ export default function DetalleHabitacion() {
         <div className="contenedor">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <a
+            <Link
               href="/panel-admin/habitaciones"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               Volver a habitaciones
-            </a>
+            </Link>
             <div className="flex-1">
               <h1 className="text-3xl font-semibold text-gray-900">
                 Habitación #{habitacion?.numero}
@@ -233,13 +234,13 @@ export default function DetalleHabitacion() {
               <p className="text-gray-600">Detalles completos de la habitación</p>
             </div>
             {userSession?.rol === "ADMINISTRADOR" && (
-              <a
+              <Link
                 href={`/panel-admin/habitaciones/${id}/editar`}
                 className="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-600 transition-colors"
               >
                 <Edit className="h-5 w-5" />
                 Editar
-              </a>
+              </Link>
             )}
           </div>
 

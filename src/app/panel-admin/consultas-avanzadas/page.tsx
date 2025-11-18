@@ -429,7 +429,7 @@ export default function ConsultasAvanzadas() {
                   <div className="text-center py-16">
                     <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500">
-                      Selecciona una consulta y haz clic en "Ejecutar Consulta" para ver los resultados
+                      Selecciona una consulta y haz clic en &quot;Ejecutar Consulta&quot; para ver los resultados
                     </p>
                   </div>
                 )}
