@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react'
 import Navbar from '@/componentes/Navbar'
 import Footer from '@/componentes/Footer'
-import { reservaService } from '@/services/reserva.service'
-import type { Reserva } from '@/types'
 import {
   CalendarDays,
   LogIn,
@@ -14,6 +12,17 @@ import {
   AlertCircle,
   ArrowLeft
 } from 'lucide-react'
+
+type Reserva = {
+  id: string
+  habitacionNumero: number
+  fechaEntrada: string
+  fechaSalida: string
+  estado: string
+  huesped: string
+  telefono?: string
+  precioTotal: number
+}
 
 export default function GestionarReservas() {
   const [reservas, setReservas] = useState<Reserva[]>([])
@@ -25,17 +34,44 @@ export default function GestionarReservas() {
     try {
       setLoading(true)
       setError(null)
-      const response = await reservaService.obtenerReservas()
-
-      if (response.success && response.data) {
-        // Ordenar por fecha de entrada
-        const reservasOrdenadas = response.data.sort((a, b) =>
-          new Date(a.fechaEntrada).getTime() - new Date(b.fechaEntrada).getTime()
-        )
-        setReservas(reservasOrdenadas)
-      } else {
-        setError('Error al cargar reservas')
-      }
+      
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const reservasMock: Reserva[] = [
+        {
+          id: 'R-001',
+          habitacionNumero: 101,
+          fechaEntrada: new Date().toISOString().split('T')[0],
+          fechaSalida: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+          estado: 'PENDIENTE',
+          huesped: 'Carlos Rodríguez',
+          telefono: '+598 99 123 456',
+          precioTotal: 100000
+        },
+        {
+          id: 'R-002',
+          habitacionNumero: 102,
+          fechaEntrada: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+          fechaSalida: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+          estado: 'CONFIRMADA',
+          huesped: 'María González',
+          telefono: '+598 99 234 567',
+          precioTotal: 160000
+        },
+        {
+          id: 'R-003',
+          habitacionNumero: 201,
+          fechaEntrada: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+          fechaSalida: new Date(Date.now() + 86400000 * 4).toISOString().split('T')[0],
+          estado: 'PENDIENTE',
+          huesped: 'Ana Martínez',
+          telefono: '+598 99 345 678',
+          precioTotal: 450000
+        }
+      ]
+      
+      setReservas(reservasMock)
     } catch (err) {
       setError('Error al cargar reservas')
     } finally {
@@ -50,13 +86,15 @@ export default function GestionarReservas() {
   const hacerCheckin = async (id: string) => {
     try {
       setProcesando(id)
-      const response = await reservaService.hacerCheckin(id)
-
-      if (response.success) {
-        await cargarReservas()
-      } else {
-        alert(response.message || 'Error al hacer check-in')
-      }
+      
+      // Backend deshabilitado - Simulando check-in
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      setReservas(prev => prev.map(r => 
+        r.id === id ? { ...r, estado: 'CONFIRMADA' } : r
+      ))
+      
+      alert('Check-in realizado exitosamente')
     } catch (err) {
       alert('Error al hacer check-in')
     } finally {
@@ -67,13 +105,15 @@ export default function GestionarReservas() {
   const hacerCheckout = async (id: string) => {
     try {
       setProcesando(id)
-      const response = await reservaService.hacerCheckout(id)
-
-      if (response.success) {
-        await cargarReservas()
-      } else {
-        alert(response.message || 'Error al hacer check-out')
-      }
+      
+      // Backend deshabilitado - Simulando check-out
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      setReservas(prev => prev.map(r => 
+        r.id === id ? { ...r, estado: 'CHECKOUT' } : r
+      ))
+      
+      alert('Check-out realizado exitosamente')
     } catch (err) {
       alert('Error al hacer check-out')
     } finally {
@@ -201,10 +241,10 @@ export default function GestionarReservas() {
                           <span className="text-sm text-gray-400">{reserva.id}</span>
                         </div>
                         <p className="text-lg font-semibold text-gray-900">
-                          {reserva.room?.tipo || 'Habitación'} #{reserva.room?.numero || '---'}
+                          Habitación #{reserva.habitacionNumero}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {reserva.user?.nombre || 'Usuario'} • {reserva.huespedes} huésped{reserva.huespedes > 1 ? 'es' : ''}
+                          {reserva.huesped}{reserva.telefono && ` • ${reserva.telefono}`}
                         </p>
                         <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
                           <CalendarDays className="h-4 w-4" />
@@ -258,10 +298,10 @@ export default function GestionarReservas() {
                           <span className="text-sm text-gray-400">{reserva.id}</span>
                         </div>
                         <p className="text-lg font-semibold text-gray-900">
-                          {reserva.room?.tipo || 'Habitación'} #{reserva.room?.numero || '---'}
+                          Habitación #{reserva.habitacionNumero}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {reserva.user?.nombre || 'Usuario'} • {reserva.huespedes} huésped{reserva.huespedes > 1 ? 'es' : ''}
+                          {reserva.huesped}{reserva.telefono && ` • ${reserva.telefono}`}
                         </p>
                         <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
                           <CalendarDays className="h-4 w-4" />

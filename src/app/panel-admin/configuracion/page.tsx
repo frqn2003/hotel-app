@@ -26,7 +26,7 @@ import {
 type UserSession = {
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO" | "ADMIN"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type ConfiguracionSistema = {

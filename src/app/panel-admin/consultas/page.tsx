@@ -24,7 +24,7 @@ import {
 type UserSession = {
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO" | "ADMIN"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type Consulta = {
@@ -74,20 +74,69 @@ export default function ConsultasPage() {
   const fetchConsultas = async () => {
     try {
       setLoading(true)
-      const res = await fetch("/api/contacto")
-      if (!res.ok) throw new Error("Error al cargar consultas")
-      const response = await res.json()
-      setConsultas(response.data || []) // Extraer el array de la respuesta
+      
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const consultasMock: Consulta[] = [
+        {
+          id: 'C-001',
+          nombre: 'Laura Martínez',
+          email: 'laura@example.com',
+          telefono: '+598 99 111 222',
+          asunto: 'Consulta sobre servicios',
+          mensaje: '¿Qué servicios están incluidos en la reserva?',
+          estado: 'PENDIENTE',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: 'C-002',
+          nombre: 'Pedro García',
+          email: 'pedro@example.com',
+          telefono: '+598 99 333 444',
+          asunto: 'Problema con reserva',
+          mensaje: 'No puedo modificar mi reserva desde la página web.',
+          estado: 'EN_PROCESO',
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatedAt: new Date(Date.now() - 43200000).toISOString()
+        },
+        {
+          id: 'C-003',
+          nombre: 'Ana López',
+          email: 'ana@example.com',
+          asunto: 'Información sobre eventos',
+          mensaje: '¿Es posible organizar un evento corporativo?',
+          respuesta: 'Sí, contamos con salas de eventos. Le enviaremos más información por correo.',
+          estado: 'RESPONDIDO',
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
+          updatedAt: new Date(Date.now() - 86400000).toISOString()
+        },
+        {
+          id: 'C-004',
+          nombre: 'Roberto Sánchez',
+          email: 'roberto@example.com',
+          telefono: '+598 99 777 888',
+          asunto: 'Solicitud de factura',
+          mensaje: 'Necesito la factura de mi última estancia.',
+          respuesta: 'Su factura ha sido enviada a su correo electrónico.',
+          estado: 'CERRADO',
+          createdAt: new Date(Date.now() - 259200000).toISOString(),
+          updatedAt: new Date(Date.now() - 172800000).toISOString()
+        }
+      ]
+      
+      setConsultas(consultasMock)
     } catch (err) {
       setError("Error al cargar las consultas")
       console.error(err)
-      setConsultas([]) // Asegurar que siempre sea un array
+      setConsultas([])
     } finally {
       setLoading(false)
     }
   }
 
-  const handleViewDetail = (consulta: Consulta) => {
+  const handleConsultaChange = (consulta: Consulta) => {
     setSelectedConsulta(consulta)
     setShowDetailModal(true)
   }
@@ -107,17 +156,16 @@ export default function ConsultasPage() {
 
     try {
       setSubmitting(true)
-      const res = await fetch(`/api/contacto/${selectedConsulta.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          respuesta: formData.respuesta,
-          estado: "RESPONDIDO"
-        })
-      })
-
-      if (!res.ok) throw new Error("Error al enviar respuesta")
-
+      
+      // Backend deshabilitado - Simulando envío de respuesta
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      setConsultas(prev => prev.map(c => 
+        c.id === selectedConsulta.id
+          ? { ...c, respuesta: formData.respuesta, estado: 'RESPONDIDO' as const, updatedAt: new Date().toISOString() }
+          : c
+      ))
+      
       setSuccess("Respuesta enviada correctamente")
       setFormData({ respuesta: "" })
       setShowResponseModal(false)
@@ -241,7 +289,7 @@ export default function ConsultasPage() {
                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <select
                   value={filterEstado}
-                  onChange={(e) => setFilterEstado(e.target.value as any)}
+                  onChange={(e) => setFilterEstado(e.target.value as "todos" | "PENDIENTE" | "EN_PROCESO" | "RESPONDIDO" | "CERRADO")}
                   className="pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black appearance-none bg-white cursor-pointer"
                 >
                   <option value="todos">Todos los estados</option>
@@ -327,7 +375,7 @@ export default function ConsultasPage() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleViewDetail(consulta)}
+                              onClick={() => handleConsultaChange(consulta)}
                               className="px-3 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
                             >
                               Ver

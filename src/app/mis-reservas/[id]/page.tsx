@@ -1,9 +1,9 @@
 'use client'
 
 import { use, useEffect, useState } from 'react'
+import Link from 'next/link'
 import Navbar from '@/componentes/Navbar'
 import Footer from '@/componentes/Footer'
-import { reservaService } from '@/services/reserva.service'
 import type { Reserva } from '@/types'
 import { 
   CalendarDays, 
@@ -33,14 +33,37 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
   const cargarReserva = async () => {
     try {
       setLoading(true)
-      const response = await reservaService.obtenerReservaPorId(resolvedParams.id)
       
-      if (response.success && response.data) {
-        setReserva(response.data)
-      } else {
-        setError('No se encontró la reserva')
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const reservaMock: Reserva = {
+        id: resolvedParams.id,
+        fechaEntrada: new Date(Date.now() + 86400000 * 2).toISOString(),
+        fechaSalida: new Date(Date.now() + 86400000 * 5).toISOString(),
+        huespedes: 2,
+        estado: 'CONFIRMADA',
+        precioTotal: 240000,
+        pagado: false,
+        notasEspeciales: 'Llegada tarde, después de las 22:00',
+        room: {
+          id: '2',
+          numero: '102',
+          tipo: 'DOBLE',
+          precio: 80000,
+          capacidad: 2,
+          estado: 'RESERVADA',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        } as unknown as Reserva['room'],
+        userId: 'user-001',
+        roomId: '2',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
-    } catch (err) {
+      
+      setReserva(reservaMock)
+    } catch (_err) {
       setError('Error al cargar la reserva')
     } finally {
       setLoading(false)
@@ -54,12 +77,15 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
   const cancelarReserva = async () => {
     try {
       setCancelando(true)
-      const response = await reservaService.cancelarReserva(resolvedParams.id)
       
-      if (response) {
-        await cargarReserva()
-        setMostrarConfirmacion(false)
+      // Backend deshabilitado - Simular cancelación
+      await new Promise(resolve => setTimeout(resolve, 800))
+      
+      // Actualizar estado local
+      if (reserva) {
+        setReserva({ ...reserva, estado: 'CANCELADA' })
       }
+      setMostrarConfirmacion(false)
     } catch (err) {
       setError('Error al cancelar la reserva')
     } finally {
@@ -120,13 +146,13 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
                   <p className="text-sm">{error || 'Reserva no encontrada'}</p>
                 </div>
               </div>
-              <a
+              <Link
                 href="/mis-reservas"
                 className="inline-flex items-center gap-2 mt-4 text-sm font-medium text-black hover:gap-3 transition-all"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Volver a Mis Reservas
-              </a>
+              </Link>
             </div>
           </div>
         </main>
@@ -148,13 +174,13 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
       <main className="bg-[#F3F6FA] min-h-screen py-16">
         <div className="contenedor flex flex-col gap-8">
           {/* Breadcrumb */}
-          <a
+          <Link
             href="/panel-usuario"
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black transition-all hover:gap-3"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver al Panel
-          </a>
+          </Link>
 
           {/* Header con Estado */}
           <section className="bg-white shadow-xl rounded-3xl px-8 py-10">
@@ -330,7 +356,6 @@ export default function DetalleReserva({ params }: { params: Promise<{ id: strin
               {!reserva.pagado && mostrarPago && (
                 <section>
                   <FormularioPago
-                    reservationId={reserva.id}
                     monto={reserva.precioTotal}
                     onSuccess={async () => {
                       setMostrarPago(false)

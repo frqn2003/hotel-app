@@ -2,15 +2,58 @@
 
 'use client'
 
-import { useReservas } from '@/hooks'
+import { useEffect, useState } from 'react'
 import { CalendarDays, Star, CreditCard } from 'lucide-react'
 
 interface ResumenReservasProps {
   userId: string
 }
 
+type Reserva = {
+  id: string
+  estado: string
+  precioTotal: number
+  updatedAt: string
+  room?: {
+    tipo: string
+  }
+}
+
 export default function ResumenReservas({ userId }: ResumenReservasProps) {
-  const { reservas, loading } = useReservas({ userId })
+  const [reservas, setReservas] = useState<Reserva[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const cargarReservas = async () => {
+      setLoading(true)
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 300))
+      
+      const reservasMock: Reserva[] = [
+        {
+          id: 'RSV-001',
+          estado: 'CONFIRMADA',
+          precioTotal: 240000,
+          updatedAt: new Date().toISOString(),
+          room: { tipo: 'DOBLE' }
+        },
+        {
+          id: 'RSV-002',
+          estado: 'CHECKOUT',
+          precioTotal: 150000,
+          updatedAt: new Date(Date.now() - 86400000 * 7).toISOString(),
+          room: { tipo: 'SIMPLE' }
+        }
+      ]
+      
+      setReservas(reservasMock)
+      setLoading(false)
+    }
+    
+    if (userId) {
+      cargarReservas()
+    }
+  }, [userId])
 
   if (loading) {
     return (
@@ -25,10 +68,6 @@ export default function ResumenReservas({ userId }: ResumenReservasProps) {
   const reservasActivas = reservas.filter(r => 
     r.estado === 'CONFIRMADA' || r.estado === 'CHECKIN'
   ).length
-
-  const totalGastado = reservas
-    .filter(r => r.estado === 'CHECKOUT')
-    .reduce((sum, r) => sum + r.precioTotal, 0)
 
   const ultimoPago = reservas
     .filter(r => r.estado === 'CHECKOUT')

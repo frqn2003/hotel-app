@@ -82,34 +82,19 @@ export default function CheckoutPage() {
         }))
     }
 
-const procesarPago = async () => {
-    if (!reserva) return
-    
-    setCargando(true)
-    
-    try {
-        // Enviar datos al backend para procesar el pago y enviar email
-        const response = await fetch('/api/procesar-pago', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                reserva: reserva,
-                datosPago: datosPago,
-                total: total
-            })
-        })
-
-        const resultado = await response.json()
-
-        if (resultado.success) {
-            // Guardar los datos reales de la reserva confirmada
+    const procesarPago = async () => {
+        if (!reserva) return
+        
+        setCargando(true)
+        
+        try {
+            // Backend deshabilitado - Solo demo visual
+            // Simular reserva confirmada
             const reservaConfirmada = {
                 ...reserva,
                 datosPago: datosPago,
                 total: total,
-                numeroConfirmacion: resultado.reservaId || Math.random().toString(36).substr(2, 9).toUpperCase()
+                numeroConfirmacion: Math.random().toString(36).substr(2, 9).toUpperCase()
             }
             
             // Guardar en sessionStorage para la página de confirmación
@@ -120,17 +105,14 @@ const procesarPago = async () => {
             
             // Redirigir a página de confirmación con los datos reales
             router.push('/confirmacion-reserva?exito=true')
-        } else {
-            throw new Error(resultado.error || 'Error al procesar el pago')
+            
+        } catch (error) {
+            console.error('Error al procesar el pago:', error)
+            alert('Error al procesar el pago. Por favor intenta nuevamente.')
+        } finally {
+            setCargando(false)
         }
-        
-    } catch (error) {
-        console.error('Error al procesar el pago:', error)
-        alert('Error al procesar el pago. Por favor intenta nuevamente.')
-    } finally {
-        setCargando(false)
     }
-}
 
     const formatNumeroTarjeta = (numero: string) => {
         return numero.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim()

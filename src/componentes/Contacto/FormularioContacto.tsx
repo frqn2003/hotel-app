@@ -3,10 +3,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useContacto } from '@/hooks'
+// import { useContacto } from '@/hooks' // Hook eliminado - frontend only
 
 export default function FormularioContacto() {
-  const { crearConsulta, loading, error } = useContacto()
+  // const { crearConsulta, loading, error } = useContacto() // Backend deshabilitado
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -15,6 +17,35 @@ export default function FormularioContacto() {
     mensaje: '',
   })
   const [success, setSuccess] = useState(false)
+
+  const crearConsulta = async (data: typeof formData) => {
+    // Simulación de envío de consulta - frontend only
+    setLoading(true)
+    setError(null)
+    
+    try {
+      // Simular delay de envío
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Guardar en localStorage como simulación
+      const consultas = JSON.parse(localStorage.getItem('consultas') || '[]')
+      consultas.push({
+        id: Date.now().toString(),
+        ...data,
+        estado: 'PENDIENTE',
+        createdAt: new Date().toISOString()
+      })
+      localStorage.setItem('consultas', JSON.stringify(consultas))
+      
+      return true
+    } catch (err) {
+      setError('Error al enviar la consulta. Intenta nuevamente.')
+      console.error(err)
+      return false
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

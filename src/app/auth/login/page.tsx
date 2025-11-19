@@ -4,20 +4,119 @@ import Icono from '@/componentes/ui/Icono'
 import Link from 'next/link'
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { User, Shield, Briefcase } from 'lucide-react'
+
+// Usuarios de prueba para testing
+const USUARIOS_PRUEBA = [
+    {
+        id: 'user-001',
+        nombre: 'Usuario Demo',
+        correo: 'usuario@demo.com',
+        password: 'demo123',
+        rol: 'USUARIO' as const,
+        telefono: '+598 99 111 222',
+        icon: User,
+        color: 'bg-blue-500'
+    },
+    {
+        id: 'admin-001',
+        nombre: 'Admin Demo',
+        correo: 'admin@demo.com',
+        password: 'admin123',
+        rol: 'ADMINISTRADOR' as const,
+        telefono: '+598 99 333 444',
+        icon: Shield,
+        color: 'bg-purple-500'
+    },
+    {
+        id: 'op-001',
+        nombre: 'Operador Demo',
+        correo: 'operador@demo.com',
+        password: 'operador123',
+        rol: 'OPERADOR' as const,
+        telefono: '+598 99 555 666',
+        icon: Briefcase,
+        color: 'bg-green-500'
+    }
+]
 
 function LoginContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const redirect = searchParams.get('redirect')
-    
+
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
-    
+
+    const loginConUsuarioPrueba = (usuario: typeof USUARIOS_PRUEBA[0]) => {
+        setLoading(true)
+        setSuccess(`Iniciando sesión como ${usuario.nombre}...`)
+        
+        const sessionData = {
+            id: usuario.id,
+            nombre: usuario.nombre,
+            correo: usuario.correo,
+            rol: usuario.rol,
+            telefono: usuario.telefono
+        }
+        
+        localStorage.clear()
+        
+        localStorage.setItem('userToken', 'demo-token-' + usuario.id)
+        localStorage.setItem('userSession', JSON.stringify(sessionData))
+        
+        setTimeout(() => {
+            if (redirect) {
+                router.push(redirect)
+            } else if (usuario.rol === 'ADMINISTRADOR') {
+                router.push('/panel-admin')
+            } else if (usuario.rol === 'OPERADOR') {
+                router.push('/panel-operador')
+            } else {
+                router.push('/')
+            }
+        }, 1000)
+    }
+
     return (
-        <section className="flex flex-col items-center justify-center h-screen space-y-6 bg-blue-100/20">
+        <section className="flex flex-col items-center justify-center min-h-screen py-8 space-y-6 bg-blue-100/20">
             <Icono />
             <h1 className='text-3xl font-bold'>Inicia Sesión</h1>
+            
+            {/* Usuarios de prueba */}
+            <div className='w-full max-w-lg bg-white p-6 rounded-lg shadow-md'>
+                <h2 className='text-lg font-semibold text-gray-900 mb-3'>👤 Usuarios de Prueba (Demo)</h2>
+                <p className='text-sm text-gray-600 mb-4'>Haz clic en cualquier usuario para iniciar sesión automáticamente:</p>
+                <div className='space-y-3'>
+                    {USUARIOS_PRUEBA.map((usuario) => {
+                        const IconComponent = usuario.icon
+                        return (
+                            <button
+                                key={usuario.id}
+                                onClick={() => loginConUsuarioPrueba(usuario)}
+                                disabled={loading}
+                                className='w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left group'
+                            >
+                                <div className={`${usuario.color} text-white p-3 rounded-full group-hover:scale-110 transition-transform`}>
+                                    <IconComponent className='h-6 w-6' />
+                                </div>
+                                <div className='flex-1'>
+                                    <p className='font-semibold text-gray-900'>{usuario.nombre}</p>
+                                    <p className='text-sm text-gray-600'>{usuario.correo}</p>
+                                    <p className='text-xs text-gray-500 mt-1'>Rol: {usuario.rol}</p>
+                                </div>
+                                <div className='text-sm text-gray-400'>
+                                    Clic para entrar →
+                                </div>
+                            </button>
+                        )
+                    })}
+                </div>
+            </div>
+
+            <div className='text-sm text-gray-500'>- O -</div>
+
             <form className='flex flex-col gap-4 w-full max-w-lg bg-white p-10 rounded-lg shadow-md font-sans'>
                 <label htmlFor="correo">Email</label>
                 <input type="email" id="correo" className='border border-gray-200 rounded-lg p-2 w-full' name="correo" required />
@@ -59,39 +158,30 @@ function LoginContent() {
                         recordar: formData.get('recordar') === 'on',
                     }
                     try {
-                        const response = await fetch('/api/login', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(data),
-                        });
-                        const result = await response.json()
-                        if (response.ok) {
-                            setSuccess(result.mensaje + ' redirigiendo...')
-                            form.reset();
+                        // Backend deshabilitado - Solo UI visual
+                        setSuccess('Redirigiendote...')
+                        form.reset();
 
-                            // Guardar sesión en localStorage
-                            localStorage.setItem('userToken', result.token)
-                            localStorage.setItem('userSession', JSON.stringify(result.usuario))
-                            
-                            setTimeout(() => {
-                                // Si hay redirect, ir ahí
-                                if (redirect) {
-                                    router.push(redirect)
-                                } 
-                                // Si es operador, ir al panel
-                                else if (result.usuario.rol === 'OPERADOR') {
-                                    router.push('/panel-operador')
-                                } 
-                                // Usuario normal, ir a inicio
-                                else {
-                                    router.push('/')
-                                }
-                            }, 1000)
-                        } else {
-                            setError(result.mensaje || result.error || 'Error al iniciar sesión');
+                        // Limpiar localStorage y guardar sesión de usuario genérico
+                        localStorage.clear()
+                        const genericUserSession = {
+                            id: 'generic-user',
+                            nombre: 'Usuario',
+                            correo: data.correo as string,
+                            rol: 'USUARIO',
+                            telefono: ''
                         }
+                        localStorage.setItem('userToken', 'token-generic')
+                        localStorage.setItem('userSession', JSON.stringify(genericUserSession))
+
+                        setTimeout(() => {
+                            if (redirect) {
+                                router.push(redirect)
+                            }
+                            else {
+                                router.push('/')
+                            }
+                        }, 1000)
                     } catch (err) {
                         setError('Error de conexión. Por favor intenta de nuevo.')
                     } finally {

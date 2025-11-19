@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Navbar from '@/componentes/Navbar'
 import Footer from '@/componentes/Footer'
-import { useReservas } from '@/hooks/useReservas'
 import { CalendarDays, Clock, MapPin, ArrowRightCircle, AlertCircle, RefreshCw } from 'lucide-react'
 
 type UserSession = {
@@ -13,9 +12,25 @@ type UserSession = {
   rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
+type Reserva = {
+  id: string
+  fechaEntrada: string
+  fechaSalida: string
+  huespedes: number
+  estado: string
+  precioTotal: number
+  room?: {
+    tipo: string
+    numero: string
+  }
+}
+
 export default function MisReservas() {
   const [userSession, setUserSession] = useState<UserSession | null>(null)
   const [isLoadingSession, setIsLoadingSession] = useState(true)
+  const [reservas, setReservas] = useState<Reserva[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const session = localStorage.getItem("userSession")
@@ -25,23 +40,54 @@ export default function MisReservas() {
     setIsLoadingSession(false)
   }, [])
 
-  const userId = userSession?.id ?? ''
-  // Solo cargar reservas si ya se cargó la sesión y hay userId
-  const { reservas, loading, error, cargarReservas } = useReservas(
-    !isLoadingSession && userId ? { userId } : undefined
-  )
-
-  // Recargar cuando vuelve a la página
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && userId) {
-        cargarReservas()
-      }
+  const cargarReservas = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 600))
+      
+      const reservasMock: Reserva[] = [
+        {
+          id: 'RES-001',
+          fechaEntrada: new Date(Date.now() + 86400000 * 3).toISOString(),
+          fechaSalida: new Date(Date.now() + 86400000 * 6).toISOString(),
+          huespedes: 2,
+          estado: 'CONFIRMADA',
+          precioTotal: 240000,
+          room: {
+            tipo: 'DOBLE',
+            numero: '102'
+          }
+        },
+        {
+          id: 'RES-002',
+          fechaEntrada: new Date(Date.now() - 86400000 * 30).toISOString(),
+          fechaSalida: new Date(Date.now() - 86400000 * 27).toISOString(),
+          huespedes: 1,
+          estado: 'CHECKOUT',
+          precioTotal: 150000,
+          room: {
+            tipo: 'SIMPLE',
+            numero: '101'
+          }
+        }
+      ]
+      
+      setReservas(reservasMock)
+    } catch (err) {
+      setError('Error al cargar reservas')
+    } finally {
+      setLoading(false)
     }
+  }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [cargarReservas, userId])
+  useEffect(() => {
+    if (!isLoadingSession) {
+      cargarReservas()
+    }
+  }, [isLoadingSession])
 
   const getEstadoColor = (estado: string) => {
     const colores: Record<string, string> = {

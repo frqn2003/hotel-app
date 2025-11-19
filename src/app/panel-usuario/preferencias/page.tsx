@@ -152,7 +152,7 @@ export default function GestionarPreferencias() {
     }
   }, [])
 
-  const handlePreferenciaChange = (categoria: keyof PreferenciasUsuario, campo: string, valor: any) => {
+  const handlePreferenciaChange = (categoria: keyof PreferenciasUsuario, campo: string, valor: string | boolean | number) => {
     setPreferencias(prev => ({
       ...prev,
       [categoria]: {

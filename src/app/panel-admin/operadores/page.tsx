@@ -23,7 +23,7 @@ import {
 type UserSession = {
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO" | "ADMIN"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type Operador = {
@@ -78,10 +78,44 @@ export default function OperadoresPage() {
   const fetchOperadores = async () => {
     try {
       setLoading(true)
-      const res = await fetch("/api/operadores")
-      if (!res.ok) throw new Error("Error al cargar operadores")
-      const data = await res.json()
-      setOperadores(data)
+      
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const operadoresMock: Operador[] = [
+        {
+          id: 'OP-001',
+          nombre: 'Juan Pérez',
+          email: 'juan.perez@hotel.com',
+          telefono: '+598 99 111 222',
+          rol: 'OPERADOR',
+          estado: 'activo',
+          createdAt: new Date().toISOString(),
+          consultasRespondidas: 45
+        },
+        {
+          id: 'OP-002',
+          nombre: 'María López',
+          email: 'maria.lopez@hotel.com',
+          telefono: '+598 99 333 444',
+          rol: 'OPERADOR',
+          estado: 'activo',
+          createdAt: new Date(Date.now() - 86400000 * 30).toISOString(),
+          consultasRespondidas: 67
+        },
+        {
+          id: 'OP-003',
+          nombre: 'Carlos Gómez',
+          email: 'carlos.gomez@hotel.com',
+          telefono: '+598 99 555 666',
+          rol: 'OPERADOR',
+          estado: 'inactivo',
+          createdAt: new Date(Date.now() - 86400000 * 60).toISOString(),
+          consultasRespondidas: 23
+        }
+      ]
+      
+      setOperadores(operadoresMock)
     } catch (err) {
       setError("Error al cargar los operadores")
       console.error(err)
@@ -107,25 +141,36 @@ export default function OperadoresPage() {
 
     try {
       setSubmitting(true)
-      const method = editingId ? "PUT" : "POST"
-      const url = editingId ? `/api/operadores/${editingId}` : "/api/operadores"
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      })
-
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.error || "Error al guardar operador")
+      
+      // Backend deshabilitado - Simulando guardado
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      if (editingId) {
+        // Actualizar operador existente
+        setOperadores(prev => prev.map(op => 
+          op.id === editingId 
+            ? { ...op, ...formData, estado: op.estado, createdAt: op.createdAt }
+            : op
+        ))
+      } else {
+        // Crear nuevo operador
+        const nuevoOperador: Operador = {
+          id: `OP-${String(Date.now()).slice(-3)}`,
+          nombre: formData.nombre,
+          email: formData.email,
+          telefono: formData.telefono,
+          rol: 'OPERADOR',
+          estado: 'activo',
+          createdAt: new Date().toISOString(),
+          consultasRespondidas: 0
+        }
+        setOperadores(prev => [...prev, nuevoOperador])
       }
-
+      
       setSuccess(editingId ? "Operador actualizado correctamente" : "Operador creado correctamente")
       setFormData({ nombre: "", email: "", telefono: "", password: "" })
       setEditingId(null)
       setShowModal(false)
-      fetchOperadores()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al guardar operador")
     } finally {
@@ -133,7 +178,7 @@ export default function OperadoresPage() {
     }
   }
 
-  const handleEdit = (operador: Operador) => {
+  const handleOperadorChange = (operador: Operador) => {
     setFormData({
       nombre: operador.nombre,
       email: operador.email,
@@ -148,10 +193,11 @@ export default function OperadoresPage() {
     if (!confirm("¿Estás seguro de que deseas eliminar este operador?")) return
 
     try {
-      const res = await fetch(`/api/operadores/${id}`, { method: "DELETE" })
-      if (!res.ok) throw new Error("Error al eliminar operador")
+      // Backend deshabilitado - Simulando eliminación
+      await new Promise(resolve => setTimeout(resolve, 300))
+      
+      setOperadores(prev => prev.filter(op => op.id !== id))
       setSuccess("Operador eliminado correctamente")
-      fetchOperadores()
     } catch (err) {
       setError("Error al eliminar operador")
       console.error(err)
@@ -216,7 +262,7 @@ export default function OperadoresPage() {
                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <select
                   value={filterEstado}
-                  onChange={(e) => setFilterEstado(e.target.value as any)}
+                  onChange={(e) => setFilterEstado(e.target.value as "todos" | "activo" | "inactivo")}
                   className="pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black appearance-none bg-white cursor-pointer"
                 >
                   <option value="todos">Todos los estados</option>
@@ -305,7 +351,7 @@ export default function OperadoresPage() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleEdit(operador)}
+                              onClick={() => handleOperadorChange(operador)}
                               className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
                               title="Editar"
                             >

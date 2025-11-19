@@ -80,19 +80,68 @@ export default function DetalleHabitacion() {
 
     const cargarHabitacion = async (id: string) => {
         try {
-            const response = await fetch(`/api/habitaciones/${id}`)
-            const data = await response.json()
+            // Backend deshabilitado - Usando datos mock
+            const habitacionesMock = [
+                {
+                    id: '1',
+                    numero: 101,
+                    tipo: 'SIMPLE',
+                    precio: 50000,
+                    capacidad: 1,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Habitación simple perfecta para viajeros solitarios. Cuenta con una cama queen size cómoda, escritorio de trabajo y baño privado con ducha.',
+                    imagen: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop',
+                    imagenes: [
+                        'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800',
+                        'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800'
+                    ],
+                    comodidades: ['WiFi', 'TV', 'Aire Acondicionado', 'Escritorio', 'Caja de Seguridad']
+                },
+                {
+                    id: '2',
+                    numero: 102,
+                    tipo: 'DOBLE',
+                    precio: 80000,
+                    capacidad: 2,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Habitación doble espaciosa ideal para parejas o amigos. Dispone de dos camas full size o una king size, área de estar y baño completo.',
+                    imagen: 'https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?w=3000',
+                    imagenes: [
+                        'https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?w=3000',
+                        'https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800',
+                        'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800'
+                    ],
+                    comodidades: ['WiFi', 'TV', 'Minibar', 'Cafetera', 'Balcón']
+                },
+                {
+                    id: '3',
+                    numero: 201,
+                    tipo: 'SUITE',
+                    precio: 150000,
+                    capacidad: 4,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Suite de lujo con vista panorámica al mar. Incluye sala de estar separada, cama king size, jacuzzi privado y todas las comodidades premium.',
+                    imagen: 'https://images.unsplash.com/photo-1631049552057-403cdb8f0658?w=3000',
+                    imagenes: [
+                        'https://images.unsplash.com/photo-1631049552057-403cdb8f0658?w=3000',
+                        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800',
+                        'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800'
+                    ],
+                    comodidades: ['WiFi', 'TV Smart 4K', 'Jacuzzi', 'Vista al mar', 'Minibar Premium', 'Room Service 24h']
+                }
+            ]
             
-            if (data.success) {
-                const habitacionData = data.data
-                // Enriquecer datos con características adicionales basadas en el tipo
-                const caracteristicas = caracteristicasAdicionales[habitacionData.tipo as keyof typeof caracteristicasAdicionales] || {}
+            const habitacionEncontrada = habitacionesMock.find(h => h.id === id)
+            
+            if (habitacionEncontrada) {
+                const caracteristicas = caracteristicasAdicionales[habitacionEncontrada.tipo as keyof typeof caracteristicasAdicionales] || {}
                 
                 setHabitacion({
-                    ...habitacionData,
+                    ...habitacionEncontrada,
                     ...caracteristicas
                 })
-                setImagenPrincipal(habitacionData.imagen || '/images/room-default.jpg')
+                setImagenPrincipal(habitacionEncontrada.imagen || '/images/room-default.jpg')
             } else {
                 setError('Habitación no encontrada')
             }

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import Navbar from "@/componentes/Navbar"
 import Footer from "@/componentes/Footer"
@@ -85,15 +86,73 @@ export default function HabitacionesAdmin() {
       setLoading(true)
       setError("")
       
-      const params = new URLSearchParams()
-      if (filtros.estado) params.append('estado', filtros.estado)
-      if (filtros.tipo) params.append('tipo', filtros.tipo)
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
       
-      const response = await fetch(`/api/habitaciones?${params.toString()}`)
-      if (!response.ok) throw new Error("Error al cargar habitaciones")
+      let habitacionesMock: Habitacion[] = [
+        {
+          id: '1',
+          numero: 101,
+          tipo: 'SIMPLE',
+          precio: 50000,
+          capacidad: 1,
+          estado: 'DISPONIBLE',
+          descripcion: 'Habitación simple con vista a la ciudad',
+          comodidades: ['WiFi', 'TV', 'Aire Acondicionado'],
+          imagen: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          numero: 102,
+          tipo: 'DOBLE',
+          precio: 80000,
+          capacidad: 2,
+          estado: 'OCUPADA',
+          descripcion: 'Habitación doble con dos camas',
+          comodidades: ['WiFi', 'TV', 'Minibar'],
+          imagen: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '3',
+          numero: 201,
+          tipo: 'SUITE',
+          precio: 150000,
+          capacidad: 4,
+          estado: 'DISPONIBLE',
+          descripcion: 'Suite de lujo con vista al mar',
+          comodidades: ['WiFi', 'TV', 'Jacuzzi', 'Vista al mar'],
+          imagen: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '4',
+          numero: 202,
+          tipo: 'SUITE',
+          precio: 150000,
+          capacidad: 4,
+          estado: 'MANTENIMIENTO',
+          descripcion: 'Suite presidencial en mantenimiento',
+          comodidades: ['WiFi', 'TV', 'Jacuzzi', 'Balcón'],
+          imagen: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ]
       
-      const data = await response.json()
-      setHabitaciones(data.data || [])
+      // Aplicar filtros
+      if (filtros.estado) {
+        habitacionesMock = habitacionesMock.filter(h => h.estado === filtros.estado)
+      }
+      if (filtros.tipo) {
+        habitacionesMock = habitacionesMock.filter(h => h.tipo === filtros.tipo)
+      }
+      
+      setHabitaciones(habitacionesMock)
     } catch (err) {
       setError("Error al cargar las habitaciones")
       console.error(err)
@@ -175,24 +234,24 @@ export default function HabitacionesAdmin() {
         <div className="contenedor">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <a
+            <Link
               href="/panel-admin"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               Volver al panel
-            </a>
+            </Link>
             <div className="flex-1">
               <h1 className="text-3xl font-semibold text-gray-900">Gestión de Habitaciones</h1>
               <p className="text-gray-600">Administra el estado y disponibilidad de las habitaciones</p>
             </div>
-            <a
+            <Link
               href="/panel-admin/habitaciones/crear"
               className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
             >
               <Bed className="h-5 w-5" />
               Nueva Habitación
-            </a>
+            </Link>
           </div>
 
           {/* Filtros */}
@@ -382,20 +441,20 @@ export default function HabitacionesAdmin() {
                         </div>
 
                         <div className="flex gap-2">
-                          <a
+                          <Link
                             href={`/panel-admin/habitaciones/${habitacion.id}`}
                             className="flex-1 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors text-center"
                           >
                             <Eye className="h-4 w-4 inline mr-1" />
                             Ver detalles
-                          </a>
-                          <a
+                          </Link>
+                          <Link
                             href={`/panel-admin/habitaciones/${habitacion.id}/editar`}
                             className="flex-1 bg-gray-50 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors text-center"
                           >
                             <Edit className="h-4 w-4 inline mr-1" />
                             Editar
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     ))}
@@ -439,18 +498,18 @@ export default function HabitacionesAdmin() {
                             </td>
                             <td className="py-3 px-4">
                               <div className="flex gap-2">
-                                <a
+                                <Link
                                   href={`/panel-admin/habitaciones/${habitacion.id}`}
                                   className="text-blue-600 hover:text-blue-700 text-sm"
                                 >
                                   <Eye className="h-4 w-4" />
-                                </a>
-                                <a
+                                </Link>
+                                <Link
                                   href={`/panel-admin/habitaciones/${habitacion.id}/editar`}
                                   className="text-gray-600 hover:text-gray-700 text-sm"
                                 >
                                   <Edit className="h-4 w-4" />
-                                </a>
+                                </Link>
                               </div>
                             </td>
                           </tr>

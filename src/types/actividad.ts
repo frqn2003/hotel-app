@@ -15,7 +15,7 @@ export interface Actividad {
   id: string
   tipo: TipoActividad
   descripcion: string
-  metadata: Record<string, any> | null
+  metadata: Record<string, unknown> | null
   createdAt: string
   userId: string | null
   operadorId: string | null
@@ -47,19 +47,19 @@ export interface CrearActividadDto {
   operadorId?: string
   reservationId?: string
   roomId?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface CheckinDto {
   reservationId: string
   operadorId: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface CheckoutDto {
   reservationId: string
   operadorId: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface FiltrosActividad {

@@ -6,42 +6,30 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint",
-    "migrate-data": "tsx scripts/migrar-datos.ts",
-    "seed:rooms": "tsx scripts/seed-rooms.ts",
-    "create-test-user": "tsx scripts/create-test-user.ts"
+    "lint": "eslint"
   },
   "dependencies": {
-    "@prisma/client": "^6.17.1",
-    "bcrypt": "^6.0.0",
-    "bcryptjs": "^3.0.2",
     "date-fns": "^4.1.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.544.0",
     "next": "15.5.4",
-    "next-auth": "^4.24.11",
-    "nodemailer": "^6.10.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
-    "recharts": "^3.3.0",
-    "stripe": "^18.5.0"
+    "recharts": "^3.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/leaflet": "^1.9.14",
     "@types/node": "^20",
-    "@types/nodemailer": "^6.4.21",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
-    "prisma": "^6.1.0",
     "tailwindcss": "^4",
-    "tsx": "^4.7.0",
     "typescript": "^5"
   }
 }

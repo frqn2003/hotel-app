@@ -49,6 +49,53 @@ export default function Habitaciones() {
     const cargarHabitaciones = async () => {
         try {
             setLoading(true)
+            // Backend deshabilitado - Usando datos mock para demo visual
+            const datosMock: Habitacion[] = [
+                {
+                    id: '1',
+                    numero: 101,
+                    tipo: 'SIMPLE',
+                    precio: 50000,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Habitación simple con vista a la ciudad',
+                    capacidad: 1,
+                    imagen: '/habitaciones/habitacion-1.jpg',
+                    comodidades: ['WiFi', 'TV', 'Aire Acondicionado'],
+                    lat: -34.9011,
+                    lng: -56.1645
+                },
+                {
+                    id: '2',
+                    numero: 102,
+                    tipo: 'DOBLE',
+                    precio: 80000,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Habitación doble con dos camas',
+                    capacidad: 2,
+                    imagen: '/habitaciones/habitacion-2.jpg',
+                    comodidades: ['WiFi', 'TV', 'Minibar'],
+                    lat: -34.9012,
+                    lng: -56.1646
+                },
+                {
+                    id: '3',
+                    numero: 201,
+                    tipo: 'SUITE',
+                    precio: 150000,
+                    estado: 'DISPONIBLE',
+                    descripcion: 'Suite de lujo con vista al mar',
+                    capacidad: 4,
+                    imagen: '/habitaciones/habitacion-3.jpg',
+                    comodidades: ['WiFi', 'TV', 'Jacuzzi', 'Vista al mar'],
+                    lat: -34.9013,
+                    lng: -56.1647
+                }
+            ]
+            
+            setHabitaciones(datosMock)
+            setHabitacionesFiltradas(datosMock)
+            
+            /* Código original comentado
             const response = await fetch('/api/habitaciones')
             const data = await response.json()
             
@@ -56,6 +103,7 @@ export default function Habitaciones() {
                 setHabitaciones(data.data)
                 setHabitacionesFiltradas(data.data)
             }
+            */
         } catch (error) {
             console.error('Error al cargar habitaciones:', error)
         } finally {
@@ -253,16 +301,14 @@ export default function Habitaciones() {
                             {vistaActual === 'lista' ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {habitacionesFiltradas.map(habitacion => (
-                                        <div key={habitacion.id} id={`habitacion-${habitacion.id}`}>
-
-                                    <HabitacionCard
-                                        habitacion={habitacion}
-                                        onReservar={(habitacionId) => router.push(`/personalizar-reserva?habitacionId=${habitacionId}`)}
-                                        isSelected={habitacionSeleccionada === habitacion.id}
-                                    />
+                                        <div key={habitacion.id} id={`habitacion-${habitacion.numero}`}>
+                                            <HabitacionCard
+                                                habitacion={habitacion}
+                                                onReservar={(habitacionId) => router.push(`/personalizar-reserva?habitacionId=${habitacionId}`)}
+                                                isSelected={habitacionSeleccionada === habitacion.numero}
+                                            />
                                         </div>
                                     ))}
-                                    
                                 </div>
                             ) : (
                                 <div className="h-[600px] rounded-lg overflow-hidden shadow-lg">
@@ -293,7 +339,6 @@ export default function Habitaciones() {
                                     </button>
                                 </div>
                             )}
-                            
                         </>
                     )}
                 </section>

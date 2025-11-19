@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Navbar from "@/componentes/Navbar"
@@ -116,46 +117,45 @@ export default function EditarHabitacion() {
   const fetchHabitacion = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/habitaciones/${id}`)
-      if (!response.ok) {
-        if (response.status === 404) {
-          setError("Habitación no encontrada")
-        } else {
-          throw new Error("Error al cargar habitación")
-        }
-        return
+      
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 400))
+      
+      const habitacionMock = {
+        id,
+        numero: 102,
+        tipo: 'DOBLE' as const,
+        precio: 80000,
+        capacidad: 2,
+        estado: 'DISPONIBLE' as Habitacion["estado"],
+        descripcion: 'Habitación doble con cama matrimonial',
+        comodidades: ['WiFi', 'TV', 'Aire Acondicionado', 'Minibar'],
+        imagen: '',
+        lat: 0,
+        lng: 0
       }
-
-      const data = await response.json()
-      if (data.success) {
-        const habitacionData = data.data
-        setHabitacion(habitacionData)
-        setFormData({
-          numero: habitacionData.numero,
-          tipo: habitacionData.tipo,
-          precio: habitacionData.precio,
-          capacidad: habitacionData.capacidad,
-          estado: habitacionData.estado,
-          descripcion: habitacionData.descripcion || "",
-          comodidades: Array.isArray(habitacionData.comodidades) 
-            ? habitacionData.comodidades 
-            : (habitacionData.comodidades || "").split(" ").filter(Boolean),
-          imagen: habitacionData.imagen || "",
-          lat: habitacionData.lat || 0,
-          lng: habitacionData.lng || 0
-        })
-      } else {
-        setError(data.error || "Error al cargar habitación")
-      }
+      
+      setFormData({
+        numero: habitacionMock.numero,
+        tipo: habitacionMock.tipo,
+        precio: habitacionMock.precio,
+        capacidad: habitacionMock.capacidad,
+        estado: habitacionMock.estado,
+        descripcion: habitacionMock.descripcion || "",
+        comodidades: habitacionMock.comodidades,
+        imagen: habitacionMock.imagen,
+        lat: habitacionMock.lat,
+        lng: habitacionMock.lng
+      })
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al cargar habitación")
       console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -184,26 +184,16 @@ export default function EditarHabitacion() {
       setError("")
       setSuccess("")
 
-      const response = await fetch(`/api/habitaciones/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      })
-
-      const data = await response.json()
+      // Backend deshabilitado - Simular actualización
+      await new Promise(resolve => setTimeout(resolve, 800))
       
-      if (data.success) {
-        setSuccess("Habitación actualizada exitosamente")
-        setTimeout(() => {
-          router.push("/panel-admin/habitaciones")
-        }, 2000)
-      } else {
-        setError(data.error || "Error al actualizar habitación")
-      }
+      setSuccess(`Habitación #${formData.numero} actualizada exitosamente`)
+      
+      setTimeout(() => {
+        router.push("/panel-admin/habitaciones")
+      }, 1500)
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al actualizar habitación")
       console.error(err)
     } finally {
       setSaving(false)
@@ -250,13 +240,13 @@ export default function EditarHabitacion() {
         <div className="contenedor">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <a
+            <Link
               href="/panel-admin/habitaciones"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               Volver a habitaciones
-            </a>
+            </Link>
             <div className="flex-1">
               <h1 className="text-3xl font-semibold text-gray-900">
                 Editar Habitación #{formData.numero}
@@ -494,12 +484,12 @@ export default function EditarHabitacion() {
 
             {/* Botones de acción */}
             <div className="flex items-center gap-4">
-              <a
+              <Link
                 href="/panel-admin/habitaciones"
                 className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
               >
                 Cancelar
-              </a>
+              </Link>
               <button
                 type="submit"
                 disabled={saving}

@@ -28,7 +28,7 @@ import {
 type UserSession = {
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO" | "ADMIN"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type Reserva = {
@@ -175,7 +175,7 @@ export default function PanelOperador() {
     if (session) {
       const userData = JSON.parse(session)
       // Verificar que el usuario sea operador o admin
-      if (userData.rol !== "OPERADOR" && userData.rol !== "ADMIN") {
+      if (userData.rol !== "OPERADOR" && userData.rol !== "ADMINISTRADOR") {
         window.location.href = "/panel-usuario"
         return
       }

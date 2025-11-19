@@ -2,19 +2,81 @@
 
 'use client'
 
-import { useEffect } from 'react'
-import { useReservas } from '@/hooks'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { CalendarDays, Clock, ArrowRightCircle, MapPin } from 'lucide-react'
 
 interface MisReservasProps {
   userId: string
 }
 
+type Reserva = {
+  id: string
+  fechaEntrada: string
+  fechaSalida: string
+  estado: string
+  huespedes: number
+  precioTotal: number
+  room?: {
+    tipo: string
+    numero: number
+  }
+}
+
 export default function MisReservas({ userId }: MisReservasProps) {
-  // Solo cargar reservas si hay userId válido
-  const { reservas, loading, error, cargarReservas } = useReservas(
-    userId ? { userId } : undefined
-  )
+  const [reservas, setReservas] = useState<Reserva[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const cargarReservas = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const reservasMock: Reserva[] = [
+        {
+          id: 'RSV-001',
+          fechaEntrada: new Date(Date.now() + 86400000 * 2).toISOString(),
+          fechaSalida: new Date(Date.now() + 86400000 * 5).toISOString(),
+          estado: 'CONFIRMADA',
+          huespedes: 2,
+          precioTotal: 240000,
+          room: {
+            tipo: 'DOBLE',
+            numero: 102
+          }
+        },
+        {
+          id: 'RSV-002',
+          fechaEntrada: new Date(Date.now() - 86400000 * 10).toISOString(),
+          fechaSalida: new Date(Date.now() - 86400000 * 7).toISOString(),
+          estado: 'CHECKOUT',
+          huespedes: 1,
+          precioTotal: 150000,
+          room: {
+            tipo: 'SIMPLE',
+            numero: 101
+          }
+        }
+      ]
+      
+      setReservas(reservasMock)
+    } catch (err) {
+      setError('Error al cargar las reservas')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (userId) {
+      cargarReservas()
+    }
+  }, [userId])
 
   // Recargar reservas cuando el usuario vuelve a la pestaña
   useEffect(() => {
@@ -37,7 +99,7 @@ export default function MisReservas({ userId }: MisReservasProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('focus', handleFocus)
     }
-  }, [cargarReservas, userId])
+  }, [userId])
 
   if (!userId) {
     return (
@@ -107,26 +169,26 @@ export default function MisReservas({ userId }: MisReservasProps) {
             {reservasActivas.length} reserva{reservasActivas.length !== 1 ? 's' : ''} activa{reservasActivas.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <a
+        <Link
           href="/mis-reservas"
           className="text-sm font-medium text-black inline-flex items-center gap-2 hover:gap-3 transition-all"
         >
           Ver historial completo
           <ArrowRightCircle className="h-4 w-4" />
-        </a>
+        </Link>
       </div>
 
       {reservas.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-xl">
           <CalendarDays className="h-12 w-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-600">No tienes reservas</p>
-          <a
+          <Link
             href="/habitaciones"
             className="inline-flex items-center gap-2 mt-4 bg-black text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-black/90 transition-colors"
           >
             Explorar habitaciones
             <ArrowRightCircle className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="flex flex-col divide-y divide-gray-100">

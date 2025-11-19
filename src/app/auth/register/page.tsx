@@ -58,25 +58,13 @@ export default function Register() {
                     const body = Object.fromEntries(formData.entries());
                     
                     try {
-                        const response = await fetch('/api/register', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(body),
-                        });
+                        // Backend deshabilitado - Solo UI visual
+                        setSuccess('¡Registro simulado! Redirigiendo al login...');
+                        form.reset();
                         
-                        const result = await response.json();
-                        
-                        if (response.ok && result.success) {
-                            setSuccess(result.mensaje + ' Redirigiendo al login...');
-                            form.reset();
-                            setTimeout(() => {
-                                window.location.href = '/auth/login';
-                            }, 2000);
-                        } else {
-                            setError(result.mensaje || result.error || 'Error al registrar');
-                        }
+                        setTimeout(() => {
+                            window.location.href = '/auth/login';
+                        }, 1500);
                     } catch (err) {
                         setError('Error de conexión. Por favor intenta de nuevo.');
                     } finally {

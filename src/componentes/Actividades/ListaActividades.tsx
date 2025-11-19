@@ -2,15 +2,56 @@
 
 'use client'
 
-import { useActividades } from '@/hooks'
+import { useState, useEffect } from 'react'
+// import { useActividades } from '@/hooks' // Hook eliminado - frontend only
 import type { TipoActividad, FiltrosActividad } from '@/types'
+
+interface Actividad {
+  id: string
+  tipo: TipoActividad
+  descripcion: string
+  createdAt: string
+  user?: { nombre: string }
+  operador?: { nombre: string }
+  room?: { numero: number }
+  reservation?: { fechaEntrada: string }
+  metadata?: Record<string, unknown>
+}
 
 interface ListaActividadesProps {
   filtros?: FiltrosActividad
 }
 
 export default function ListaActividades({ filtros }: ListaActividadesProps) {
-  const { actividades, loading, error } = useActividades(filtros)
+  const [actividades, setActividades] = useState<Actividad[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    // Simulación de carga de actividades - frontend only
+    const timer = setTimeout(() => {
+      setActividades([
+        {
+          id: '1',
+          tipo: 'RESERVA_CREADA',
+          descripcion: 'Nueva reserva creada',
+          createdAt: new Date().toISOString(),
+          user: { nombre: 'Juan Pérez' },
+          room: { numero: 101 }
+        },
+        {
+          id: '2',
+          tipo: 'PAGO_PROCESADO',
+          descripcion: 'Pago procesado exitosamente',
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          user: { nombre: 'María García' }
+        }
+      ])
+      setLoading(false)
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [filtros])
 
   const getIconoActividad = (tipo: TipoActividad) => {
     switch (tipo) {

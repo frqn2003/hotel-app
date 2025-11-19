@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Navbar from "@/componentes/Navbar"
@@ -78,24 +79,48 @@ export default function DetalleHabitacion() {
   const fetchHabitacion = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/habitaciones/${id}`)
-      if (!response.ok) {
-        if (response.status === 404) {
-          setError("Habitación no encontrada")
-        } else {
-          throw new Error("Error al cargar habitación")
+      
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 400))
+      
+      const habitacionesMock: Habitacion[] = [
+        {
+          id: '1',
+          numero: 101,
+          tipo: 'SIMPLE',
+          precio: 50000,
+          descripcion: 'Habitación simple con cama individual',
+          capacidad: 1,
+          estado: 'DISPONIBLE',
+          comodidades: ['WiFi', 'TV', 'Aire Acondicionado'],
+          imagen: '/placeholder-room.jpg',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          numero: 102,
+          tipo: 'DOBLE',
+          precio: 80000,
+          descripcion: 'Habitación doble con cama matrimonial',
+          capacidad: 2,
+          estado: 'OCUPADA',
+          comodidades: ['WiFi', 'TV', 'Aire Acondicionado', 'Minibar'],
+          imagen: '/placeholder-room.jpg',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         }
-        return
-      }
-
-      const data = await response.json()
-      if (data.success) {
-        setHabitacion(data.data)
+      ]
+      
+      const habitacionEncontrada = habitacionesMock.find(h => h.id === id)
+      
+      if (habitacionEncontrada) {
+        setHabitacion(habitacionEncontrada)
       } else {
-        setError(data.error || "Error al cargar habitación")
+        setError("Habitación no encontrada")
       }
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al cargar habitación")
       console.error(err)
     } finally {
       setLoading(false)
@@ -199,13 +224,13 @@ export default function DetalleHabitacion() {
         <div className="contenedor">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <a
+            <Link
               href="/panel-admin/habitaciones"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               Volver a habitaciones
-            </a>
+            </Link>
             <div className="flex-1">
               <h1 className="text-3xl font-semibold text-gray-900">
                 Habitación #{habitacion?.numero}
@@ -213,13 +238,13 @@ export default function DetalleHabitacion() {
               <p className="text-gray-600">Detalles completos de la habitación</p>
             </div>
             {userSession?.rol === "ADMINISTRADOR" && (
-              <a
+              <Link
                 href={`/panel-admin/habitaciones/${id}/editar`}
                 className="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-600 transition-colors"
               >
                 <Edit className="h-5 w-5" />
                 Editar
-              </a>
+              </Link>
             )}
           </div>
 

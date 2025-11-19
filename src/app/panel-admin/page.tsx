@@ -21,7 +21,7 @@ import {
 type UserSession = {
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO" | "ADMIN"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type Reserva = {
@@ -178,6 +178,7 @@ export default function PanelAdministrador() {
     const session = localStorage.getItem("userSession")
     if (session) {
       const userData = JSON.parse(session)
+      
       // Verificar que el usuario sea administrador
       if (userData.rol !== "ADMINISTRADOR" && userData.rol !== "OPERADOR") {
         // Redirigir si no tiene permisos

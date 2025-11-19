@@ -31,13 +31,13 @@ type ConsultaDisponible = {
   parametros: string[]
 }
 
-type ResultadoConsulta = any
+type ResultadoConsulta = Record<string, unknown> | Array<Record<string, unknown>>
 
 export default function ConsultasAvanzadas() {
   const [userSession, setUserSession] = useState<UserSession | null>(null)
   const [consultasDisponibles, setConsultasDisponibles] = useState<ConsultaDisponible[]>([])
   const [consultaSeleccionada, setConsultaSeleccionada] = useState<string>("")
-  const [parametros, setParametros] = useState<Record<string, any>>({})
+  const [parametros, setParametros] = useState<Record<string, string>>({})
   const [resultados, setResultados] = useState<ResultadoConsulta | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -58,16 +58,18 @@ export default function ConsultasAvanzadas() {
 
   const fetchConsultasDisponibles = async () => {
     try {
-      const response = await fetch("/api/consultas-avanzadas")
-      const data = await response.json()
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 200))
       
-      if (data.success) {
-        setConsultasDisponibles(data.data)
-      } else {
-        setError("Error al cargar consultas disponibles")
-      }
+      const consultasMock = [
+        { id: 'ocupacion', nombre: 'Análisis de Ocupación', descripcion: 'Estadísticas de ocupación por período', parametros: ['fechaInicio', 'fechaFin'] },
+        { id: 'ingresos', nombre: 'Reporte de Ingresos', descripcion: 'Desglose de ingresos por fuente', parametros: ['fechaInicio', 'fechaFin'] },
+        { id: 'clientes', nombre: 'Análisis de Clientes', descripcion: 'Segmentación y comportamiento de clientes', parametros: [] }
+      ]
+      
+      setConsultasDisponibles(consultasMock)
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al cargar consultas disponibles")
       console.error(err)
     }
   }
@@ -79,10 +81,10 @@ export default function ConsultasAvanzadas() {
     setError("")
   }
 
-  const handleParametroChange = (key: string, value: any) => {
+  const handleParametroChange = (key: string, value: string | number) => {
     setParametros(prev => ({
       ...prev,
-      [key]: value
+      [key]: String(value)
     }))
   }
 
@@ -96,26 +98,31 @@ export default function ConsultasAvanzadas() {
       setLoading(true)
       setError("")
       
-      const response = await fetch("/api/consultas-avanzadas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          tipoConsulta: consultaSeleccionada,
-          ...parametros
-        })
-      })
-
-      const data = await response.json()
+      // Backend deshabilitado - Simular consulta con datos mock
+      await new Promise(resolve => setTimeout(resolve, 800))
       
-      if (data.success) {
-        setResultados(data.data)
-      } else {
-        setError(data.error || "Error al ejecutar la consulta")
+      const resultadosMock = {
+        ocupacion: [
+          { periodo: 'Enero 2025', ocupacion: 75, habitaciones: 30 },
+          { periodo: 'Febrero 2025', ocupacion: 82, habitaciones: 33 },
+          { periodo: 'Marzo 2025', ocupacion: 78, habitaciones: 31 }
+        ],
+        ingresos: [
+          { fuente: 'Habitaciones', monto: 1850000 },
+          { fuente: 'Servicios', monto: 320000 },
+          { fuente: 'Extras', monto: 180000 }
+        ],
+        clientes: [
+          { segmento: 'VIP', cantidad: 45, porcentaje: 15 },
+          { segmento: 'Regular', cantidad: 180, porcentaje: 60 },
+          { segmento: 'Nuevo', cantidad: 75, porcentaje: 25 }
+        ]
       }
+      
+      const resultado = resultadosMock[consultaSeleccionada as keyof typeof resultadosMock] || []
+      setResultados(resultado as ResultadoConsulta)
     } catch (err) {
-      setError("Error al conectar con el servidor")
+      setError("Error al ejecutar la consulta")
       console.error(err)
     } finally {
       setLoading(false)
@@ -345,17 +352,6 @@ export default function ConsultasAvanzadas() {
                 {consultaSeleccionada && (
                   <div className="space-y-4">
                     <h3 className="text-sm font-medium text-gray-700 mb-3">Parámetros</h3>
-                    {consultasDisponibles
-                      .find(c => c.id === consultaSeleccionada)
-                      ?.parametros.map(parametro => (
-                        <div key={parametro}>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            {parametro.replace(/_/g, ' ').charAt(0).toUpperCase() + parametro.replace(/_/g, ' ').slice(1)}
-                          </label>
-                          {renderParametroInput(parametro)}
-                        </div>
-                      ))}
-                    
                     <button
                       onClick={ejecutarConsulta}
                       disabled={loading}
@@ -433,7 +429,7 @@ export default function ConsultasAvanzadas() {
                   <div className="text-center py-16">
                     <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500">
-                      Selecciona una consulta y haz clic en "Ejecutar Consulta" para ver los resultados
+                      Selecciona una consulta y haz clic en &quot;Ejecutar Consulta&quot; para ver los resultados
                     </p>
                   </div>
                 )}

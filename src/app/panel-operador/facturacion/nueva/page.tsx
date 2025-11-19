@@ -48,14 +48,53 @@ export default function NuevaFactura() {
 
   const cargarPagosSinFactura = async () => {
     try {
-      const response = await fetch('/api/pagos')
-      const data = await response.json()
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 300))
       
-      if (data.success) {
-        // Filtrar solo pagos sin factura
-        const pagosSinFactura = data.data.filter((p: any) => !p.invoice)
-        setPagos(pagosSinFactura)
-      }
+      const pagosMock: Pago[] = [
+        {
+          id: 'PAG-001',
+          monto: 240000,
+          metodoPago: 'TARJETA_CREDITO',
+          fechaPago: new Date().toISOString(),
+          reservation: {
+            id: 'RSV-001',
+            fechaEntrada: new Date(Date.now() + 86400000 * 2).toISOString(),
+            fechaSalida: new Date(Date.now() + 86400000 * 5).toISOString(),
+            precioTotal: 240000,
+            user: {
+              nombre: 'María González',
+              email: 'maria@example.com'
+            },
+            room: {
+              numero: 102,
+              tipo: 'DOBLE'
+            }
+          }
+        },
+        {
+          id: 'PAG-002',
+          monto: 150000,
+          metodoPago: 'EFECTIVO',
+          fechaPago: new Date().toISOString(),
+          reservation: {
+            id: 'RSV-002',
+            fechaEntrada: new Date(Date.now() - 86400000).toISOString(),
+            fechaSalida: new Date(Date.now() + 86400000 * 2).toISOString(),
+            precioTotal: 150000,
+            user: {
+              nombre: 'Carlos Pérez',
+              email: 'carlos@example.com'
+            },
+            room: {
+              numero: 201,
+              tipo: 'SIMPLE'
+            }
+          }
+        }
+      ]
+      
+      setPagos(pagosMock)
     } catch (err) {
       console.error('Error al cargar pagos:', err)
     }
@@ -84,7 +123,7 @@ export default function NuevaFactura() {
     }
   }
 
-  const actualizarDetalle = (index: number, campo: keyof DetalleItem, valor: any) => {
+  const actualizarDetalle = (index: number, campo: keyof DetalleItem, valor: string | number) => {
     const nuevosDetalles = [...detalles]
     nuevosDetalles[index] = { ...nuevosDetalles[index], [campo]: valor }
     setDetalles(nuevosDetalles)
@@ -112,25 +151,15 @@ export default function NuevaFactura() {
       setLoading(true)
       setError(null)
 
-      const response = await fetch('/api/facturas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          paymentId: pagoSeleccionado,
-          subtotal: calcularSubtotal(),
-          impuestos: calcularImpuestos(),
-          detalles
-        })
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        alert('Factura generada exitosamente: ' + data.data.numeroFactura)
+      // Backend deshabilitado - Simular generación de factura
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      const numeroFactura = `FAC-${Date.now().toString().slice(-6)}`
+      alert(`Factura generada exitosamente: ${numeroFactura}\n\nSubtotal: $${calcularSubtotal().toLocaleString()}\nImpuestos: $${calcularImpuestos().toLocaleString()}\nTotal: $${calcularTotal().toLocaleString()}`)
+      
+      setTimeout(() => {
         window.location.href = '/panel-operador/facturacion'
-      } else {
-        setError(data.error || 'Error al generar factura')
-      }
+      }, 500)
     } catch (err) {
       setError('Error al generar factura')
     } finally {

@@ -27,7 +27,7 @@ type Factura = {
       }
     }
   }
-  detalles: any[]
+  detalles: Array<{descripcion: string; cantidad: number; precio: number}>
 }
 
 export default function GestionFacturas() {
@@ -44,14 +44,62 @@ export default function GestionFacturas() {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch('/api/facturas')
-      const data = await response.json()
-
-      if (data.success) {
-        setFacturas(data.data)
-      } else {
-        setError('Error al cargar facturas')
-      }
+      
+      // Backend deshabilitado - Usando datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const facturasMock: Factura[] = [
+        {
+          id: 'F-001',
+          numeroFactura: 'FAC-2024-001',
+          subtotal: 100000,
+          impuestos: 19000,
+          total: 119000,
+          emitidaEl: new Date().toISOString(),
+          payment: {
+            monto: 119000,
+            metodoPago: 'TARJETA_CREDITO',
+            reservation: {
+              id: 'R-001',
+              user: {
+                nombre: 'Carlos Rodríguez',
+                email: 'carlos@example.com'
+              },
+              room: {
+                numero: 101,
+                tipo: 'SIMPLE'
+              }
+            }
+          },
+          detalles: []
+        },
+        {
+          id: 'F-002',
+          numeroFactura: 'FAC-2024-002',
+          subtotal: 160000,
+          impuestos: 30400,
+          total: 190400,
+          emitidaEl: new Date(Date.now() - 86400000).toISOString(),
+          payment: {
+            monto: 190400,
+            metodoPago: 'EFECTIVO',
+            reservation: {
+              id: 'R-002',
+              user: {
+                nombre: 'María González',
+                email: 'maria@example.com'
+              },
+              room: {
+                numero: 102,
+                tipo: 'DOBLE'
+              }
+            }
+          },
+          detalles: []
+        }
+      ]
+      
+      setFacturas(facturasMock)
     } catch (err) {
       setError('Error al cargar facturas')
     } finally {

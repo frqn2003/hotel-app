@@ -128,42 +128,23 @@ Enviado desde el formulario de contacto de Next Lujos Hotel
       
       console.log('Enviando payload:', payload)
 
-      // Envío real a la API
-      const response = await fetch('/api/contacto', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify(payload)
+      // Backend deshabilitado - Solo UI visual
+      setFormEstado(prev => ({ ...prev, enviando: false, enviado: true }))
+
+      // Resetear formulario después de enviar
+      setFormData({
+        nombre: "",
+        email: "",
+        telefono: "",
+        asunto: "",
+        mensaje: "",
+        tipoConsulta: "informacion"
       })
 
-      const data = await response.json()
-      console.log('Respuesta del servidor:', { status: response.status, data })
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Error al enviar el mensaje')
-      }
-
-      if (data.success) {
-        setFormEstado(prev => ({ ...prev, enviando: false, enviado: true }))
-        
-        // Resetear formulario después de enviar
-        setFormData({
-          nombre: "",
-          email: "",
-          telefono: "",
-          asunto: "",
-          mensaje: "",
-          tipoConsulta: "informacion"
-        })
-
-        // Auto-ocultar mensaje de éxito después de 5 segundos
-        setTimeout(() => {
-          setFormEstado(prev => ({ ...prev, enviado: false }))
-        }, 5000)
-      } else {
-        throw new Error(data.message || 'Error al enviar el mensaje')
-      }
+      // Auto-ocultar mensaje de éxito después de 5 segundos
+      setTimeout(() => {
+        setFormEstado(prev => ({ ...prev, enviado: false }))
+      }, 5000)
 
     } catch (error) {
       console.error('Error enviando mensaje:', error)

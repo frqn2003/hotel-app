@@ -40,7 +40,7 @@ import {
 type UserSession = {
   nombre: string
   correo: string
-  rol: "OPERADOR" | "USUARIO" | "ADMIN"
+  rol: "OPERADOR" | "USUARIO" | "ADMINISTRADOR"
 }
 
 type EstadisticasHabitaciones = {
@@ -104,17 +104,74 @@ export default function ReportesFinancieros() {
       setLoading(true)
       setError("")
       
-      const [resHabitaciones, resGanancias] = await Promise.all([
-        fetch(`/api/estadisticas/habitaciones?periodo=${periodo}`),
-        fetch(`/api/estadisticas/ganancias?periodo=${periodo}`)
-      ])
-
-      if (!resHabitaciones.ok || !resGanancias.ok) {
-        throw new Error("Error al cargar estadísticas")
+      // Backend deshabilitado - Datos mock
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const dataHabitaciones: EstadisticasHabitaciones = {
+        resumen: {
+          totalHabitaciones: 40,
+          habitacionesOcupadas: 28,
+          habitacionesDisponibles: 10,
+          habitacionesMantenimiento: 2,
+          tasaOcupacion: 70,
+          ingresosTotales: 0,
+          promedioPorReserva: 0,
+          totalReservas: 0
+        },
+        estado: [
+          { estado: 'Ocupada', cantidad: 28 },
+          { estado: 'Disponible', cantidad: 10 },
+          { estado: 'Mantenimiento', cantidad: 2 }
+        ],
+        porTipo: [
+          { tipo: 'SIMPLE', cantidad: 15, precioPromedio: 0 },
+          { tipo: 'DOBLE', cantidad: 15, precioPromedio: 0 },
+          { tipo: 'SUITE', cantidad: 10, precioPromedio: 0 }
+        ],
+        tendencia: [
+          { mes: 'Enero', ingresos: 0, ocupacion: 65, reservas: 0 },
+          { mes: 'Febrero', ingresos: 0, ocupacion: 68, reservas: 0 },
+          { mes: 'Marzo', ingresos: 0, ocupacion: 72, reservas: 0 },
+          { mes: 'Abril', ingresos: 0, ocupacion: 70, reservas: 0 },
+          { mes: 'Mayo', ingresos: 0, ocupacion: 73, reservas: 0 }
+        ]
       }
-
-      const dataHabitaciones = await resHabitaciones.json()
-      const dataGanancias = await resGanancias.json()
+      
+      const dataGanancias: EstadisticasGanancias = {
+        resumen: {
+          ingresosActuales: 2400000,
+          ingresosAnteriores: 0,
+          variacion: 0,
+          variacionPorcentaje: '0%',
+          totalReservas: 45,
+          promedioPorReserva: 53333
+        },
+        porMetodoPago: [
+          { metodo: 'Tarjeta Crédito', ingresos: 1200000 },
+          { metodo: 'Tarjeta Débito', ingresos: 720000 },
+          { metodo: 'Efectivo', ingresos: 360000 },
+          { metodo: 'Transferencia', ingresos: 120000 }
+        ],
+        porEstado: [
+          { estado: 'COMPLETADO', cantidad: 38, ingresos: 2040000 },
+          { estado: 'PENDIENTE', cantidad: 5, ingresos: 270000 },
+          { estado: 'CANCELADO', cantidad: 2, ingresos: 90000 }
+        ],
+        tendencia: [
+          { fecha: '01/11', ingresos: 65000 },
+          { fecha: '05/11', ingresos: 72000 },
+          { fecha: '10/11', ingresos: 85000 },
+          { fecha: '15/11', ingresos: 78000 },
+          { fecha: '18/11', ingresos: 92000 }
+        ],
+        top5Habitaciones: [
+          { tipo: 'SUITE', ingresos: 850000, reservas: 12 },
+          { tipo: 'DOBLE', ingresos: 720000, reservas: 18 },
+          { tipo: 'SIMPLE', ingresos: 580000, reservas: 15 },
+          { tipo: 'PRESIDENCIAL', ingresos: 150000, reservas: 2 },
+          { tipo: 'EJECUTIVA', ingresos: 100000, reservas: 5 }
+        ]
+      }
 
       setEstadisticasHabitaciones(dataHabitaciones)
       setEstadisticasGanancias(dataGanancias)
@@ -431,5 +488,6 @@ export default function ReportesFinancieros() {
       </div>
     </main>
     <Footer />
-  </>
+  </> 
 )
+}
