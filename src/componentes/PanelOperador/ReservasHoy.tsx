@@ -18,7 +18,6 @@ export default function ReservasHoy() {
   const [checkinsHoy, setCheckinsHoy] = useState<Reserva[]>([])
   const [checkoutsHoy, setCheckoutsHoy] = useState<Reserva[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const cargarReservas = async () => {
@@ -52,8 +51,7 @@ export default function ReservasHoy() {
         ])
         
         setLoading(false)
-      } catch (error) {
-        setError('Error al cargar reservas')
+      } catch {
         setLoading(false)
       }
     }
@@ -65,14 +63,6 @@ export default function ReservasHoy() {
     return (
       <div className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8">
         <p className="text-gray-600 text-center">Cargando reservas...</p>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="bg-white border border-gray-100 rounded-3xl shadow-lg p-8">
-        <p className="text-red-600 text-center">Error: {error}</p>
       </div>
     )
   }
