@@ -2,23 +2,43 @@
 
 'use client'
 
-// import { useNotificaciones } from '@/hooks' // Hook eliminado - frontend only
+import { useState, useEffect } from 'react'
 import type { TipoNotificacion } from '@/types'
+
+interface Notificacion {
+  id: string
+  titulo: string
+  mensaje: string
+  tipo: TipoNotificacion
+  leido: boolean
+  createdAt: string
+  enlace?: string
+}
 
 interface ListaNotificacionesProps {
   userId: string
 }
 
 export default function ListaNotificaciones({ userId }: ListaNotificacionesProps) {
-  const {
-    notificaciones,
-    noLeidas,
-    loading,
-    error,
-    marcarLeida,
-    marcarTodasLeidas,
-    eliminarNotificacion,
-  } = useNotificaciones({ userId })
+  const [notificaciones, setNotificaciones] = useState<Notificacion[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const noLeidas = notificaciones.filter(n => !n.leido).length
+
+  const marcarLeida = (id: string, leido: boolean) => {
+    setNotificaciones(prev =>
+      prev.map(n => (n.id === id ? { ...n, leido } : n))
+    )
+  }
+
+  const marcarTodasLeidas = () => {
+    setNotificaciones(prev => prev.map(n => ({ ...n, leido: true })))
+  }
+
+  const eliminarNotificacion = (id: string) => {
+    setNotificaciones(prev => prev.filter(n => n.id !== id))
+  }
 
   const getIconoTipo = (tipo: TipoNotificacion) => {
     switch (tipo) {
